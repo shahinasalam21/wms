@@ -1,0 +1,61 @@
+/* Centered Box Design */
+.signup-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url("https://source.unsplash.com/1600x900/?technology,workspace") no-repeat center center/cover;
+    background-size: cover;
+  }
+  
+  .signup-card {
+    width: 350px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .form-control {
+    border-radius: 5px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    transition: 0.3s;
+  }
+  
+  .btn:hover {
+    transform: scale(1.05);
+  }
+  
+  p {
+    color: #333;
+  }
+  
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+/* Fix label visibility */
+.signup-card label {
+    color: #333;  /* Dark text */
+    font-weight: bold;
+  }
+    
