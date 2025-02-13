@@ -3,121 +3,133 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { body, validationResult } from "express-validator";
 import pool from "../config/db.js";
-import fetch from "node-fetch";
+import nodemailer from "nodemailer";
+import crypto from "crypto";
+import dotenv from "dotenv";
+import fetch from "node-fetch"; // Required for reCAPTCHA
 
+dotenv.config();
 const router = express.Router();
-const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
-// 🟢 REGISTER (SIGN UP) WITH reCAPTCHA VERIFICATION
-router.post("/register", async (req, res) => {
-  const { name, email, password, captchaToken } = req.body;
+// ✅ Configure Nodemailer (Gmail SMTP)
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER, // Your Gmail Address
+    pass: process.env.EMAIL_PASS, // Your App Password (Generated in Google)
+  },
+});
 
-  if (!captchaToken) {
-    console.log("❌ No reCAPTCHA token received!");
-    return res.status(400).json({ error: "reCAPTCHA verification failed" });
-  }
+// ✅ Function to Verify reCAPTCHA
+const verifyRecaptcha = async (token) => {
+  const secretKey = process.env.RECAPTCHA_SECRET;
+  const response = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `secret=${secretKey}&response=${token}`,
+  });
 
-  try {
-    console.log("🟢 Verifying reCAPTCHA token:", captchaToken);
+  const data = await response.json();
+  console.log("🔹 reCAPTCHA verification response:", data);
+  return data.success;
+};
 
-    // Verify reCAPTCHA with Google
-    const recaptchaResponse = await fetch(
-      `https://www.google.com/recaptcha/api/siteverify`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          secret: RECAPTCHA_SECRET_KEY,
-          response: captchaToken,
-        }),
-      }
-    );
+// ✅ User Registration Route
+router.post(
+  "/register",
+  [
+    body("name").notEmpty(),
+    body("email").isEmail(),
+    body("password").isLength({ min: 6 }),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-    const recaptchaData = await recaptchaResponse.json();
-    console.log("🔍 reCAPTCHA verification response:", recaptchaData);
-
-    if (!recaptchaData.success) {
-      console.log("❌ reCAPTCHA verification failed:", recaptchaData["error-codes"]);
+    const { name, email, password, recaptchaToken } = req.body;
+    const isHuman = await verifyRecaptcha(recaptchaToken);
+    if (!isHuman) {
       return res.status(400).json({ error: "reCAPTCHA verification failed" });
     }
 
-    console.log("✅ reCAPTCHA verified successfully!");
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const verificationToken = crypto.randomBytes(32).toString("hex");
 
-    // Check if email already exists
-    const userExists = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-    if (userExists.rows.length > 0) {
-      return res.status(400).json({ error: "User already exists" });
+      const result = await pool.query(
+        "INSERT INTO users (name, email, password, role, verified, verification_token) VALUES ($1, $2, $3, 'user', false, $4) RETURNING *",
+        [name, email, hashedPassword, verificationToken]
+      );
+
+      // ✅ Send Verification Email
+      const verificationLink = `http://localhost:5000/api/auth/verify-email/${verificationToken}`;
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Verify Your Email - WMS Project",
+        html: `<p>Click the link below to verify your email:</p>
+               <p><a href="${verificationLink}">${verificationLink}</a></p>
+               <p>If you did not request this, please ignore this email.</p>`,
+      });
+
+      res.json({ message: "Signup successful. Check your email to verify your account." });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
+  }
+);
 
-    // Hash password & insert into DB
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await pool.query(
-      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
-      [name, email, hashedPassword]
+// ✅ Email Verification Route (Redirect to Frontend)
+router.get("/verify-email/:token", async (req, res) => {
+  const { token } = req.params;
+  try {
+    const result = await pool.query(
+      "UPDATE users SET verified = true WHERE verification_token = $1 RETURNING *",
+      [token]
     );
 
-    res.status(201).json({ message: "User registered successfully", user: newUser.rows[0] });
+    if (result.rowCount === 0) {
+      return res.status(400).send("<h2>Invalid or expired verification token</h2>");
+    }
 
+    // ✅ Redirect user to frontend login page
+    res.redirect("http://localhost:3000/login?verified=true");
   } catch (error) {
-    console.error("❌ Error during registration:", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).send(`<h2>Error verifying email: ${error.message}</h2>`);
   }
 });
 
-// 🟢 LOGIN WITH reCAPTCHA VERIFICATION
+// ✅ User Login Route
 router.post("/login", async (req, res) => {
-  const { email, password, captchaToken } = req.body;
-
-  if (!captchaToken) {
-    console.log("❌ No reCAPTCHA token received!");
+  const { email, password, recaptchaToken } = req.body;
+  const isHuman = await verifyRecaptcha(recaptchaToken);
+  if (!isHuman) {
     return res.status(400).json({ error: "reCAPTCHA verification failed" });
   }
 
   try {
-    console.log("🟢 Verifying reCAPTCHA token:", captchaToken);
-
-    // Verify reCAPTCHA with Google
-    const recaptchaResponse = await fetch(
-      `https://www.google.com/recaptcha/api/siteverify`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          secret: RECAPTCHA_SECRET_KEY,
-          response: captchaToken,
-        }),
-      }
-    );
-
-    const recaptchaData = await recaptchaResponse.json();
-    console.log("🔍 reCAPTCHA verification response:", recaptchaData);
-
-    if (!recaptchaData.success) {
-      console.log("❌ reCAPTCHA verification failed:", recaptchaData["error-codes"]);
-      return res.status(400).json({ error: "reCAPTCHA verification failed" });
-    }
-
-    console.log("✅ reCAPTCHA verified successfully!");
-
-    // Authenticate user
     const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+
     if (result.rows.length === 0) {
       return res.status(400).json({ error: "User not found" });
     }
 
     const user = result.rows[0];
-    const isMatch = await bcrypt.compare(password, user.password);
+    if (!user.verified) {
+      return res.status(403).json({ error: "Please verify your email before logging in." });
+    }
 
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
     res.json({ message: "Login successful", token });
-
   } catch (error) {
-    console.error("❌ Error during login:", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: error.message });
   }
 });
 
