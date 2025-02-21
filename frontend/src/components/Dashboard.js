@@ -16,11 +16,11 @@ const DashboardHome = () => (
 );
 
 const Dashboard = () => {
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate(); 
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Clear token from storage
-    navigate("/login"); // Redirect to Login page
+    localStorage.removeItem("token"); 
+    navigate("/login"); 
   };
 
   return (

@@ -12,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Middleware to Verify JWT and Attach User Role
+// Middleware to Verify JWT and Attach User Role
 app.use((req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Get token from headers
   if (!token) return next();
@@ -27,7 +27,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Role-Based Protected Routes
+//  Role-Based Protected Routes
 app.get("/admin", authMiddleware(["admin"]), (req, res) => {
   res.json({ message: "Welcome Admin!" });
 });
@@ -36,7 +36,7 @@ app.get("/manager", authMiddleware(["admin", "manager"]), (req, res) => {
   res.json({ message: "Welcome Manager!" });
 });
 
-// ✅ User Routes
+//  User Routes
 app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 5000;

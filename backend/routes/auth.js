@@ -6,21 +6,21 @@ import pool from "../config/db.js";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import dotenv from "dotenv";
-import fetch from "node-fetch"; // Required for reCAPTCHA
+import fetch from "node-fetch"; // for reCAPTCHA
 
 dotenv.config();
 const router = express.Router();
 
-// ✅ Configure Nodemailer (Gmail SMTP)
+// Configure Nodemailer
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, // Your Gmail Address
-    pass: process.env.EMAIL_PASS, // Your App Password (Generated in Google)
+    user: process.env.EMAIL_USER, //  Gmail Address
+    pass: process.env.EMAIL_PASS, //  App Password 
   },
 });
 
-// ✅ Function to Verify reCAPTCHA
+//  to Verify reCAPTCHA
 const verifyRecaptcha = async (token) => {
   const secretKey = process.env.RECAPTCHA_SECRET;
   const response = await fetch("https://www.google.com/recaptcha/api/siteverify", {
@@ -34,7 +34,7 @@ const verifyRecaptcha = async (token) => {
   return data.success;
 };
 
-// ✅ User Registration Route
+// user Registration Route
 router.post(
   "/register",
   [
@@ -63,7 +63,7 @@ router.post(
         [name, email, hashedPassword, verificationToken]
       );
 
-      // ✅ Send Verification Email
+      //  Send Verification Email
       const verificationLink = `http://localhost:5000/api/auth/verify-email/${verificationToken}`;
       await transporter.sendMail({
         from: process.env.EMAIL_USER,
@@ -81,7 +81,7 @@ router.post(
   }
 );
 
-// ✅ Email Verification Route (Redirect to Frontend)
+//  Email Verification Route 
 router.get("/verify-email/:token", async (req, res) => {
   const { token } = req.params;
   try {
@@ -94,14 +94,14 @@ router.get("/verify-email/:token", async (req, res) => {
       return res.status(400).send("<h2>Invalid or expired verification token</h2>");
     }
 
-    // ✅ Redirect user to frontend login page
+    // Redirect user to frontend login page
     res.redirect("http://localhost:3000/login?verified=true");
   } catch (error) {
     res.status(500).send(`<h2>Error verifying email: ${error.message}</h2>`);
   }
 });
 
-// ✅ User Login Route
+// User Login Route
 router.post("/login", async (req, res) => {
   const { email, password, recaptchaToken } = req.body;
   const isHuman = await verifyRecaptcha(recaptchaToken);
