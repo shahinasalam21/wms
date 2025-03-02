@@ -8,6 +8,7 @@ const Signup = () => {
     name: "",
     email: "",
     password: "",
+    role: "employee",
   });
   const [recaptchaToken, setRecaptchaToken] = useState("");
   const [error, setError] = useState("");
@@ -52,6 +53,11 @@ const Signup = () => {
           <input type="text" name="name" placeholder="Name" onChange={handleChange} required />
           <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
           <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+          <select name="role" value={formData.role} onChange={handleChange} required>
+            <option value="user">Employee</option>
+            <option value="manager">Manager</option>
+          </select>
+
           <div className="recaptcha-container">
             <ReCAPTCHA sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} onChange={setRecaptchaToken} />
           </div>

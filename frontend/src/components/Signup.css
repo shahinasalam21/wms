@@ -56,3 +56,26 @@
   justify-content: center;
   margin-bottom: 10px;
 }
+/* Style for the role select dropdown */
+.signup-box select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+/* Hover effect */
+.signup-box select:hover {
+  border-color: green;
+}
+
+/* Focus effect */
+.signup-box select:focus {
+  outline: none;
+  border-color: darkgreen;
+  background-color: white;
+}

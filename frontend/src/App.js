@@ -3,7 +3,10 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import Dashboard from "./components/Dashboard";
+//import Dashboard from "./components/Dashboard";
+import ManagerDashboard from "./components/ManagerDashboard";
+import EmployeeDashboard from "./components/EmployeeDashboard";
+
 import { Carousel } from "react-bootstrap";
 import "./App.css"; 
 
@@ -41,7 +44,9 @@ const App = () => {
         />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route path="/manager-dashboard" element={<ManagerDashboard />} />
+        <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
+      
       </Routes>
     </Router>
   );

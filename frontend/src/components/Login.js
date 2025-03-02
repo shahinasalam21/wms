@@ -35,7 +35,13 @@ const Login = () => {
         setError(data.error);
       } else {
         alert("Login successful!");
-        navigate("/dashboard"); 
+
+        // Store token in localStorage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role); // Save role for future use
+
+        // Redirect to the correct dashboard
+        navigate(data.redirectURL);
       }
     } catch (error) {
       setError("Login failed. Please try again.");
@@ -46,7 +52,7 @@ const Login = () => {
     <div className="login-container">
       <div className="login-box">
         <h2>Login</h2>
-        {error && <p>{error}</p>}
+        {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleSubmit}>
           <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
           <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
