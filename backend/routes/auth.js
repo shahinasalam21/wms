@@ -34,7 +34,7 @@ const verifyRecaptcha = async (token) => {
   return data.success;
 };
 
-//  User Registration Route
+// Registration Route
 router.post(
   "/register",
   [
@@ -53,7 +53,7 @@ router.post(
     }
 
     try {
-      // Check if email is already registered
+      // Checking mail is already registered
       const existingUser = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
       if (existingUser.rows.length > 0) {
         return res.status(400).json({ error: "Email already registered. Please log in." });
@@ -148,7 +148,7 @@ router.post("/login", async (req, res) => {
     // Generate JWT token
     const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    // Determine Redirect URL based on role
+    //Redirect URL based on role
     let redirectURL = "/dashboard";
     if (user.role === "manager") {
       redirectURL = "/manager-dashboard";
