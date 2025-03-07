@@ -10,7 +10,7 @@ const pool = new Pool({
 });
 
 pool.on("connect", () => {
-  console.log("✅ Connected to PostgreSQL - wms_db");
+  console.log(" Connected to PostgreSQL - wms_db");
 });
 
 export default pool;

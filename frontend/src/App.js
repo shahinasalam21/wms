@@ -5,7 +5,7 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import ManagerDashboard from "./components/ManagerDashboard";
 import EmployeeDashboard from "./components/EmployeeDashboard";
-
+import CreateWorkflow from "./components/CreateWorkflow";
 import { Carousel } from "react-bootstrap";
 import "./App.css"; 
 
@@ -45,7 +45,8 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/manager-dashboard" element={<ManagerDashboard />} />
         <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
-      
+        <Route path="/create-workflow" element={<CreateWorkflow />} />  
+          
       </Routes>
     </Router>
   );
