@@ -1,7 +1,15 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .container {
   display: flex;
   height: 100vh;
   background: #f4f4f4;
+  align-items: flex-start; /* Align everything at the top */
 }
 
 /* Sidebar Styling */
@@ -22,7 +30,7 @@
 }
 
 .sidebar ul {
-  list-style: none;
+  list-style: none; /* Remove bullets from list */
   padding: 0;
   width: 100%;
 }
@@ -41,6 +49,7 @@
   font-size: 16px;
   padding: 10px;
   transition: background 0.3s ease;
+  outline: none; /* Remove outline */
 }
 
 .sidebar a:hover {
@@ -51,7 +60,7 @@
 /* Main Content */
 .main-content {
   flex-grow: 1;
-  padding: 20px;
+  padding: 0px 20px; /* Reduce padding on top */
 }
 
 /* Header */
@@ -61,16 +70,25 @@
   align-items: center;
   background: #222;
   color: white;
-  padding: 15px;
-  border-radius: 5px;
+  padding: 10px 15px; /* Adjust padding */
+  border-radius: 0; /* Remove unnecessary rounding */
+  margin: 0;  /* Ensure no unwanted margins */
 }
 
-/* Workflow List */
-.workflow-section ul, .pending-tasks ul {
+.header h2 {
+  margin: 0; /* Remove extra spacing */
   padding: 0;
 }
 
-.workflow-section li, .pending-tasks li {
+/* Workflow List */
+.workflow-section ul,
+.pending-tasks ul {
+  padding: 0;
+  list-style: none; /* Remove bullets from list */
+}
+
+.workflow-section li,
+.pending-tasks li {
   background: white;
   padding: 10px;
   border-radius: 5px;
@@ -81,13 +99,11 @@
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.workflow-section .badge {
-  padding: 5px 10px;
-}
-
+/* Remove any dots on focusable elements like buttons */
+.workflow-section .badge,
 .pending-tasks .btn {
-  font-size: 14px;
-  padding: 5px 10px;
+  list-style: none; /* Ensure no list dots */
+  outline: none; /* Remove outline when focused */
 }
 
 /* Responsive */

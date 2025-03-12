@@ -7,24 +7,25 @@ import {
 import "./Dashboard.css";
 import CreateWorkflow from "./CreateWorkflow"; 
 
-const Sidebar = () => {
+const Sidebar = ({ workflows }) => {
   const navigate = useNavigate(); 
 
   const handleLogout = () => navigate("/login");
-  const handleCreateWorkflow = () => navigate("/create-workflow"); 
+  const handleCreateWorkflow = () => navigate("/create-workflow");
 
   return (
     <div className="sidebar p-3 d-flex flex-column align-items-center">
       <h2 className="mb-4 text-center">MINIPROJECT</h2>
       <nav className="w-100">
-        <ul className="list-unstyled w-100">
+        
           <li className="mb-3 text-center"><Link to="/home"><FaHome /> Home</Link></li>
           <li className="mb-3 text-center"><Link to="/workflows"><FaClipboardList /> Workflows</Link></li>
           <li className="mb-3 text-center"><Link to="/tasks"><FaClipboardList /> Tasks</Link></li>
           <li className="mb-3 text-center"><Link to="/employees"><FaUsers /> Employees</Link></li>
           <li className="mb-3 text-center"><Link to="/reports"><FaChartBar /> Reports</Link></li>
+
           
-          {/* Use handleCreateWorkflow to navigate */}
+
           <li className="mt-4 d-flex justify-content-center">
             <button className="btn btn-success w-75 text-center" onClick={handleCreateWorkflow}>
               <FaPlus /> Create Workflow
@@ -36,7 +37,7 @@ const Sidebar = () => {
               <FaSignOutAlt /> Sign Out
             </button>
           </li>
-        </ul>
+        
       </nav>
     </div>
   );
@@ -44,7 +45,7 @@ const Sidebar = () => {
 
 const Header = () => (
   <header className="header d-flex justify-content-between align-items-center p-3">
-    <h2>Manager Dashboard</h2>
+    <h2 style={{ color: "white" }}>Manager Dashboard</h2>
     <input type="text" placeholder="Search..." className="form-control w-25" />
   </header>
 );
@@ -55,20 +56,28 @@ const ManagerDashboard = () => {
     { id: 1, name: "Website Redesign", progress: 60 },
     { id: 2, name: "Mobile App Development", progress: 30 }
   ]);
-
-  const [pendingTasks, setPendingTasks] = useState([
+  const [pendingTasks] = useState([
     { id: 1, task: "UI Design Review", employee: "John Doe" },
     { id: 2, task: "API Testing", employee: "Jane Smith" }
   ]);
 
+  const navigate = useNavigate();
+
+  // Handle Workflow Creation
+  const handleCreateWorkflow = (workflow) => {
+    setWorkflows((prev) => [...prev, workflow]);
+    setShowCreateWorkflow(false);
+    navigate("/dashboard"); // Redirect to Dashboard after creation
+  };
+
   return (
-    <div className="container-fluid d-flex">
-      <Sidebar onCreateWorkflow={() => setShowCreateWorkflow(!showCreateWorkflow)} />
+    <div className="container-fluid d-flex" style={{ minHeight: "100vh" }}>
+      <Sidebar workflows={workflows} />
       <div className="main-content flex-grow-1 p-4">
         <Header />
 
         {showCreateWorkflow ? (
-          <CreateWorkflow />
+          <CreateWorkflow onCreate={handleCreateWorkflow} />
         ) : (
           <>
             {/* Workflows Section */}
