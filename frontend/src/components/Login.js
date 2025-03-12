@@ -36,9 +36,8 @@ const Login = () => {
       } else {
         alert("Login successful!");
 
-        // Store token in localStorage
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.role); // Save role for future use
+        localStorage.setItem("token", data.token);// Store token in localStorage
+        localStorage.setItem("role", data.role); // Save role
 
         // Redirect to the correct dashboard
         navigate(data.redirectURL);
