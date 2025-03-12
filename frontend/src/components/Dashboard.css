@@ -1,0 +1,55 @@
+.container {
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  background: #111;
+  color: white;
+  height: 100vh;
+  padding: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin: 15px 0;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #222;
+  color: white;
+  padding: 10px;
+}
+
+.task-board {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.task-column {
+  width: 23%;
+  background: #333;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
