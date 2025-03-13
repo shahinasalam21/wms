@@ -1,62 +1,41 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Link, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Carousel } from "react-bootstrap";
+import "./App.css";
+
 import Login from "./components/Login";
 import Signup from "./components/Signup";
+import DashboardLayout from "./components/DashboardLayout";
 import ManagerDashboard from "./components/ManagerDashboard";
 import EmployeeDashboard from "./components/EmployeeDashboard";
 import CreateWorkflow from "./components/CreateWorkflow";
 import Workflows from "./components/Workflows";
-import { Carousel } from "react-bootstrap";
-import "./App.css";
 
 const App = () => {
   const [workflows, setWorkflows] = useState([]);
 
   return (
     <Router>
-      
-        {/* ✅ Navbar is conditionally rendered */}
-        <NavBar />
+      <Routes>
+        {/* ✅ Pages without Layout (No Sidebar) */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
-        {/* ✅ Page Content */}
-        <main className="content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/manager-dashboard" element={<ManagerDashboard />} />
-            <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
-            <Route path="/create-workflow" element={<CreateWorkflow setWorkflows={setWorkflows} />} />
-            <Route path="/workflows" element={<Workflows workflows={workflows} />} />
-          </Routes>
-        </main>
-      
+        {/* ✅ Dashboard Pages with Static Sidebar */}
+        <Route element={<DashboardLayout />}>
+          <Route path="/manager-dashboard" element={<ManagerDashboard />} />
+          <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
+          <Route path="/create-workflow" element={<CreateWorkflow setWorkflows={setWorkflows} />} />
+          <Route path="/workflows" element={<Workflows workflows={workflows} />} />
+        </Route>
+      </Routes>
     </Router>
   );
 };
 
-/* ✅ Updated NavBar Component */
-const NavBar = () => {
-  const location = useLocation();
-  
-  // ✅ Hide Navbar on Home, Login, Signup, and Manager Dashboard
-  if (["/", "/login", "/signup", "/manager-dashboard"].includes(location.pathname)) return null;
-
-  return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <Link className="navbar-brand" to="/">Workflow Management</Link>
-      <div className="collapse navbar-collapse">
-        <ul className="navbar-nav ms-auto">
-          <li className="nav-item"><Link className="nav-link" to="/manager-dashboard">Manager Dashboard</Link></li>
-          <li className="nav-item"><Link className="nav-link" to="/workflows">Workflows</Link></li>
-        </ul>
-      </div>
-    </nav>
-  );
-};
-
-/* ✅ Updated Home Component */
+/* ✅ Home Component (Kept Inside App.js) */
 const Home = () => {
   return (
     <div className="home-container">
@@ -77,8 +56,8 @@ const Home = () => {
           </Carousel.Item>
         </Carousel>
         <div className="button-group">
-          <Link to="/login" className="btn btn-primary">Login</Link>
-          <Link to="/signup" className="btn btn-success">Sign Up</Link>
+          <a href="/login" className="btn btn-primary">Login</a>
+          <a href="/signup" className="btn btn-success">Sign Up</a>
         </div>
       </div>
     </div>
