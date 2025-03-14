@@ -1,7 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CreateWorkflow from "./CreateWorkflow";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaSearch } from "react-icons/fa";
+import "./Dashboard.css";
+
+// ✅ Move the Header component here
+const Header = () => (
+  <header className="manager-header d-flex justify-content-between align-items-center p-3">
+    <div className="manager-search-container">
+      <FaSearch className="manager-search-icon" />
+      
+      <input type="text" placeholder="Search..." className="form-control manager-search-input" />
+    </div>
+  </header>
+);
 
 const ManagerDashboard = () => {
   const [showCreateWorkflow, setShowCreateWorkflow] = useState(false);
@@ -25,7 +37,9 @@ const ManagerDashboard = () => {
   return (
     <div className="d-flex" style={{ minHeight: "100vh" }}>
       <div className="main-content flex-grow-1 p-4">
-        <h2>Manager Dashboard</h2>
+        
+        {/* ✅ Use the Header component here */}
+        <Header />
 
         {showCreateWorkflow ? (
           <CreateWorkflow onCreate={handleCreateWorkflow} />

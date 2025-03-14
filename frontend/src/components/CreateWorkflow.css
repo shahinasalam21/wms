@@ -44,10 +44,21 @@
   background: #f8f9fa;
   border-radius: 5px;
   margin-bottom: 15px;
+  margin-bottom:10px;
 }
 
 .btn-remove{
-  margin-left: 400px;
-  background: #e30c0c;
+  
+  padding: 3px 6px;
+  
+  border-radius: 3px;
+  cursor: pointer;
+  background: #b13737 !important;
   color:  white;
+  
+  margin-left: 250px;
+  width: 100px;
+  
+  
+  
 }

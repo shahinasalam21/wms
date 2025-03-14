@@ -45,29 +45,34 @@ const Signup = () => {
   };
 
   return (
-    <div className="signup-container">
-      <div className="signup-box">
-        <h2>Sign Up</h2>
-        {error && <p>{error}</p>}
-        <form onSubmit={handleSubmit}>
-          <input type="text" name="name" placeholder="Name" onChange={handleChange} required />
-          <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
-          <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-          <select name="role" value={formData.role} onChange={handleChange} required>
-            <option value="" disabled>Select your role</option>
-            <option value="employee">Employee</option>
-            <option value="manager">Manager</option>
-          </select>
-
-          <div className="recaptcha-container">
-            <ReCAPTCHA sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} onChange={setRecaptchaToken} />
+    <div className="outer-container"> {/* Outer Box */}
+      <div className="signup-container"> {/* Inner Box */}
+        <div className="signup-box">
+          <h2>Sign Up</h2>
+          {error && <p>{error}</p>}
+          <form onSubmit={handleSubmit}>
+            <input type="text" name="name" placeholder="Name" onChange={handleChange} required />
+            <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
+            <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+            <select name="role" value={formData.role} onChange={handleChange} required>
+              <option value="" disabled>Select your role</option>
+              <option value="employee">Employee</option>
+              <option value="manager">Manager</option>
+            </select>
+  
+            <div className="recaptcha-container">
+              <ReCAPTCHA sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} onChange={setRecaptchaToken} />
+            </div>
+            <button type="submit">Sign Up</button>
+          </form>
+          <div className="auth-footer">
+            <p>Already have an account? <a href="/login">Login</a></p>
           </div>
-          <button type="submit">Sign Up</button>
-        </form>
-        <p>Already have an account? <a href="/login">Login</a></p>
+        </div>
       </div>
     </div>
   );
+  
 };
 
 export default Signup;

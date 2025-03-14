@@ -8,7 +8,7 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      <h2 className="text-center">MINIPROJECT</h2>
+      <h2 className="text-center">DASHBOARD</h2>
       <nav>
         <li><Link to="/home"><FaHome /> Home</Link></li>
         <li><Link to="/workflows"><FaClipboardList /> Workflows</Link></li>

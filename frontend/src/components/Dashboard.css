@@ -1,4 +1,4 @@
-
+/* General Reset */
 * {
   margin: 0;
   padding: 0;
@@ -9,16 +9,17 @@
   display: flex;
   height: 100vh;
   background: #f4f4f4;
-  align-items: flex-start; 
+  align-items: flex-start;
+  overflow: hidden; /* Prevents scrolling */
 }
 
 .sidebar {
   position: fixed;
   left: 0;
   top: 0;
-  width: 250px; 
-  height: 100vh; 
-  background-color: #040b11; 
+  width: 250px;
+  height: 100vh;
+  background-color: #040b11;
   color: white;
   overflow-y: auto;
   padding-top: 20px;
@@ -45,34 +46,37 @@
   background-color: #34495e;
 }
 
-
-.main-content {
-  flex-grow: 1;
-  padding: 0px 20px; 
+.manager-header {
+  position: fixed;
+  top: 0;
+  left: 250px;
+  width: calc(100% - 250px);
+  height: 60px;
+  background-color: #222;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  color: white;
 }
 
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #222;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 0;
-  margin: 0;  
+.main-content {
+  margin-left: 110px;
+  margin-top: 70px; /* Ensures it starts below the fixed header */
+  padding: 20px;
+  height: calc(100vh - 70px);
+  overflow-y: auto;
 }
 
 .header h2 {
-  margin: 0; 
+  margin: 0;
   padding: 0;
 }
-
 
 .workflow-section ul,
 .pending-tasks ul {
   padding: 0;
-  list-style: none; 
+  list-style: none;
 }
 
 .workflow-section li,
@@ -87,14 +91,20 @@
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-
 .workflow-section .badge,
 .pending-tasks .btn {
-  list-style: none; 
-  outline: none; 
+  list-style: none;
+  padding: 0;
 }
 
+.pending-tasks .btn {
+  font-size: 12px;
+  padding: 5px 10px;
+  width: auto;
+  height: 30px;
+}
 
+/* Responsive Styles */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
@@ -109,5 +119,47 @@
   .sidebar ul {
     display: flex;
     justify-content: space-around;
+  }
+
+  .manager-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #222;
+    color: white;
+    padding: 80px 80px !important; /* Increased padding */
+    height: 100px !important; /* Increased height */
+    position: fixed;
+    top: 0;
+    left: 250px;
+    width: calc(100% - 250px);
+    z-index: 1000;
+  }
+  
+  /* Search Box */
+  .manager-search-container {
+    display: flex;
+    align-items: center;
+    background: rgb(238, 235, 235);
+    padding: 10px 15px; /* Increased padding */
+    border-radius: 5px;
+    width: 100%;
+    max-width: 350px; /* Adjust width */
+    height: 50px; /* Increased height */
+  }
+  
+  .manager-search-input {
+    border: none;
+    outline: none;
+    padding: 10px;
+    width: 100%;
+    font-size: 16px; /* Make text larger */
+    background: transparent;
+  }
+  
+
+  .main-content {
+    margin-left: 0;
+    margin-top: 70px;
   }
 }
