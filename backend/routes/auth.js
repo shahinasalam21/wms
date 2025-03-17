@@ -136,7 +136,7 @@ router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
 
   try {
-    // Check if the user exists
+    //check user
     const userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
     if (userResult.rows.length === 0) {
       return res.status(400).json({ error: "User not found" });
@@ -147,7 +147,7 @@ router.post("/forgot-password", async (req, res) => {
     // Generate a password reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
 
-    // Store the reset token in the database with an expiry time
+    // Store the reset token with an expiry time
     await pool.query(
       "UPDATE users SET reset_token = $1, reset_token_expiry = NOW() + INTERVAL '1 hour' WHERE email = $2",
       [resetToken, email]
@@ -174,7 +174,7 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
-// Reset Password - Update Password
+// Update Password
 router.post("/reset-password", async (req, res) => {
   const { token, newPassword } = req.body;
 
@@ -191,10 +191,10 @@ router.post("/reset-password", async (req, res) => {
 
     const user = userResult.rows[0];
 
-    // Hash the new password
+    // Hash new password and update password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update the user's password and clear the reset token
+   
     await pool.query(
       "UPDATE users SET password = $1, reset_token = NULL, reset_token_expiry = NULL WHERE id = $2",
       [hashedPassword, user.id]

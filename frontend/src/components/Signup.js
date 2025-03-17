@@ -8,7 +8,7 @@ const Signup = () => {
     name: "",
     email: "",
     password: "",
-    confirmPassword: "", // Added confirm password field
+    confirmPassword: "", 
     role: "employee",
   });
   const [recaptchaToken, setRecaptchaToken] = useState("");

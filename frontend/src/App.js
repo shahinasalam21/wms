@@ -60,7 +60,7 @@ const App = () => {
   );
 };
 
-/* Home Component (Kept Inside App.js) */
+// Home Component 
 const Home = () => {
   return (
     <div className="home-container">
