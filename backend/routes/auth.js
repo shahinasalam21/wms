@@ -131,4 +131,81 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// Forgot Password - Generate Reset Token
+router.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Check if the user exists
+    const userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    if (userResult.rows.length === 0) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    const user = userResult.rows[0];
+
+    // Generate a password reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    // Store the reset token in the database with an expiry time
+    await pool.query(
+      "UPDATE users SET reset_token = $1, reset_token_expiry = NOW() + INTERVAL '1 hour' WHERE email = $2",
+      [resetToken, email]
+    );
+
+    // Create a password reset link
+    const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+
+    // Send email with the reset link
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Password Reset Request",
+      html: `<p>Click the link below to reset your password:</p>
+             <p><a href="${resetLink}">${resetLink}</a></p>
+             <p>This link is valid for 1 hour.</p>`,
+    });
+
+    console.log("Password reset email sent to:", email);
+    res.json({ message: "Password reset link sent to your email." });
+  } catch (error) {
+    console.error("Error in Forgot Password Route:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Reset Password - Update Password
+router.post("/reset-password", async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    // Find the user with the given reset token and check expiry
+    const userResult = await pool.query(
+      "SELECT * FROM users WHERE reset_token = $1 AND reset_token_expiry > NOW()",
+      [token]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(400).json({ error: "Invalid or expired reset token" });
+    }
+
+    const user = userResult.rows[0];
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password and clear the reset token
+    await pool.query(
+      "UPDATE users SET password = $1, reset_token = NULL, reset_token_expiry = NULL WHERE id = $2",
+      [hashedPassword, user.id]
+    );
+
+    res.json({ message: "Password reset successful. You can now log in." });
+  } catch (error) {
+    console.error("Error in Reset Password Route:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
 export default router;

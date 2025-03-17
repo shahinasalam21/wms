@@ -61,6 +61,7 @@ const Login = () => {
           </div>
           <button type="submit">Login</button>
         </form>
+        <p><a href="/forgot-password">Forgot Password?</a></p>
         <div className="auth-footer">
            <p>Don't have an account? <a href="/signup">Sign Up</a></p>  
         </div>
