@@ -36,8 +36,8 @@ const Login = () => {
       } else {
         alert("Login successful!");
 
-        localStorage.setItem("token", data.token);// Store token in localStorage
-        localStorage.setItem("role", data.role); // Save role
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role); 
 
         // Redirect to the correct dashboard
         navigate(data.redirectURL);
@@ -48,6 +48,7 @@ const Login = () => {
   };
 
   return (
+  <div className="outer-container">
     <div className="login-container">
       <div className="login-box">
         <h2>Login</h2>
@@ -60,10 +61,13 @@ const Login = () => {
           </div>
           <button type="submit">Login</button>
         </form>
-        <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+        <div className="auth-footer">
+           <p>Don't have an account? <a href="/signup">Sign Up</a></p>  
+        </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default Login;

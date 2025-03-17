@@ -1,58 +1,126 @@
-/* Login.css */
-.login-container {
-  width: 100%;
+
+.outer-container {
+  background: url(bp.jpeg) no-repeat center center fixed;
+  background-size: cover;
+  width: 100vw;
   height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-  
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.outer-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  filter: blur(12px); 
+  z-index: 0;
 }
 
+/* Centered login box */
+.login-container {
+  background: rgba(255, 255, 255, 0.2); 
+  backdrop-filter: blur(10px); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+  width: 100vw;
+}
+
+/* Login box  */
 .login-box {
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.2); 
   width: 400px;
   padding: 20px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px); 
+}
+.h2{
+  color: black;
 }
 
-.login-box h2 {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
 
-.login-box p {
-  color: red;
-  font-size: 14px;
-}
-
-.login-box input {
+input {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
-  border: 1px solid #ccc;
+  border: 1px solid black;
   border-radius: 5px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  color: black;
 }
 
-.login-box button {
+/* Login button */
+button {
   width: 100%;
   padding: 10px;
-  background: green;
+  margin-top: 5px;
+  background-color: #3182ce;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
 }
-
-.login-box button:hover {
-  background: darkgreen;
-}
-
 .recaptcha-container {
+  margin-top: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  
   display: flex;
   justify-content: center;
-  margin-bottom: 10px;
+  align-items: center;
+  width: fit-content;
+  margin: auto;
 }
+input::placeholder {
+  color: rgba(69, 74, 71, 0.8); 
+  font-size: 16px;
+  font-weight: 500;
+  
+}
+
+p {
+  color: rgb(75, 69, 69) !important;
+  font-size: 16px;
+  
+}
+
+p a {
+  color: rgb(58, 56, 56) !important;
+  text-decoration: underline;
+}
+body {
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.auth-footer a {
+  color: #4459f8 !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+}
+.auth-footer a:hover {
+  color: #171619 !important;  
+  text-decoration: underline !important;
+}
+
+
+
+
+
+
+
+
+
