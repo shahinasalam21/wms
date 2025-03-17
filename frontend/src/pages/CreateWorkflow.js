@@ -77,7 +77,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
       setWorkflows(updatedWorkflows);
     }
 
-    // Reset form
+   
     setWorkflow({ name: "", description: "", tasks: [] });
 
     if (onClose) {

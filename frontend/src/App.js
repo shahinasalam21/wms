@@ -15,7 +15,10 @@ import Reports from "./pages/Reports";
 import Profile from "./pages/Profile";
 import Tasks from "./pages/Tasks";
 import Employees from "./pages/Employees";
-
+import TaskPage from "./pages/TaskPage";
+import Notifications from "./pages/Notifications";
+import Performance from "./pages/Performance";
+import EmpDashboardLayout from "./components/EmpDashboardLayout";
 
 const App = () => {
   const [workflows, setWorkflows] = useState([]);
@@ -23,12 +26,12 @@ const App = () => {
   return (
     <Router>
     <Routes>
-      {/* Pages without Layout (No Sidebar) */}
+     
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
   
-      {/* Manager Dashboard with Static Sidebar */}
+     
       <Route element={<DashboardLayout />}>
         <Route path="/manager-dashboard" element={<ManagerDashboard />} />
         <Route path="/create-workflow" element={<CreateWorkflow setWorkflows={setWorkflows} />} />
@@ -39,8 +42,13 @@ const App = () => {
         <Route path="/employees" element={<Employees />} />
       </Route>
   
-      {/* Employee Dashboard with Sidebar */}
-      
+     
+      <Route element={<EmpDashboardLayout />}>
+        <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
+        <Route path="/employee-tasks" element={<TaskPage />} />
+        <Route path="/performance" element={<Performance />} />
+        <Route path="/notifications" element={<Notifications />} />
+      </Route>
     </Routes>
   </Router>
   
