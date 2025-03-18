@@ -12,7 +12,7 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Added basic validation for password match
+   
     if (newPassword !== confirmPassword) {
       setMessage("Passwords don't match");
       return;
