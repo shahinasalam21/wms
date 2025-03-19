@@ -12,16 +12,10 @@ services:
 variables:
   DOCKER_HOST: tcp://docker:2375
   NODE_ENV: test
-  DATABASE_URL: "postgres://postgres:shahi@db:5432/wms_db"  # Change 'localhost' to 'db' if using Docker
+  DATABASE_URL: "postgres://postgres:shahi@db:5432/wms_db"
+
 before_script:
-  - apt-get update && apt-get install -y python3-dev libffi-dev build-essential
-  - python3 -m venv venv
-  - source venv/bin/activate
-  - pip install --upgrade pip setuptools wheel
-
-script:
-  - pip install PyYAML==6.0 docker-compose --no-cache-dir
-
+  - apt-get update && apt-get install -y python3-dev libffi-dev build-essential libssl-dev docker-compose
 
 # 1️⃣ Backend Test Stage
 test-backend:
