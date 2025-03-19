@@ -1,6 +1,11 @@
 image: docker:latest
 
+services:
+  - docker:dind  # Enables Docker-in-Docker
+
 variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
   DOCKER_DRIVER: overlay2
   CI_REGISTRY: registry.gitlab.com
   CI_IMAGE: $CI_REGISTRY/csd24-25/workflow-management-system/workflow-management
