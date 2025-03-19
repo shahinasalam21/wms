@@ -1,0 +1,50 @@
+# Use the official Node.js image
+image: node:20
+
+# Define stages of the pipeline
+stages:
+  - install
+  - test
+  - build
+  - deploy
+
+# Cache node_modules to speed up future builds
+cache:
+  paths:
+    - node_modules/
+
+# Step 1: Install Dependencies
+install_dependencies:
+  stage: install
+  script:
+    - npm install
+  only:
+    - main  # Run only on the main branch
+
+# Step 2: Run Tests
+run_tests:
+  stage: test
+  script:
+    - npm run test -- --watchAll=false
+  only:
+    - main
+
+# Step 3: Build the Project
+build:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - build/
+  only:
+    - main
+
+# Step 4: Deploy (Modify based on your deployment setup)
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying the app..."
+    - npm run deploy  # Modify this for your deployment
+  only:
+    - main
