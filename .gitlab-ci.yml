@@ -12,6 +12,7 @@ variables:
 
 stages:
   - build
+  - test
   - deploy
 
 before_script:
@@ -30,6 +31,18 @@ build-backend:
     - echo "Building backend..."
     - docker build -t $CI_IMAGE/my-backend:latest backend/
     - docker push $CI_IMAGE/my-backend:latest
+
+test-frontend:
+  stage: test
+  script:
+    - echo "Testing frontend..."
+    - docker run --rm $CI_IMAGE/my-frontend:latest npm test
+
+test-backend:
+  stage: test
+  script:
+    - echo "Testing backend..."
+    - docker run --rm $CI_IMAGE/my-backend:latest pytest  # Use the correct test command
 
 deploy-frontend:
   stage: deploy
