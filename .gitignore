@@ -9,5 +9,5 @@ backend/.env
 frontend/.env
 
 # Ignore dependencies lock files
-package-lock.json
+
 yarn.lock
