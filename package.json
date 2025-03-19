@@ -4,8 +4,11 @@
   "main": "index.js",
   
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "test:frontend": "cd frontend && npm test",
+  "test:backend": "cd backend && npm test",
+  "test": "npm run test:frontend && npm run test:backend"
+}
+,
   "keywords": [],
   "author": "",
   "license": "ISC",

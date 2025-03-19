@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "main": "server.js",
   "type": "module",
-  "scripts": {
-  "test": "echo \"Skipping backend tests...\" && exit 0",
-  "start": "node server.js"
+ "scripts": {
+  "start": "node server.js",
+  "test": "jest --ci --coverage"
 },
-
   "keywords": [],
   "author": "",
   "license": "ISC",
