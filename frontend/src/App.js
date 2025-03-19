@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import React, { useState } from "react"; 
+import { Route, Routes } from "react-router-dom"; // ✅ Remove BrowserRouter
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Carousel } from "react-bootstrap";
 import "./App.css";
@@ -27,16 +27,13 @@ const App = () => {
   const [workflows, setWorkflows] = useState([]);
 
   return (
-    <Router>
     <Routes>
-     
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-        
-     
+      
       <Route element={<DashboardLayout />}>
         <Route path="/manager-dashboard" element={<ManagerDashboard />} />
         <Route path="/create-workflow" element={<CreateWorkflow setWorkflows={setWorkflows} />} />
@@ -46,8 +43,7 @@ const App = () => {
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/employees" element={<Employees />} />
       </Route>
-  
-     
+
       <Route element={<EmpDashboardLayout />}>
         <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
         <Route path="/employee-tasks" element={<TaskPage />} />
@@ -55,8 +51,6 @@ const App = () => {
         <Route path="/notifications" element={<Notifications />} />
       </Route>
     </Routes>
-  </Router>
-  
   );
 };
 

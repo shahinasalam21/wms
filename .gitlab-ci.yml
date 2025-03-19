@@ -1,20 +1,57 @@
+image: node:20
+
 stages:
+  - install
   - test
-  - build
   - deploy
 
-test-frontend:
-  stage: test
-  image: node:20
-  script:
-    - cd frontend
-    - npm install
-    - npm test
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
 
+variables:
+  NODE_ENV: test
+  DATABASE_URL: "postgres://postgres:shahi@localhost:5432/wms_db"
+
+before_script:
+  - npm install
+
+# 1️⃣ Backend Test Stage
 test-backend:
   stage: test
-  image: node:20
   script:
     - cd backend
     - npm install
-    - npm test
+    - npm run test -- --watchAll=false
+
+# 2️⃣ Frontend Test Stage
+test-frontend:
+  stage: test
+  script:
+    - cd frontend
+    - npm install
+    - npm run test -- --watchAll=false
+
+# 3️⃣ Backend Deployment (Modify for your server)
+deploy-backend:
+  stage: deploy
+  script:
+    - echo "Deploying backend..."
+    - cd backend
+    - npm install
+    - pm2 restart server.js
+  only:
+    - main
+
+# 4️⃣ Frontend Deployment (Modify for your hosting)
+deploy-frontend:
+  stage: deploy
+  script:
+    - echo "Deploying frontend..."
+    - cd frontend
+    - npm install
+    - npm run build
+    - cp -r dist/* /var/www/html/
+  only:
+    - main
