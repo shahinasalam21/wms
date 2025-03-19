@@ -1,4 +1,3 @@
-# ✅ Use Node.js image to support npm commands
 image: node:18
 
 stages:
@@ -17,7 +16,7 @@ variables:
 before_script:
   - apt-get update && apt-get install -y python3-dev libffi-dev build-essential libssl-dev docker-compose
 
-# 1️⃣ Backend Test Stage
+# Backend Test Stage
 test-backend:
   stage: test
   script:
@@ -25,7 +24,7 @@ test-backend:
     - npm install
     - npm test -- --watchAll=false
 
-# 2️⃣ Frontend Test Stage
+# Frontend Test Stage
 test-frontend:
   stage: test
   script:
@@ -33,48 +32,48 @@ test-frontend:
     - npm install
     - npm test -- --watchAll=false
 
-# 3️⃣ Build Backend Docker Image
+# Build Backend Docker Image
 build-backend:
   stage: build
   script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
     - docker build -t my-backend:latest ./backend
-    - docker tag my-backend:latest registry.gitlab.com/${CI_REGISTRY_USER,,}/workflow-management/my-backend:latest
-    - echo $CI_REGISTRY_PASSWORD | docker login -u ${CI_REGISTRY_USER,,} --password-stdin registry.gitlab.com
-    - docker push registry.gitlab.com/${CI_REGISTRY_USER,,}/workflow-management/my-backend:latest
+    - docker tag my-backend:latest $CI_REGISTRY_IMAGE/my-backend:latest
+    - docker push $CI_REGISTRY_IMAGE/my-backend:latest
   only:
     - main
 
-# 4️⃣ Build Frontend Docker Image
+# Build Frontend Docker Image
 build-frontend:
   stage: build
   script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
     - docker build -t my-frontend:latest ./frontend
-    - docker tag my-frontend:latest registry.gitlab.com/${CI_REGISTRY_USER,,}/workflow-management/my-frontend:latest
-    - echo $CI_REGISTRY_PASSWORD | docker login -u ${CI_REGISTRY_USER,,} --password-stdin registry.gitlab.com
-    - docker push registry.gitlab.com/${CI_REGISTRY_USER,,}/workflow-management/my-frontend:latest
+    - docker tag my-frontend:latest $CI_REGISTRY_IMAGE/my-frontend:latest
+    - docker push $CI_REGISTRY_IMAGE/my-frontend:latest
   only:
     - main
 
-# 5️⃣ Deploy Backend
+# Deploy Backend
 deploy-backend:
   stage: deploy
   script:
     - echo "Deploying backend..."
-    - docker pull registry.gitlab.com/${CI_REGISTRY_USER,,}/workflow-management/my-backend:latest
+    - docker pull $CI_REGISTRY_IMAGE/my-backend:latest
     - docker stop backend || true
     - docker rm backend || true
-    - docker run -d -p 5000:5000 --name backend --env DATABASE_URL=$DATABASE_URL registry.gitlab.com/${CI_REGISTRY_USER,,}/workflow-management/my-backend:latest
+    - docker run -d -p 5000:5000 --name backend --env DATABASE_URL=$DATABASE_URL $CI_REGISTRY_IMAGE/my-backend:latest
   only:
     - main
 
-# 6️⃣ Deploy Frontend
+# Deploy Frontend
 deploy-frontend:
   stage: deploy
   script:
     - echo "Deploying frontend..."
-    - docker pull registry.gitlab.com/${CI_REGISTRY_USER,,}/workflow-management/my-frontend:latest
+    - docker pull $CI_REGISTRY_IMAGE/my-frontend:latest
     - docker stop frontend || true
     - docker rm frontend || true
-    - docker run -d -p 80:80 --name frontend registry.gitlab.com/${CI_REGISTRY_USER,,}/workflow-management/my-frontend:latest
+    - docker run -d -p 80:80 --name frontend $CI_REGISTRY_IMAGE/my-frontend:latest
   only:
     - main
