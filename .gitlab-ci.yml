@@ -15,9 +15,11 @@ variables:
   DATABASE_URL: "postgres://postgres:shahi@db:5432/wms_db"  # Change 'localhost' to 'db' if using Docker
 
 before_script:
-  - apt-get update && apt-get install -y python3 python3-pip
-  - pip3 install --upgrade pip
-  - pip3 install docker-compose
+  - apt-get update && apt-get install -y python3 python3-pip python3-venv  # Install Python and venv
+  - python3 -m venv venv  # Create a virtual environment
+  - source venv/bin/activate  # Activate the virtual environment
+  - pip install --upgrade pip  # Upgrade pip safely
+  - pip install docker-compose  # Install docker-compose
 
 
 # 1️⃣ Backend Test Stage
