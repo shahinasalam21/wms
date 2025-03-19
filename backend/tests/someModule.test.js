@@ -1,4 +1,5 @@
-test("Simple math test", () => {
-    expect(2 + 2).toBe(4);
-  });
-  
+import { someFunction } from "../routes/auth.js";
+
+test("should return expected output", () => {
+  expect(someFunction("input")).toBe("expected output");
+});

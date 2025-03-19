@@ -6,10 +6,17 @@ import pool from "../config/db.js";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import dotenv from "dotenv";
-import fetch from "node-fetch";
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+
 
 dotenv.config();
 const router = express.Router();
+
+
+// Sample function for testing
+export const someFunction = (input) => {
+  return "expected output";
+};
 
 // Configure Nodemailer
 const transporter = nodemailer.createTransport({
