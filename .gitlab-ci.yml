@@ -1,3 +1,4 @@
+# ✅ Use Node.js image to support npm commands
 image: node:18
 
 stages:
@@ -11,10 +12,11 @@ services:
 variables:
   DOCKER_HOST: tcp://docker:2375
   NODE_ENV: test
-  DATABASE_URL: "postgres://postgres:shahi@localhost:5432/wms_db"
+  DATABASE_URL: "postgres://postgres:shahi@db:5432/wms_db"  # Change 'localhost' to 'db' if using Docker
 
 before_script:
-  - apk add --no-cache python3 py3-pip docker-compose
+  - apt-get update && apt-get install -y python3 python3-pip
+  - pip3 install docker-compose
 
 # 1️⃣ Backend Test Stage
 test-backend:
@@ -37,9 +39,9 @@ build-backend:
   stage: build
   script:
     - docker build -t my-backend:latest ./backend
-    - docker tag my-backend:latest registry.gitlab.com/myusername/myrepo/my-backend:latest
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin registry.gitlab.com
-    - docker push registry.gitlab.com/myusername/myrepo/my-backend:latest
+    - docker tag my-backend:latest registry.gitlab.com/Shahinasalam21/workflow-management/my-backend:latest
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin registry.gitlab.com
+    - docker push registry.gitlab.com/Shahinasalam21/workflow-management/my-backend:latest
   only:
     - main
 
@@ -48,9 +50,9 @@ build-frontend:
   stage: build
   script:
     - docker build -t my-frontend:latest ./frontend
-    - docker tag my-frontend:latest registry.gitlab.com/myusername/myrepo/my-frontend:latest
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin registry.gitlab.com
-    - docker push registry.gitlab.com/myusername/myrepo/my-frontend:latest
+    - docker tag my-frontend:latest registry.gitlab.com/Shahinasalam21/workflow-management/my-frontend:latest
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin registry.gitlab.com
+    - docker push registry.gitlab.com/Shahinasalam21/workflow-management/my-frontend:latest
   only:
     - main
 
@@ -59,10 +61,10 @@ deploy-backend:
   stage: deploy
   script:
     - echo "Deploying backend..."
-    - docker pull registry.gitlab.com/myusername/myrepo/my-backend:latest
+    - docker pull registry.gitlab.com/Shahinasalam21/workflow-management/my-backend:latest
     - docker stop backend || true
     - docker rm backend || true
-    - docker run -d -p 5000:5000 --name backend --env DATABASE_URL="$DATABASE_URL" registry.gitlab.com/myusername/myrepo/my-backend:latest
+    - docker run -d -p 5000:5000 --name backend --env DATABASE_URL=$DATABASE_URL registry.gitlab.com/Shahinasalam21/workflow-management/my-backend:latest
   only:
     - main
 
@@ -71,9 +73,9 @@ deploy-frontend:
   stage: deploy
   script:
     - echo "Deploying frontend..."
-    - docker pull registry.gitlab.com/myusername/myrepo/my-frontend:latest
+    - docker pull registry.gitlab.com/Shahinasalam21/workflow-management/my-frontend:latest
     - docker stop frontend || true
     - docker rm frontend || true
-    - docker run -d -p 80:80 --name frontend registry.gitlab.com/myusername/myrepo/my-frontend:latest
+    - docker run -d -p 80:80 --name frontend registry.gitlab.com/Shahinasalam21/workflow-management/my-frontend:latest
   only:
     - main
