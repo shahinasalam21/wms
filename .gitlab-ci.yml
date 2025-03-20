@@ -1,59 +1,83 @@
+# Use the docker image for CI/CD tasks
 image: docker:latest
 
+# Services for Docker-in-Docker (dind)
 services:
-  - docker:dind  # Enables Docker-in-Docker
+  - docker:dind  # Enables Docker-in-Docker for running Docker commands
 
+# Environment variables
 variables:
-  DOCKER_HOST: tcp://docker:2375
-  DOCKER_TLS_CERTDIR: ""
-  DOCKER_DRIVER: overlay2
-  CI_REGISTRY: registry.gitlab.com
-  CI_IMAGE: $CI_REGISTRY/csd24-25/workflow-management-system/workflow-management
+  DOCKER_HOST: tcp://docker:2375  # Docker Daemon URL for Docker-in-Docker
+  DOCKER_TLS_CERTDIR: ""  # Disable Docker TLS for Docker-in-Docker
+  NODE_ENV: test  # Set environment to test
+  DATABASE_URL: "postgres://postgres:shahi@db:5432/wms_db"  # Postgres database URL
 
-stages:
-  - build
-  - test
-  - deploy
-
+# Before script to handle Docker login
 before_script:
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
 
-build-frontend:
-  stage: build
-  script:
-    - echo "Building frontend..."
-    - docker build -t $CI_IMAGE/my-frontend:latest frontend/
-    - docker push $CI_IMAGE/my-frontend:latest
+# Define the stages of the pipeline
+stages:
+  - test
+  - build
+  - deploy
 
-build-backend:
-  stage: build
-  script:
-    - echo "Building backend..."
-    - docker build -t $CI_IMAGE/my-backend:latest backend/
-    - docker push $CI_IMAGE/my-backend:latest
-
-test-frontend:
-  stage: test
-  script:
-    - echo "Testing frontend..."
-    - docker run --rm $CI_IMAGE/my-frontend:latest npm test
-
+# Backend Test Stage
 test-backend:
   stage: test
   script:
-    - echo "Testing backend..."
-    - docker run --rm $CI_IMAGE/my-backend:latest pytest  # Use the correct test command
+    - cd backend
+    - npm install
+    - npm test -- --watchAll=false  # Run backend tests
 
-deploy-frontend:
-  stage: deploy
+# Frontend Test Stage
+test-frontend:
+  stage: test
   script:
-    - echo "Deploying frontend..."
-    - docker pull $CI_IMAGE/my-frontend:latest
-    - docker run -d -p 3000:3000 $CI_IMAGE/my-frontend:latest
+    - cd frontend
+    - npm install
+    - npm test -- --watchAll=false  # Run frontend tests
 
+# Build Backend Docker Image
+build-backend:
+  stage: build
+  script:
+    - echo "Building Backend Docker Image..."
+    - docker build -t $CI_REGISTRY_IMAGE/my-backend:latest ./backend
+    - docker push $CI_REGISTRY_IMAGE/my-backend:latest  # Push backend image to GitLab registry
+  only:
+    - main  # Trigger this stage only on the main branch
+
+# Build Frontend Docker Image
+build-frontend:
+  stage: build
+  script:
+    - echo "Building Frontend Docker Image..."
+    - docker build -t $CI_REGISTRY_IMAGE/my-frontend:latest ./frontend
+    - docker push $CI_REGISTRY_IMAGE/my-frontend:latest  # Push frontend image to GitLab registry
+  only:
+    - main  # Trigger this stage only on the main branch
+
+# Deploy Backend
 deploy-backend:
   stage: deploy
   script:
-    - echo "Deploying backend..."
-    - docker pull $CI_IMAGE/my-backend:latest
-    - docker run -d -p 8000:8000 $CI_IMAGE/my-backend:latest
+    - echo "Deploying Backend..."
+    - docker pull $CI_REGISTRY_IMAGE/my-backend:latest  # Pull the latest backend image
+    - docker stop backend || true  # Stop the current backend container (if running)
+    - docker rm backend || true  # Remove the current backend container (if exists)
+    - docker run -d -p 5000:5000 --name backend --env DATABASE_URL=$DATABASE_URL $CI_REGISTRY_IMAGE/my-backend:latest  # Start backend container
+  only:
+    - main  # Trigger this stage only on the main branch
+
+# Deploy Frontend
+deploy-frontend:
+  stage: deploy
+  script:
+    - echo "Deploying Frontend..."
+    - docker pull $CI_REGISTRY_IMAGE/my-frontend:latest  # Pull the latest frontend image
+    - docker stop frontend || true  # Stop the current frontend container (if running)
+    - docker rm frontend || true  # Remove the current frontend container (if exists)
+    - docker run -d -p 80:80 --name frontend $CI_REGISTRY_IMAGE/my-frontend:latest  # Start frontend container
+  only:
+    - main  # Trigger this stage only on the main branch
