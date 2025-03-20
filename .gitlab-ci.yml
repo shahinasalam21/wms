@@ -1,5 +1,5 @@
-# Define a Node.js image for testing frontend and backend (needed for npm)
-image: docker:latest  # Default image used for build and deploy stages
+# Default image for build and deploy stages (using Docker image for Docker commands)
+image: docker:latest
 
 # Services for Docker-in-Docker (dind)
 services:
@@ -22,29 +22,25 @@ stages:
   - build
   - deploy
 
-# Backend Test Stage (with node:18)
+# Backend Test Stage (use node:18 image to run npm commands)
 test-backend:
   stage: test
-  image: node:18  # Specify Node.js image for test stages
+  image: node:18  # Use Node.js image for backend tests
   script:
     - cd backend
     - npm install  # Install backend dependencies with npm
     - npm test -- --watchAll=false  # Run backend tests
 
-# Frontend Test Stage (with node:18)
+# Frontend Test Stage (use node:18 image to run npm commands)
 test-frontend:
   stage: test
-  image: node:18  # Specify Node.js image for test stages
+  image: node:18  # Use Node.js image for frontend tests
   script:
     - cd frontend
     - npm install  # Install frontend dependencies with npm
     - npm test -- --watchAll=false  # Run frontend tests
 
-# Change image for build and deploy stages
-# Use Docker image for build and deploy
-image: docker:latest
-
-# Build Backend Docker Image
+# Build Backend Docker Image (using docker:latest)
 build-backend:
   stage: build
   script:
@@ -54,7 +50,7 @@ build-backend:
   only:
     - main  # Trigger this stage only on the main branch
 
-# Build Frontend Docker Image
+# Build Frontend Docker Image (using docker:latest)
 build-frontend:
   stage: build
   script:
@@ -64,7 +60,7 @@ build-frontend:
   only:
     - main  # Trigger this stage only on the main branch
 
-# Deploy Backend
+# Deploy Backend (using docker:latest)
 deploy-backend:
   stage: deploy
   script:
@@ -76,7 +72,7 @@ deploy-backend:
   only:
     - main  # Trigger this stage only on the main branch
 
-# Deploy Frontend
+# Deploy Frontend (using docker:latest)
 deploy-frontend:
   stage: deploy
   script:
