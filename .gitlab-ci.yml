@@ -1,5 +1,5 @@
-# Use the docker image for CI/CD tasks
-image: docker:latest
+# Define a Node.js image for testing frontend and backend
+image: node:18
 
 # Services for Docker-in-Docker (dind)
 services:
@@ -12,7 +12,7 @@ variables:
   NODE_ENV: test  # Set environment to test
   DATABASE_URL: "postgres://postgres:shahi@db:5432/wms_db"  # Postgres database URL
 
-# Before script to handle Docker login
+# Before script to handle Docker login (executed in both test and build stages)
 before_script:
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
 
@@ -27,7 +27,7 @@ test-backend:
   stage: test
   script:
     - cd backend
-    - npm install
+    - npm install  # Run backend tests with npm
     - npm test -- --watchAll=false  # Run backend tests
 
 # Frontend Test Stage
@@ -35,8 +35,12 @@ test-frontend:
   stage: test
   script:
     - cd frontend
-    - npm install
+    - npm install  # Run frontend tests with npm
     - npm test -- --watchAll=false  # Run frontend tests
+
+# Change image for build and deploy stages
+# Use Docker image for build and deploy
+image: docker:latest
 
 # Build Backend Docker Image
 build-backend:
