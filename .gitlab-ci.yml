@@ -1,4 +1,4 @@
-# Define a Node.js image for testing frontend and backend
+# Define a Node.js image for testing frontend and backend (needed for npm)
 image: node:18
 
 # Services for Docker-in-Docker (dind)
@@ -27,7 +27,7 @@ test-backend:
   stage: test
   script:
     - cd backend
-    - npm install  # Run backend tests with npm
+    - npm install  # Install backend dependencies with npm
     - npm test -- --watchAll=false  # Run backend tests
 
 # Frontend Test Stage
@@ -35,7 +35,7 @@ test-frontend:
   stage: test
   script:
     - cd frontend
-    - npm install  # Run frontend tests with npm
+    - npm install  # Install frontend dependencies with npm
     - npm test -- --watchAll=false  # Run frontend tests
 
 # Change image for build and deploy stages
