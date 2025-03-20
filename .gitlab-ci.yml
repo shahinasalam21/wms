@@ -12,15 +12,16 @@ variables:
   NODE_ENV: test  # Set environment to test
   DATABASE_URL: "postgres://postgres:shahi@db:5432/wms_db"  # Postgres database URL
 
-# Before script to handle Docker login (executed in both test and build stages)
-before_script:
-  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-
 # Define the stages of the pipeline
 stages:
   - test
   - build
   - deploy
+
+# Before script to handle Docker login (only in build and deploy stages)
+before_script:
+  # Docker login will only run during the build and deploy stages
+  - if [[ "$CI_JOB_STAGE" == "build" || "$CI_JOB_STAGE" == "deploy" ]]; then docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY; fi
 
 # Backend Test Stage (use node:18 image to run npm commands)
 test-backend:
