@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from "react";
-import './Workflows.css';
+import "./Workflows.css";
 
 const Workflows = () => {
     const [workflows, setWorkflows] = useState([]);
 
     useEffect(() => {
-        const fetchWorkflows = () => {
-            const savedWorkflows = JSON.parse(localStorage.getItem("workflows")) || [];
-            setWorkflows(savedWorkflows);
+        const fetchWorkflows = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/api/workflows"); 
+                if (!response.ok) {
+                    throw new Error("Failed to fetch workflows");
+                }
+                const data = await response.json();
+                console.log("Fetched Workflows:", data); 
+                setWorkflows(data);
+            } catch (error) {
+                console.error("Error fetching workflows:", error);
+            }
         };
 
-       
         fetchWorkflows();
-
-        
-        window.addEventListener("storage", fetchWorkflows);
-
-        return () => {
-            window.removeEventListener("storage", fetchWorkflows);
-        };
     }, []);
 
     return (
@@ -26,24 +27,10 @@ const Workflows = () => {
             <h2>Workflows</h2>
             <div className="workflow-list">
                 {workflows.length > 0 ? (
-                    workflows.map((workflow, index) => (
-                        <div key={index} className="workflow-item">
+                    workflows.map((workflow) => (
+                        <div key={workflow.id} className="workflow-item">
                             <h3>{workflow.name}</h3>
                             <p>{workflow.description || "No description available."}</p>
-                            {workflow.tasks && workflow.tasks.length > 0 ? (
-                                <>
-                                    <h4>Tasks:</h4>
-                                    <ul>
-                                        {workflow.tasks.map((task, idx) => (
-                                            <li key={idx}>
-                                                {task.taskName} - {task.assignee} ({task.priority})
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </>
-                            ) : (
-                                <p>No tasks added.</p>
-                            )}
                         </div>
                     ))
                 ) : (

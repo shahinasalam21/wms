@@ -16,7 +16,7 @@ const ManagerDashboard = () => {
 
   useEffect(() => {
     const savedWorkflows = JSON.parse(localStorage.getItem("workflows")) || [];
-    // Filter out empty workflows (dots or empty names)
+    
     const validWorkflows = savedWorkflows.filter(workflow => workflow.name && workflow.name.trim() !== ".");
     setWorkflows(validWorkflows);
   }, []);

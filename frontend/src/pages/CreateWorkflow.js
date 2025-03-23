@@ -16,7 +16,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
     priority: "Medium",
   });
 
-  // Load existing workflows from localStorage
+
   useEffect(() => {
     const savedWorkflows = JSON.parse(localStorage.getItem("workflows")) || [];
     if (setWorkflows) {
@@ -53,39 +53,54 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!workflow.name.trim()) {
       alert("Workflow name is required.");
       return;
     }
-
+  
     const newWorkflow = {
-      id: Date.now(),
       name: workflow.name,
       description: workflow.description,
-      progress: 0,
-      tasks: workflow.tasks,
+      manager_id: 1, 
     };
-
-    const updatedWorkflows = [...(JSON.parse(localStorage.getItem("workflows")) || []), newWorkflow];
-
-    localStorage.setItem("workflows", JSON.stringify(updatedWorkflows));
-
-    if (setWorkflows) {
-      setWorkflows(updatedWorkflows);
+  
+    try {
+      const response = await fetch("http://localhost:5000/api/workflows/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newWorkflow),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to create workflow");
+      }
+  
+      const result = await response.json();
+      alert("Workflow created successfully!");
+  
+      // updating sidebar
+      if (setWorkflows) {
+        setWorkflows((prev) => [...prev, result.workflow]); 
+      }
+  
+      setWorkflow({ name: "", description: "", tasks: [] });
+  
+      if (onClose) {
+        onClose();
+      }
+  
+      navigate("/manager-dashboard");
+    } catch (error) {
+      console.error("Error creating workflow:", error);
+      alert("Error creating workflow");
     }
-
-   
-    setWorkflow({ name: "", description: "", tasks: [] });
-
-    if (onClose) {
-      onClose();
-    }
-
-    navigate("/manager-dashboard");
   };
+  
 
   return (
     <div className="create-workflow-container">
@@ -104,12 +119,13 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
         <h3>Add Tasks</h3>
         <div className="task-form">
           <input type="text" name="taskName" placeholder="Task Name" value={newTask.taskName} onChange={handleTaskChange} />
-          <input type="text" name="assignedTo" placeholder="Assign to Employee" value={newTask.assignedTo} onChange={handleTaskChange} />
+          <input type="email" name="assignedTo" placeholder="Assign to Employee" value={newTask.assignedTo} onChange={handleTaskChange} />
           <select name="priority" value={newTask.priority} onChange={handleTaskChange}>
             <option value="Low">Low</option>
             <option value="Medium">Medium</option>
             <option value="High">High</option>
           </select>
+          <input type="date" name="duedate" placeholder="Due Date" value={newTask.duedate} onChange={handleTaskChange}/>
           <button type="button" className="btn-add" onClick={addTask}>Add Task</button>
         </div>
 
