@@ -1,21 +1,23 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaHome, FaClipboardList, FaUsers, FaChartBar, FaPlus, FaSignOutAlt } from "react-icons/fa";
 import "../pages/Dashboard.css";
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path) => (location.pathname === path ? "active-link" : "");
 
   return (
     <div className="sidebar">
       <h2 className="text-center">DASHBOARD</h2>
       <nav>
-        <li><Link to="/Profile"><FaHome /> Profile</Link></li>
-        <li><Link to="/workflows"><FaClipboardList /> Workflows</Link></li>
-        <li><Link to="/tasks"><FaClipboardList /> Tasks</Link></li>
-        <li><Link to="/employees"><FaUsers /> Employees</Link></li>
-        <li><Link to="/reports"><FaChartBar /> Reports</Link></li>
-        
+        <li className={isActive("/Profile")}><Link to="/Profile"><FaHome /> Profile</Link></li>
+        <li className={isActive("/workflows")}><Link to="/workflows"><FaClipboardList /> Workflows</Link></li>
+        <li className={isActive("/tasks")}><Link to="/tasks"><FaClipboardList /> Tasks</Link></li>
+        <li className={isActive("/employees")}><Link to="/employees"><FaUsers /> Employees</Link></li>
+        <li className={isActive("/reports")}><Link to="/reports"><FaChartBar /> Reports</Link></li>
 
         <li>
           <button className="create-button" onClick={() => navigate("/create-workflow")}>

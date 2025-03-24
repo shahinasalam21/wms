@@ -6,17 +6,13 @@ import pool from "../config/db.js";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import dotenv from "dotenv";
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+import fetch from "node-fetch";
+import verifyJWT from "../middleware/verifyJWT.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 
 dotenv.config();
 const router = express.Router();
-
-
-// Sample function for testing
-export const someFunction = (input) => {
-  return "expected output";
-};
 
 // Configure Nodemailer
 const transporter = nodemailer.createTransport({
@@ -213,6 +209,16 @@ router.post("/reset-password", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+router.get("/employees", verifyJWT, authMiddleware(["manager"]), async (req, res) => {
+  try {
+    const result = await pool.query("SELECT id, name, email, role FROM users WHERE role = 'employee'");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching employees:", err);
+    res.status(500).json({ error: "Failed to fetch employees" });
+  }
+});
+
 
 
 export default router;

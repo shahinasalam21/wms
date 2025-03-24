@@ -69,6 +69,25 @@ body {
   padding: 0 20px;
 }
 
+.active-link a {
+  background-color: #182431;
+  color: white !important;
+  border-radius: 5px;
+  display: block;
+}
+
+.sidebar li a {
+  text-decoration: none;
+  color: #fff;
+  padding: 10px;
+  display: block;
+}
+
+.sidebar li a:hover {
+  background-color: #2f6bb5;
+}
+
+
 .create-button, .signout-button {
   display: flex;
   align-items: center;

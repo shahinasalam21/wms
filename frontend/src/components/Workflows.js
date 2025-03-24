@@ -1,36 +1,62 @@
 import React, { useState, useEffect } from "react";
-import "./Workflows.css";
+import './Workflows.css';
 
 const Workflows = () => {
     const [workflows, setWorkflows] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
-        const fetchWorkflows = async () => {
-            try {
-                const response = await fetch("http://localhost:5000/api/workflows"); 
-                if (!response.ok) {
-                    throw new Error("Failed to fetch workflows");
-                }
-                const data = await response.json();
-                console.log("Fetched Workflows:", data); 
-                setWorkflows(data);
-            } catch (error) {
-                console.error("Error fetching workflows:", error);
-            }
+        const fetchWorkflows = () => {
+            const savedWorkflows = JSON.parse(localStorage.getItem("workflows")) || [];
+            setWorkflows(savedWorkflows);
         };
 
         fetchWorkflows();
+        window.addEventListener("storage", fetchWorkflows);
+
+        return () => {
+            window.removeEventListener("storage", fetchWorkflows);
+        };
     }, []);
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const filteredWorkflows = workflows.filter((workflow) =>
+        workflow.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <div className="workflows-container">
             <h2>Workflows</h2>
+            <input
+                type="text"
+                placeholder="Search Workflows..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="workflow-search-input"
+            />
             <div className="workflow-list">
-                {workflows.length > 0 ? (
-                    workflows.map((workflow) => (
-                        <div key={workflow.id} className="workflow-item">
+                {filteredWorkflows.length > 0 ? (
+                    filteredWorkflows.map((workflow, index) => (
+                        <div key={index} className="workflow-item">
                             <h3>{workflow.name}</h3>
                             <p>{workflow.description || "No description available."}</p>
+                            {workflow.tasks && workflow.tasks.length > 0 ? (
+                                <>
+                                    <h4>Tasks:</h4>
+                                    <ul>
+                                        {workflow.tasks.map((task, idx) => (
+                                            <li key={idx}>
+                                                <strong>{task.taskName}</strong> — Assigned to <em>{task.assignee}</em> ({task.priority})
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </>
+                            ) : (
+                                <p>No tasks added.</p>
+                            )}
                         </div>
                     ))
                 ) : (
