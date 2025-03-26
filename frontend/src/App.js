@@ -22,6 +22,7 @@ import TaskPage from "./pages/TaskPage";
 import Notifications from "./pages/Notifications";
 import Performance from "./pages/Performance";
 import EmpDashboardLayout from "./components/EmpDashboardLayout";
+import UploadDocument from "./pages/UploadDocument";
 
 const App = () => {
   const [workflows, setWorkflows] = useState([]);
@@ -49,6 +50,7 @@ const App = () => {
         <Route path="/employee-tasks" element={<TaskPage />} />
         <Route path="/performance" element={<Performance />} />
         <Route path="/notifications" element={<Notifications />} />
+        <Route path="/upload-document" element={<UploadDocument />} />
       </Route>
     </Routes>
   );
