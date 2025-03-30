@@ -61,47 +61,35 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
       return;
     }
   
-    const newWorkflow = {
-      name: workflow.name,
-      description: workflow.description,
-      manager_id: 1, 
-    };
-  
     try {
       const response = await fetch("http://localhost:5000/api/workflows/create", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newWorkflow),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: workflow.name,
+          description: workflow.description,
+          manager_id: 1,
+        }),
       });
   
       if (!response.ok) {
         throw new Error("Failed to create workflow");
       }
   
-      const result = await response.json();
+      // 🔥 Fetch updated workflows after adding a new one
+      const fetchUpdatedWorkflows = await fetch("http://localhost:5000/api/workflows");
+      const updatedData = await fetchUpdatedWorkflows.json();
+  
+      setWorkflows(updatedData.workflows); // Update dashboard
       alert("Workflow created successfully!");
-  
-      // updating sidebar
-      if (setWorkflows) {
-        setWorkflows((prev) => [...prev, result.workflow]); 
-      }
-  
-      setWorkflow({ name: "", description: "", tasks: [] });
-  
-      if (onClose) {
-        onClose();
-      }
-  
       navigate("/manager-dashboard");
+  
     } catch (error) {
       console.error("Error creating workflow:", error);
       alert("Error creating workflow");
     }
   };
   
-
   return (
     <div className="create-workflow-container">
       <h2>Create Workflow</h2>
