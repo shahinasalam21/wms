@@ -51,7 +51,7 @@ router.post("/upload", upload.single("document"), (req, res) => {
   }
 
   res.json({
-    message: "✅ File uploaded successfully!",
+    message: "File uploaded successfully!",
     name: req.file.filename,
     url: `/uploads/${req.file.filename}`,
   });
@@ -84,10 +84,10 @@ router.delete("/delete-file/:filename", async (req, res) => {
     }
 
     await fs.promises.unlink(filePath);
-    res.json({ message: "✅ File deleted successfully." });
+    res.json({ message: "File deleted successfully." });
   } catch (error) {
     console.error("Error deleting file:", error);
-    res.status(500).json({ error: "❌ Failed to delete file." });
+    res.status(500).json({ error: " Failed to delete file." });
   }
 });
 

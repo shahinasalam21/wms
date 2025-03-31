@@ -5,7 +5,7 @@ function ManagerMeetings() {
     const [meetings, setMeetings] = useState([]);
     const [error, setError] = useState(null);
 
-    // ✅ Get managerId from localStorage
+    // Get managerId from localStorage
     const managerId = localStorage.getItem("userId");
 
     useEffect(() => {

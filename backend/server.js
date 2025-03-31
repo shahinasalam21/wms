@@ -30,7 +30,7 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        console.error("🚫 CORS Blocked:", origin);
+        console.error("CORS Blocked:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -60,4 +60,4 @@ app.get("/employee-dashboard", verifyJWT, authMiddleware(["employee"]), (req, re
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

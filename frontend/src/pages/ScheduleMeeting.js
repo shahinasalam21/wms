@@ -9,9 +9,8 @@ function ScheduleMeeting() {
     const [selectedEmployees, setSelectedEmployees] = useState([]);
     const [error, setError] = useState(null);
 
-    const managerId = localStorage.getItem("userId"); // ✅ Dynamic Manager ID
-    const API_BASE_URL = "http://localhost:5000/api"; // ✅ Replaced the import
-
+    const managerId = localStorage.getItem("userId"); //  Dynamic Manager ID
+    const API_BASE_URL = "http://localhost:5000/api"; 
     useEffect(() => {
         const fetchEmployees = async () => {
             try {
@@ -35,7 +34,7 @@ function ScheduleMeeting() {
 
         try {
             const response = await axios.post(`${API_BASE_URL}/meeting/create`, {
-                manager_id: managerId, // ✅ Use dynamic ID
+                manager_id: managerId, // Use dynamic ID
                 title,
                 start_time: startTime,
                 end_time: endTime,

@@ -17,7 +17,7 @@ router.get("/count", async (req, res) => {
   });
 
   
-// ✅ Get All Employees
+// Get All Employees
 router.get("/", async (req, res) => {
   try {
       const result = await pool.query("SELECT id, name, email FROM users WHERE role = 'employee'");

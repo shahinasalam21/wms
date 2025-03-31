@@ -17,7 +17,7 @@ oauth2Client.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN })
 
 const calendar = google.calendar({ version: "v3", auth: oauth2Client });
 
-// ✅ Function to Send Meeting Email
+//Function to Send Meeting Email
 async function sendMeetingEmail(email, meetingLink, title) {
     try {
         let transporter = nodemailer.createTransport({
@@ -37,15 +37,15 @@ async function sendMeetingEmail(email, meetingLink, title) {
 
         await transporter.sendMail(mailOptions);
     } catch (error) {
-        console.error(`❌ Failed to send email to ${email}:`, error);
+        console.error(` Failed to send email to ${email}:`, error);
     }
 }
 
-// ✅ Create Google Meet Meeting
+// Create Google Meet Meeting
 router.post("/create", async (req, res) => {
     const { manager_id, title, start_time, end_time, employee_ids } = req.body;
 
-    // ❌ Validate request data
+    //  Validate request data
     if (!manager_id || !title || !start_time || !end_time || !Array.isArray(employee_ids)) {
         return res.status(400).json({ error: "Missing or invalid data" });
     }
@@ -77,9 +77,9 @@ router.post("/create", async (req, res) => {
         });
 
         const meetingLink = response.data.hangoutLink;
-        console.log(`✅ Meeting Created: ${meetingLink}`);
+        console.log(` Meeting Created: ${meetingLink}`);
 
-        // ✅ Insert meeting into DB
+        //  Insert meeting into DB
         const result = await pool.query(
             "INSERT INTO meetings (manager_id, title, start_time, end_time, meeting_link) VALUES ($1, $2, $3, $4, $5) RETURNING id",
             [manager_id, title, start_time, end_time, meetingLink]
@@ -87,12 +87,12 @@ router.post("/create", async (req, res) => {
 
         const meetingId = result.rows[0].id;
 
-        // ✅ Store invites & Send Emails in parallel (Improved Performance)
+        //  Store invites & Send Emails in parallel
         await Promise.all(
             employee_ids.map(async (empId) => {
                 await pool.query("INSERT INTO meeting_invites (meeting_id, employee_id) VALUES ($1, $2)", [meetingId, empId]);
 
-                // ✅ Fetch employee email
+                // Fetch employee email
                 const emp = await pool.query("SELECT email FROM users WHERE id = $1", [empId]);
                 if (emp.rows.length > 0) {
                     await sendMeetingEmail(emp.rows[0].email, meetingLink, title);
@@ -102,12 +102,12 @@ router.post("/create", async (req, res) => {
 
         res.json({ success: true, meeting_link: meetingLink });
     } catch (error) {
-        console.error("❌ Error Creating Meeting:", error);
+        console.error(" Error Creating Meeting:", error);
         res.status(500).json({ error: "Failed to create meeting" });
     }
 });
 
-// ✅ Get Manager Meetings with Employees
+//  Get Manager Meetings with Employees
 router.get("/manager/:manager_id", async (req, res) => {
     try {
         const { manager_id } = req.params;
@@ -124,16 +124,16 @@ router.get("/manager/:manager_id", async (req, res) => {
 
         res.json(result.rows);
     } catch (error) {
-        console.error("❌ Error Fetching Manager Meetings:", error);
+        console.error("Error Fetching Manager Meetings:", error);
         res.status(500).json({ error: "Failed to fetch meetings" });
     }
 });
 
-// ✅ Get Employee Meetings
+// Get Employee Meetings
 router.get("/employee/:employee_id", async (req, res) => {
     const { employee_id } = req.params;
 
-    console.log("Received Employee ID:", employee_id); // ✅ Debugging
+    console.log("Received Employee ID:", employee_id); 
 
     if (!employee_id || employee_id === "undefined") {
         return res.status(400).json({ error: "Invalid or missing employee ID" });
@@ -150,7 +150,7 @@ router.get("/employee/:employee_id", async (req, res) => {
 
         res.json(result.rows);
     } catch (error) {
-        console.error("❌ Error Fetching Employee Meetings:", error);
+        console.error(" Error Fetching Employee Meetings:", error);
         res.status(500).json({ error: "Failed to fetch meetings" });
     }
 });

@@ -4,11 +4,11 @@ import axios from "axios";
 function EmployeeMeetings() {
     const [meetings, setMeetings] = useState([]);
     
-    // ✅ Ensure employeeId is correctly retrieved
+    // Ensure employeeId is correctly retrieved
     const employeeId = localStorage.getItem("userId");
 
     useEffect(() => {
-        console.log("Stored Employee ID:", employeeId); // ✅ Debugging
+        console.log("Stored Employee ID:", employeeId); 
 
         if (!employeeId || employeeId === "undefined") {
             console.error("🚨 Error: Employee ID is missing.");
@@ -20,7 +20,7 @@ function EmployeeMeetings() {
                 const response = await axios.get(`http://localhost:5000/api/meeting/employee/${employeeId}`);
                 setMeetings(response.data);
             } catch (error) {
-                console.error("❌ Error fetching meetings:", error);
+                console.error("Error fetching meetings:", error);
             }
         };
         

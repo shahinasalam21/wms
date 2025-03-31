@@ -134,7 +134,7 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
     const redirectURL = user.role === "manager" ? "/manager-dashboard" : "/employee-dashboard";
 
-    // ✅ Send user data in response
+    // Send user data in response
     res.json({ 
       message: "Login successful",
       user,  // <-- Include the user object

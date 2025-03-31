@@ -35,7 +35,7 @@ const Login = () => {
         } else {
             alert("Login successful!");
             
-            // ✅ Ensure userId is stored correctly
+            
             localStorage.setItem("userId", data.user.id);  // Correct way to access user ID
             localStorage.setItem("token", data.token);
             localStorage.setItem("role", data.role);
