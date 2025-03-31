@@ -1,0 +1,93 @@
+/* Form Container */
+/* Form Container */
+.meeting-form {
+    width: 90%;
+    max-width: 600px;
+    margin-top:30px; /* Removed top margin */
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 70px;
+    
+}
+
+
+/* Input Fields */
+.input-field {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+}
+
+.input-field:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0px 0px 8px rgba(52, 152, 219, 0.5);
+}
+
+/* Employee Selection Table */
+.employee-select-container {
+    margin-top: 10px;
+}
+
+.employee-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.employee-table th,
+.employee-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.employee-table th {
+    background: #3498db;
+    color: white;
+}
+
+.employee-table td {
+    background: #f8f9fa;
+}
+
+.employee-table input[type="checkbox"] {
+    transform: scale(1.2);
+}
+
+/* Submit Button */
+.submit-button {
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.submit-button:hover {
+    background: linear-gradient(135deg, #2980b9, #2471a3);
+    transform: scale(1.05);
+}
+
+/* Error Message */
+.error-text {
+    color: red;
+    font-size: 14px;
+    text-align: center;
+}

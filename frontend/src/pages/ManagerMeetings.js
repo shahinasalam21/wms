@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import "./ManagerMeetings.css";
 
 function ManagerMeetings() {
     const [meetings, setMeetings] = useState([]);
@@ -28,9 +29,9 @@ function ManagerMeetings() {
     }, [managerId]);
 
     return (
-        <div>
+        <div className="manager-meetings">  {/* Applied the CSS class */}
             <h2>Scheduled Meetings</h2>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && <p className="error">{error}</p>}
             <ul>
                 {meetings.length > 0 ? (
                     meetings.map((meeting) => (

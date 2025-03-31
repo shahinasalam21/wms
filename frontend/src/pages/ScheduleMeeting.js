@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "./ScheduleMeeting.css";
 
 function ScheduleMeeting() {
     const [title, setTitle] = useState("");
@@ -9,8 +10,9 @@ function ScheduleMeeting() {
     const [selectedEmployees, setSelectedEmployees] = useState([]);
     const [error, setError] = useState(null);
 
-    const managerId = localStorage.getItem("userId"); //  Dynamic Manager ID
-    const API_BASE_URL = "http://localhost:5000/api"; 
+    const managerId = localStorage.getItem("userId"); // Dynamic Manager ID
+    const API_BASE_URL = "http://localhost:5000/api";
+
     useEffect(() => {
         const fetchEmployees = async () => {
             try {
@@ -22,6 +24,14 @@ function ScheduleMeeting() {
         };
         fetchEmployees();
     }, []);
+
+    const handleEmployeeSelection = (empId) => {
+        setSelectedEmployees((prevSelected) =>
+            prevSelected.includes(empId)
+                ? prevSelected.filter((id) => id !== empId) // Remove if already selected
+                : [...prevSelected, empId] // Add if not selected
+        );
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -48,29 +58,65 @@ function ScheduleMeeting() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-            <input type="datetime-local" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
-            <input type="datetime-local" value={endTime} onChange={(e) => setEndTime(e.target.value)} required />
+        <form onSubmit={handleSubmit} className="meeting-form">
+            <input
+                type="text"
+                className="input-field"
+                placeholder="Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+            />
 
-           
-            <div className="mb-3">
-    <label className="form-label">Select Employees:</label>
-    <select 
-        multiple 
-        className="form-select form-control" 
-        style={{ height: "250px", overflowY: "auto" }} 
-        onChange={(e) => setSelectedEmployees([...e.target.selectedOptions].map(opt => opt.value))}
-    >
-        {employees.map(emp => (
-            <option key={emp.id} value={emp.id}>{emp.name}</option>
-        ))}
-    </select>
-</div>
+            <label className="form-label">Start Time:</label>
+            <input
+                type="datetime-local"
+                className="input-field"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                required
+            />
 
+            <label className="form-label">End Time:</label>
+            <input
+                type="datetime-local"
+                className="input-field"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                required
+            />
 
-            <button type="submit">Create Meeting</button>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {/* Employee Selection Table */}
+            <div className="employee-select-container">
+                <label className="form-label">Select Employees:</label>
+                <table className="employee-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Select</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {employees.map((emp, index) => (
+                            <tr key={emp.id}>
+                                <td>{index + 1}</td>
+                                <td>{emp.name}</td>
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedEmployees.includes(emp.id)}
+                                        onChange={() => handleEmployeeSelection(emp.id)}
+                                    />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <button type="submit" className="submit-button">Create Meeting</button>
+            {error && <p className="error-text">{error}</p>}
         </form>
     );
 }
