@@ -13,9 +13,10 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
   const [newTask, setNewTask] = useState({
     taskName: "",
     assignedTo: "",
-    priority: "Medium",
+    priority: "medium",  // Keeping lowercase to match the database
+    description: "",
+    duedate: "",
   });
-
 
   useEffect(() => {
     const savedWorkflows = JSON.parse(localStorage.getItem("workflows")) || [];
@@ -40,8 +41,8 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(newTask.assignedTo)) {
-        alert("Please enter a valid email address.");
-        return;
+      alert("Please enter a valid email address.");
+      return;
     }
 
     setWorkflow((prevWorkflow) => ({
@@ -49,7 +50,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
       tasks: [...prevWorkflow.tasks, newTask],
     }));
 
-    setNewTask({ taskName: "", assignedTo: "", priority: "Medium" });
+    setNewTask({ taskName: "", assignedTo: "", priority: "medium", description: "", duedate: "" });
   };
 
   const removeTask = (index) => {
@@ -61,13 +62,14 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!workflow.name.trim()) {
       alert("Workflow name is required.");
       return;
     }
-  
+
     try {
+      // Step 1: Create Workflow
       const response = await fetch("http://localhost:5000/api/workflows/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -77,25 +79,43 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
           manager_id: 1,
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to create workflow");
       }
-  
-      // 🔥 Fetch updated workflows after adding a new one
+
+      const workflowData = await response.json();
+      const workflowId = workflowData.workflowId; // Get workflow ID
+
+      // Step 2: Create Tasks
+      for (const task of workflow.tasks) {
+        await fetch("http://localhost:5000/api/tasks/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: task.taskName,
+            description: task.description || "",
+            priority: task.priority, // Keep lowercase
+            assignedTo: task.assignedTo,
+            workflow_id: workflowId,
+            due_date: task.duedate || null,
+          }),
+        });
+      }
+
+      // Step 3: Fetch Updated Workflows
       const fetchUpdatedWorkflows = await fetch("http://localhost:5000/api/workflows");
       const updatedData = await fetchUpdatedWorkflows.json();
-  
-      setWorkflows(updatedData.workflows); // Update dashboard
+
+      setWorkflows(updatedData.workflows);
       alert("Workflow created successfully!");
       navigate("/manager-dashboard");
-  
     } catch (error) {
       console.error("Error creating workflow:", error);
       alert("Error creating workflow");
     }
   };
-  
+
   return (
     <div className="create-workflow-container">
       <h2>Create Workflow</h2>
@@ -115,11 +135,12 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
           <input type="text" name="taskName" placeholder="Task Name" value={newTask.taskName} onChange={handleTaskChange} />
           <input type="email" name="assignedTo" placeholder="Assign to Employee" value={newTask.assignedTo} onChange={handleTaskChange} />
           <select name="priority" value={newTask.priority} onChange={handleTaskChange}>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
           </select>
-          <input type="date" name="duedate" placeholder="Due Date" value={newTask.duedate} onChange={handleTaskChange}/>
+          <input type="text" name="description" placeholder="Task Description" value={newTask.description} onChange={handleTaskChange} />
+          <input type="date" name="duedate" value={newTask.duedate} onChange={handleTaskChange} />
           <button type="button" className="btn-add" onClick={addTask}>Add Task</button>
         </div>
 
