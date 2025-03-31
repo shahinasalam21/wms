@@ -13,7 +13,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
   const [newTask, setNewTask] = useState({
     taskName: "",
     assignedTo: "",
-    priority: "medium",  // Keeping lowercase to match the database
+    priority: "medium",  
     description: "",
     duedate: "",
   });
@@ -69,7 +69,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
     }
 
     try {
-      // Step 1: Create Workflow
+      //create workflow
       const response = await fetch("http://localhost:5000/api/workflows/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -85,9 +85,9 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
       }
 
       const workflowData = await response.json();
-      const workflowId = workflowData.workflowId; // Get workflow ID
+      const workflowId = workflowData.workflowId; 
 
-      // Step 2: Create Tasks
+      // create task
       for (const task of workflow.tasks) {
         await fetch("http://localhost:5000/api/tasks/create", {
           method: "POST",
@@ -95,7 +95,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
           body: JSON.stringify({
             title: task.taskName,
             description: task.description || "",
-            priority: task.priority, // Keep lowercase
+            priority: task.priority, 
             assignedTo: task.assignedTo,
             workflow_id: workflowId,
             due_date: task.duedate || null,
@@ -103,7 +103,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
         });
       }
 
-      // Step 3: Fetch Updated Workflows
+      // fetching workflow
       const fetchUpdatedWorkflows = await fetch("http://localhost:5000/api/workflows");
       const updatedData = await fetchUpdatedWorkflows.json();
 
