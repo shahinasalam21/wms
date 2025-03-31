@@ -15,60 +15,62 @@ const Login = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!recaptchaToken) {
-      setError("Please complete reCAPTCHA verification.");
-      return;
+        setError("Please complete reCAPTCHA verification.");
+        return;
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, recaptchaToken }),
-      });
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...formData, recaptchaToken }),
+        });
 
-      const data = await response.json();
-      if (data.error) {
-        setError(data.error);
-      } else {
-        alert("Login successful!");
+        const data = await response.json();
+        if (data.error) {
+            setError(data.error);
+        } else {
+            alert("Login successful!");
+            
+            // ✅ Ensure userId is stored correctly
+            localStorage.setItem("userId", data.user.id);  // Correct way to access user ID
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("role", data.role);
 
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.role); 
-
-        // Redirect to the correct dashboard
-        navigate(data.redirectURL);
-      }
+            // Redirect to dashboard
+            navigate(data.redirectURL);
+        }
     } catch (error) {
-      setError("Login failed. Please try again.");
+        setError("Login failed. Please try again.");
     }
-  };
+};
+
 
   return (
-  <div className="outer-container">
-    <div className="login-container">
-      <div className="login-box">
-        <h2>Login</h2>
-        {error && <p className="error-message">{error}</p>}
-        <form onSubmit={handleSubmit}>
-          <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
-          <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-          <div className="recaptcha-container">
-            <ReCAPTCHA sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} onChange={setRecaptchaToken} />
+    <div className="outer-container">
+      <div className="login-container">
+        <div className="login-box">
+          <h2>Login</h2>
+          {error && <p className="error-message">{error}</p>}
+          <form onSubmit={handleSubmit}>
+            <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
+            <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+            <div className="recaptcha-container">
+              <ReCAPTCHA sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY} onChange={setRecaptchaToken} />
+            </div>
+            <button type="submit">Login</button>
+          </form>
+          <p><a href="/forgot-password">Forgot Password?</a></p>
+          <div className="auth-footer">
+            <p>Don't have an account? <a href="/signup">Sign Up</a></p>  
           </div>
-          <button type="submit">Login</button>
-        </form>
-        <p><a href="/forgot-password">Forgot Password?</a></p>
-        <div className="auth-footer">
-           <p>Don't have an account? <a href="/signup">Sign Up</a></p>  
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default Login;

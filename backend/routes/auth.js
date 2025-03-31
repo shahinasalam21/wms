@@ -115,21 +115,35 @@ router.get("/verify-email/:token", async (req, res) => {
 // User Login
 router.post("/login", async (req, res) => {
   const { email, password, recaptchaToken } = req.body;
-  if (!(await verifyRecaptcha(recaptchaToken))) return res.status(400).json({ error: "reCAPTCHA failed" });
+  if (!(await verifyRecaptcha(recaptchaToken))) {
+    return res.status(400).json({ error: "reCAPTCHA failed" });
+  }
 
   try {
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    const result = await pool.query("SELECT id, name, email, role, verified FROM users WHERE email = $1", [email]);
     if (result.rows.length === 0) return res.status(400).json({ error: "Invalid credentials" });
 
     const user = result.rows[0];
     if (!user.verified) return res.status(403).json({ error: "Verify your email before login." });
 
-    if (!(await bcrypt.compare(password, user.password))) return res.status(400).json({ error: "Invalid credentials" });
+    const storedPassword = await pool.query("SELECT password FROM users WHERE email = $1", [email]);
+    if (!(await bcrypt.compare(password, storedPassword.rows[0].password))) {
+      return res.status(400).json({ error: "Invalid credentials" });
+    }
 
     const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
     const redirectURL = user.role === "manager" ? "/manager-dashboard" : "/employee-dashboard";
-    res.json({ message: "Login successful", token, role: user.role, redirectURL });
-  } catch {
+
+    // ✅ Send user data in response
+    res.json({ 
+      message: "Login successful",
+      user,  // <-- Include the user object
+      token,
+      role: user.role,
+      redirectURL 
+    });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

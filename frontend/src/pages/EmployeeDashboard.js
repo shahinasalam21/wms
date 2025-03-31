@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaTrash, FaEdit, FaClock } from "react-icons/fa";
 import "./EmployeeDashboard.css";
 
-const API_BASE_URL = "http://your-backend-url.com/api"; 
+const API_BASE_URL = "http://localhost:5000/api";  // Update if different
 
 const EmployeeHeader = () => (
   <header className="employee-header align-items-center p-3">

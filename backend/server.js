@@ -9,7 +9,8 @@ import workflowRoutes from "./routes/workflowRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import { verifyJWT, authMiddleware } from "./middleware/authMiddleware.js";
 import employeeRoutes from "./routes/employees.js";
-
+import meetingRoutes from "./routes/meetingRoutes.js";
+//import employeeRoutes from "./routes/employees.js";
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use("/api", uploadRoutes);
 app.use("/api/workflows", workflowRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/employees", employeeRoutes);
+app.use("/api/meeting", meetingRoutes);
 // Role-Based Protected Routes
 app.get("/manager-dashboard", verifyJWT, authMiddleware(["manager"]), (req, res) => {
   res.json({ message: "Welcome to the Manager Dashboard!" });

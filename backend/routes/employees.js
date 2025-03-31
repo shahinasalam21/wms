@@ -15,5 +15,16 @@ router.get("/count", async (req, res) => {
       res.status(500).json({ error: "Failed to fetch employee count" });
     }
   });
+
   
+// ✅ Get All Employees
+router.get("/", async (req, res) => {
+  try {
+      const result = await pool.query("SELECT id, name, email FROM users WHERE role = 'employee'");
+      res.json(result.rows);
+  } catch (error) {
+      console.error("❌ Error Fetching Employees:", error);
+      res.status(500).json({ error: "Failed to fetch employees" });
+  }
+});
 export default router;

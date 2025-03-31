@@ -23,7 +23,9 @@ import Notifications from "./pages/Notifications";
 import Performance from "./pages/Performance";
 import EmpDashboardLayout from "./components/EmpDashboardLayout";
 import UploadDocument from "./pages/UploadDocument";
-
+import ScheduleMeeting from "./pages/ScheduleMeeting"; 
+import EmployeeMeetings from "./pages/EmployeeMeetings";
+import ManagerMeetings from "./pages/ManagerMeetings";
 const App = () => {
   const [workflows, setWorkflows] = useState([]);
 
@@ -43,6 +45,8 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/employees" element={<Employees />} />
+        <Route path="/schedule-meeting" element={<ScheduleMeeting />} />
+        <Route path="/manager-meetings" element={<ManagerMeetings />} />
       </Route>
 
       <Route element={<EmpDashboardLayout />}>
@@ -51,6 +55,12 @@ const App = () => {
         <Route path="/performance" element={<Performance />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/upload-document" element={<UploadDocument />} />
+        <Route
+  path="/employee-meetings"
+  element={<EmployeeMeetings employeeId={localStorage.getItem("employeeId")} />}
+/>
+
+
       </Route>
     </Routes>
   );
