@@ -29,7 +29,7 @@ function ManagerMeetings() {
     }, [managerId]);
 
     return (
-        <div className="manager-meetings">  {/* Applied the CSS class */}
+        <div className="manager-meetings">  
             <h2>Scheduled Meetings</h2>
             {error && <p className="error">{error}</p>}
             <ul>
