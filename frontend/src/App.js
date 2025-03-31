@@ -1,5 +1,5 @@
 import React, { useState } from "react"; 
-import { Route, Routes } from "react-router-dom"; // Remove BrowserRouter
+import { Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Carousel } from "react-bootstrap";
 import "./App.css";
