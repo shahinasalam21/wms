@@ -38,6 +38,12 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
       return;
     }
 
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(newTask.assignedTo)) {
+        alert("Please enter a valid email address.");
+        return;
+    }
+
     setWorkflow((prevWorkflow) => ({
       ...prevWorkflow,
       tasks: [...prevWorkflow.tasks, newTask],

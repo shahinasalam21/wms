@@ -6,19 +6,21 @@ const Workflows = () => {
     const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
-        const fetchWorkflows = () => {
-            const savedWorkflows = JSON.parse(localStorage.getItem("workflows")) || [];
-            setWorkflows(savedWorkflows);
+        const fetchWorkflows = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/api/workflows");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch workflows");
+                }
+                const data = await response.json();
+                setWorkflows(data); // ✅ Set workflows from API response
+            } catch (error) {
+                console.error("Error fetching workflows:", error);
+            }
         };
 
         fetchWorkflows();
-        window.addEventListener("storage", fetchWorkflows);
-
-        return () => {
-            window.removeEventListener("storage", fetchWorkflows);
-        };
     }, []);
-
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
     };
