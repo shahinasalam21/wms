@@ -1,9 +1,10 @@
 import pool from "../config/db.js";
+import { sendTaskNotification } from "../mail/email.js"; 
 
-// Function to insert task
+//insert task
 export const createTask = async (title, description, priority, assignedToEmail, workflowId, dueDate) => {
   try {
-    // Step 1: Get user ID from email
+    
     const userQuery = "SELECT id FROM users WHERE email = $1";
     const userResult = await pool.query(userQuery, [assignedToEmail]);
 
@@ -13,7 +14,7 @@ export const createTask = async (title, description, priority, assignedToEmail, 
 
     const assignedToId = userResult.rows[0].id;
 
-    // Step 2: Insert task into database
+   
     const taskQuery = `
       INSERT INTO tasks (title, description, priority, assigned_to, workflow_id, due_date, created_at)
       VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *;
@@ -21,8 +22,17 @@ export const createTask = async (title, description, priority, assignedToEmail, 
 
     const values = [title, description, priority, assignedToId, workflowId, dueDate];
     const { rows } = await pool.query(taskQuery, values);
+    const newTask = rows[0];
 
-    return rows[0];
+    
+    try {
+      await sendTaskNotification(assignedToEmail, workflowId, title, description, dueDate);
+      console.log(`📧 Notification email sent to ${assignedToEmail}`);
+    } catch (emailError) {
+      console.error("❌ Failed to send email notification:", emailError);
+    }
+
+    return newTask;
   } catch (error) {
     throw error;
   }
