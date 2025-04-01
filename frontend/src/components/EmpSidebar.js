@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaTasks, FaBell, FaChartLine,FaClipboardList, FaSignOutAlt } from "react-icons/fa";
+import { FaTasks, FaBell, FaChartLine, FaFileUpload,FaClipboardList, FaSignOutAlt } from "react-icons/fa";
 import "../pages/EmployeeDashboard.css"; 
 
 const EmpSidebar = () => {
@@ -27,6 +27,12 @@ const EmpSidebar = () => {
               <FaChartLine className="me-2" /> Performance Report
             </Link>
           </li>
+          <li className="mb-3">
+            <Link to="/upload-document">
+              <FaFileUpload className="me-2" /> Upload Document
+            </Link>
+          </li>
+
           <li><Link to="/employee-meetings"><FaClipboardList /> Meetings</Link></li>
 
 
