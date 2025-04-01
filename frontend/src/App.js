@@ -27,6 +27,7 @@ import UploadDocument from "./pages/UploadDocument";
 import ScheduleMeeting from "./pages/ScheduleMeeting"; 
 import EmployeeMeetings from "./pages/EmployeeMeetings";
 import ManagerMeetings from "./pages/ManagerMeetings";
+import Empprofile from "./pages/Empprofile";
 
 
 const App = () => {
@@ -55,6 +56,7 @@ const App = () => {
 
       <Route element={<EmpDashboardLayout />}>
         <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
+        <Route path="employee-profile" element={<Empprofile/>}/>
         <Route path="/employee-tasks" element={<TaskPage />} />
         <Route path="/performance" element={<Performance />} />
         <Route path="/notifications" element={<Notifications />} />

@@ -21,7 +21,7 @@ const TaskPage = () => {
         }
 
         const data = await response.json();
-        setTasks(data);
+        setTasks(data); // Here we expect the response to be an array
       } catch (error) {
         console.error("Error fetching tasks:", error);
       } finally {

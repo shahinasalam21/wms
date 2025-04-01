@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaTasks, FaBell, FaChartLine, FaFileUpload,FaClipboardList, FaSignOutAlt } from "react-icons/fa";
+import { FaUser,FaTasks, FaBell, FaChartLine, FaFileUpload,FaClipboardList, FaSignOutAlt } from "react-icons/fa";
 import "../pages/EmployeeDashboard.css"; 
 
 const EmpSidebar = () => {
@@ -12,6 +12,11 @@ const EmpSidebar = () => {
       <h2 className="mb-4 text-center">EMPLOYEE DASHBOARD</h2>
       <nav>
         <ul style={{listStyle:"none"}}>
+        <li className="mb-3">
+            <Link to="/employee-profile">
+              <FaUser className="me-2" /> Profile
+            </Link>
+          </li>
           <li className="mb-3">
             <Link to="/employee-tasks">
               <FaTasks className="me-2" /> Tasks
