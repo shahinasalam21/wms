@@ -1,0 +1,60 @@
+/* profile.css */
+
+/* Container styling */
+.profile-container {
+    padding: 20px;
+    max-width: 500px;
+    margin: auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Heading styling */
+  .profile-container h2 {
+    font-size: 24px;
+    text-align: center;
+    color: #333;
+    padding: 15px;
+    margin-top: 0%;
+    margin-bottom: 20px;
+  }
+  
+  /* Paragraph styling for profile details */
+  .profile-container p {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 15px;
+  }
+  
+  /* Button styling */
+  .profile-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+  }
+  
+  .profile-container button:hover {
+    opacity: 0.8;
+  }
+  
+  /* Edit Profile button */
+  .profile-container .edit-button {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  /* Delete Profile button */
+  .profile-container .delete-button {
+    background-color: red;
+    color: white;
+  }
+  
+  /* Styling for loading and error messages */
+  .profile-container .loading,
+  .profile-container .error {
+    font-size: 18px;
+    text-align: center;
+    color: #d9534f;
+  }
