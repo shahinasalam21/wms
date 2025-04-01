@@ -1,12 +1,12 @@
 import express from "express";
-import db from "../config/db.js"; // Ensure you have db setup
+import db from "../config/db.js"; 
 import { verifyJWT } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 router.get("/manager-profile", verifyJWT, async (req, res) => {
     try {
-        const userId = req.user.id; // Ensure user ID is extracted from JWT
+        const userId = req.user.id; 
         const result = await db.query("SELECT name, email FROM users WHERE id = $1", [userId]);
 
         if (result.rows.length === 0) {
