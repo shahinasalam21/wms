@@ -10,6 +10,7 @@ import taskRoutes from "./routes/taskRoutes.js";
 import { verifyJWT, authMiddleware } from "./middleware/authMiddleware.js";
 import employeeRoutes from "./routes/employees.js";
 import meetingRoutes from "./routes/meetingRoutes.js";
+import profileRoute from './routes/profile.js'; 
 //import employeeRoutes from "./routes/employees.js";
 
 dotenv.config();
@@ -50,6 +51,8 @@ app.use("/api/workflows", workflowRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/meeting", meetingRoutes);
+app.use("/api", verifyJWT, profileRoute);
+
 // Role-Based Protected Routes
 app.get("/manager-dashboard", verifyJWT, authMiddleware(["manager"]), (req, res) => {
   res.json({ message: "Welcome to the Manager Dashboard!" });
@@ -61,3 +64,20 @@ app.get("/employee-dashboard", verifyJWT, authMiddleware(["employee"]), (req, re
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+
+app.get("/api/manager-profile", async (req, res) => {
+  try {
+      // Assuming user ID is stored in JWT token
+      const userId = req.user.id; // Ensure authentication middleware sets req.user
+      const result = await db.query("SELECT name, email FROM users WHERE id = $1", [userId]);
+
+      if (result.rows.length === 0) {
+          return res.status(404).json({ message: "Manager not found" });
+      }
+
+      res.json(result.rows[0]);
+  } catch (error) {
+      console.error("Error fetching manager profile:", error);
+      res.status(500).json({ message: "Server error" });
+  }
+});

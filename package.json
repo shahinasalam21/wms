@@ -2,13 +2,11 @@
   "name": "wms",
   "version": "1.0.0",
   "main": "index.js",
-  
   "scripts": {
-  "test:frontend": "cd frontend && npm test",
-  "test:backend": "cd backend && npm test",
-  "test": "npm run test:frontend && npm run test:backend"
-}
-,
+    "test:frontend": "cd frontend && npm test",
+    "test:backend": "cd backend && npm test",
+    "test": "npm run test:frontend && npm run test:backend"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -31,6 +29,6 @@
     "passport-jwt": "^4.0.1",
     "pg": "^8.13.1",
     "react-bootstrap": "^2.10.9",
-    "react-router-dom": "^7.1.5"
+    "react-router-dom": "^7.4.1"
   }
 }

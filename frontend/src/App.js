@@ -15,7 +15,8 @@ import EmployeeDashboard from "./pages/EmployeeDashboard";
 import CreateWorkflow from "./pages/CreateWorkflow";
 import Workflows from "./components/Workflows";
 import Reports from "./pages/Reports";
-import Profile from "./pages/Profile";
+import Profile from "./pages/Profile"; // Make sure Profile page is imported
+import EditProfile from "./pages/EditProfile"; // EditProfile page import
 import Tasks from "./pages/Tasks";
 import Employees from "./pages/Employees";
 import TaskPage from "./pages/TaskPage";
@@ -26,6 +27,8 @@ import UploadDocument from "./pages/UploadDocument";
 import ScheduleMeeting from "./pages/ScheduleMeeting"; 
 import EmployeeMeetings from "./pages/EmployeeMeetings";
 import ManagerMeetings from "./pages/ManagerMeetings";
+
+
 const App = () => {
   const [workflows, setWorkflows] = useState([]);
 
@@ -42,7 +45,8 @@ const App = () => {
         <Route path="/create-workflow" element={<CreateWorkflow setWorkflows={setWorkflows} />} />
         <Route path="/workflows" element={<Workflows workflows={workflows} />} />
         <Route path="/reports" element={<Reports />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile />} />  {/* Profile Page */}
+        <Route path="/edit-profile" element={<EditProfile />} />  {/* Edit Profile Page */}
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/employees" element={<Employees />} />
         <Route path="/schedule-meeting" element={<ScheduleMeeting />} />
@@ -56,11 +60,9 @@ const App = () => {
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/upload-document" element={<UploadDocument />} />
         <Route
-  path="/employee-meetings"
-  element={<EmployeeMeetings employeeId={localStorage.getItem("employeeId")} />}
-/>
-
-
+          path="/employee-meetings"
+          element={<EmployeeMeetings employeeId={localStorage.getItem("employeeId")} />}
+        />
       </Route>
     </Routes>
   );
