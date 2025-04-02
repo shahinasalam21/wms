@@ -43,7 +43,9 @@ const EmployeeProfilePage = () => {
 
   return (
     <div className="employee-profile-page">
-      <h1>Employee Profile</h1>
+      <header className="empprofile-header">
+        <h2>EMPLOYEE PROFILE</h2>
+      </header>
       <p><strong>Name:</strong> {employeeData.name}</p>
       <p><strong>Email:</strong> {employeeData.email}</p>
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import "./EditEmployeePage.css";
 
-const EditEmployeeProfile = () => {
+const EditEmployeePage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
@@ -18,7 +19,9 @@ const EditEmployeeProfile = () => {
 
   return (
     <div>
-      <h2>Edit Employee Profile</h2>
+      <header className="employee-profilee-header">
+        <h2>EDIT EMPLOYEE PROFILE</h2>
+      </header>
       <form onSubmit={handleSubmit}>
         <div>
           <label>Name:</label>
@@ -42,4 +45,4 @@ const EditEmployeeProfile = () => {
   );
 };
 
-export default EditEmployeeProfile;
+export default EditEmployeePage;

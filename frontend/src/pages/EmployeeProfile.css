@@ -7,7 +7,28 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
+.employee-profile-header {
+    position: fixed;
+    top: 0;
+    left: 260px;
+    width: calc(100% - 260px);
+    font-size: 22px;
+    font-weight: bold;
+    color: rgb(147, 140, 140);
+    height: 65px;
+    background: linear-gradient(135deg, #2c3e50, #1e272e);
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    text-align: center;
+    z-index: 1000;
+}
+.employee-profile-header h2{
+    text-align: center;
+    padding-left: 450px;
 
+}
 .profile-heading {
     font-size: 24px;
     color: #343a40;
