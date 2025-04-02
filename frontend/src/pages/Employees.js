@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./EmployeeTable.css"; // Ensure this file contains necessary styles
+import "./EmployeeTable.css"; 
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
