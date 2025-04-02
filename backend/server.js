@@ -10,8 +10,9 @@ import taskRoutes from "./routes/taskRoutes.js";
 import { verifyJWT, authMiddleware } from "./middleware/authMiddleware.js";
 import employeeRoutes from "./routes/employees.js";
 import meetingRoutes from "./routes/meetingRoutes.js";
-import profileRoute from './routes/profile.js'; 
-//import employeeRoutes from "./routes/employees.js";
+import profileRoute from "./routes/profile.js";
+import empprofileRoute from "./routes/empprofileroutes.js"; 
+import db from "./config/db.js"; // Ensure db connection is imported
 
 dotenv.config();
 
@@ -52,6 +53,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/meeting", meetingRoutes);
 app.use("/api", verifyJWT, profileRoute);
+app.use("/api", verifyJWT, empprofileRoute); // ✅ Ensure the correct route is used
 
 // Role-Based Protected Routes
 app.get("/manager-dashboard", verifyJWT, authMiddleware(["manager"]), (req, res) => {
@@ -62,13 +64,10 @@ app.get("/employee-dashboard", verifyJWT, authMiddleware(["employee"]), (req, re
   res.json({ message: "Welcome to the Employee Dashboard!" });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-
-app.get("/api/manager-profile", async (req, res) => {
+// Manager Profile Route (Ensure verifyJWT is used)
+app.get("/api/manager-profile", verifyJWT, async (req, res) => {
   try {
-      // Assuming user ID is stored in JWT token
-      const userId = req.user.id; // Ensure authentication middleware sets req.user
+      const userId = req.user.id; 
       const result = await db.query("SELECT name, email FROM users WHERE id = $1", [userId]);
 
       if (result.rows.length === 0) {
@@ -81,3 +80,6 @@ app.get("/api/manager-profile", async (req, res) => {
       res.status(500).json({ message: "Server error" });
   }
 });
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
