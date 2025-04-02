@@ -1,8 +1,8 @@
-import db from '../config/db.js'; // Database connection file
+import db from '../config/db.js';
 
-// Get employee profile data
+
 const getEmployeeProfile = async (req, res) => {
-  const { userId } = req.user; // Assuming user is authenticated and userId is in req.user
+  const { userId } = req.user; 
 
   try {
     const result = await db.query('SELECT name, email FROM employees WHERE id = $1', [userId]);
@@ -17,7 +17,7 @@ const getEmployeeProfile = async (req, res) => {
   }
 };
 
-// Update employee profile
+
 const updateEmployeeProfile = async (req, res) => {
   const { userId } = req.user;
   const { name, email } = req.body;
@@ -31,7 +31,7 @@ const updateEmployeeProfile = async (req, res) => {
   }
 };
 
-// Delete employee profile
+
 const deleteEmployeeProfile = async (req, res) => {
   const { userId } = req.user;
 
@@ -44,4 +44,4 @@ const deleteEmployeeProfile = async (req, res) => {
   }
 };
 
-export { getEmployeeProfile, updateEmployeeProfile, deleteEmployeeProfile }; // Named exports
+export { getEmployeeProfile, updateEmployeeProfile, deleteEmployeeProfile }; 

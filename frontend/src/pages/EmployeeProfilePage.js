@@ -8,7 +8,7 @@ const EmployeeProfilePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch the employee profile data when the component mounts
+    
     axios.get('http://localhost:5000/api/employee-profile', { withCredentials: true })
       .then(response => {
         setEmployeeData(response.data);
@@ -25,7 +25,7 @@ const EmployeeProfilePage = () => {
       try {
         await axios.delete('http://localhost:5000/api/delete-employee-profile', { withCredentials: true });
         alert('Profile deleted successfully');
-        window.location.href = '/logout'; // Or redirect to another page after deleting
+        window.location.href = '/logout'; 
       } catch (error) {
         console.error('Error deleting employee profile', error);
         alert('Error deleting profile');

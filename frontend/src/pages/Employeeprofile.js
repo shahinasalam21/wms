@@ -7,7 +7,7 @@ const EmployeeProfile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch employee data from API
+   
     fetch("http://localhost:5000/api/employee-profile")
       .then((res) => res.json())
       .then((data) => setProfile(data))
@@ -16,7 +16,7 @@ const EmployeeProfile = () => {
 
   const handleDelete = () => {
     alert("Profile deleted! (Add API call here)");
-    // Call API to delete profile
+
   };
 
   return (
