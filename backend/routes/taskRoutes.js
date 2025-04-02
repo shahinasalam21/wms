@@ -28,4 +28,14 @@ router.get("/", verifyJWT, async (req, res) => {
   }
 });
 
+router.get("/active", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT COUNT(*) FROM tasks");
+    res.json({ count: result.rows[0].count });
+  } catch (error) {
+    console.error("Error fetching active tasks count:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export default router;
