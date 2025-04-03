@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Employeeprofile.css";
+import "./EmployeeProfile.css";
 
 const EmployeeProfile = () => {
   const [profile, setProfile] = useState({ name: "", email: "" });
