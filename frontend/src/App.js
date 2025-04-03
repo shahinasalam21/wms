@@ -10,23 +10,31 @@ import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 
 import DashboardLayout from "./components/DashboardLayout";
+import EmpDashboardLayout from "./components/EmpDashboardLayout";
+
 import ManagerDashboard from "./pages/ManagerDashboard";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
+
 import CreateWorkflow from "./pages/CreateWorkflow";
 import Workflows from "./components/Workflows";
-import Reports from "./pages/Reports";
-import Profile from "./pages/Profile"; // Make sure Profile page is imported
-import EditProfile from "./pages/EditProfile"; // EditProfile page import
+
+import ScheduleMeeting from "./pages/ScheduleMeeting"; 
+import EmployeeMeetings from "./pages/EmployeeMeetings";
+import ManagerMeetings from "./pages/ManagerMeetings";
+
 import Tasks from "./pages/Tasks";
+import Reports from "./pages/Reports";
+
+import Profile from "./pages/Profile"; 
+
+
 import Employees from "./pages/Employees";
 import TaskPage from "./pages/TaskPage";
 import Notifications from "./pages/Notifications";
 import Performance from "./pages/Performance";
-import EmpDashboardLayout from "./components/EmpDashboardLayout";
+
 import UploadDocument from "./pages/UploadDocument";
-import ScheduleMeeting from "./pages/ScheduleMeeting"; 
-import EmployeeMeetings from "./pages/EmployeeMeetings";
-import ManagerMeetings from "./pages/ManagerMeetings";
+
 import Employeeprofile from "./pages/Employeeprofile";
 import EditEmployeePage from "./pages/EditEmployeePage";
 
@@ -47,8 +55,9 @@ const App = () => {
         <Route path="/create-workflow" element={<CreateWorkflow setWorkflows={setWorkflows} />} />
         <Route path="/workflows" element={<Workflows workflows={workflows} />} />
         <Route path="/reports" element={<Reports />} />
-        <Route path="/profile" element={<Profile />} />  {/* Profile Page */}
-        <Route path="/edit-profile" element={<EditProfile />} />  {/* Edit Profile Page */}
+        <Route path="/profile" element={<Profile userId={localStorage.getItem("userId")} />} />
+
+          
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/employees" element={<Employees />} />
         <Route path="/schedule-meeting" element={<ScheduleMeeting />} />
