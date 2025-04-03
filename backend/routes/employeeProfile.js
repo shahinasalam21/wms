@@ -52,4 +52,22 @@ router.put("/employees/:id", verifyJWT, authMiddleware(["employee"]), async (req
       res.status(500).json({ message: "Server error" });
     }
   });
+  //delete profile
+
+  router.delete("/employees/:id", verifyJWT, authMiddleware(["employee"]), async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      const result = await pool.query("DELETE FROM users WHERE id = $1 AND role = 'employee' RETURNING id", [id]);
+  
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: "Employee not found" });
+      }
+  
+      res.json({ message: "Profile deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
 export default router;
