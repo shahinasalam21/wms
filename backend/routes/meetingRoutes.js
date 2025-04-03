@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 import { google } from "googleapis";
 import pool from "../config/db.js";
 import dotenv from "dotenv";
-
+import { verifyJWT, authMiddleware } from "../middleware/authMiddleware.js";
 dotenv.config();
 const router = express.Router();
 
@@ -154,6 +154,39 @@ router.get("/employee/:employee_id", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch meetings" });
     }
 });
+router.get("/emp/employee/:employeeId", verifyJWT, authMiddleware(["employee"]), async (req, res) => {
+    try {
+        const { employeeId } = req.params;
+
+        console.log("Received Employee ID:", employeeId); // Debugging: Check if employeeId is correct
+
+        if (!employeeId || employeeId === "undefined") {
+            return res.status(400).json({ message: "Invalid Employee ID" });
+        }
+
+        // ❌ Incorrect Query
+        // "SELECT * FROM meetings WHERE assigned_to = $1"
+
+        // ✅ Correct Query: Use `meeting_invites` to get meetings for an employee
+        const result = await pool.query(
+            `SELECT m.* FROM meetings m
+             JOIN meeting_invites mi ON m.id = mi.meeting_id
+             WHERE mi.employee_id = $1
+             ORDER BY m.start_time DESC`,
+            [employeeId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "No meetings found for this employee" });
+        }
+
+        res.json(result.rows);
+    } catch (error) {
+        console.error("Error fetching meetings:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
 
 
+  
 export default router;

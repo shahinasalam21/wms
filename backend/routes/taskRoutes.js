@@ -1,6 +1,7 @@
 import express from "express";
 import { createTask } from "../models/task.js";
-import verifyJWT from "../middleware/verifyJWT.js"; 
+import { verifyJWT, authMiddleware } from "../middleware/authMiddleware.js";
+
 import pool from "../config/db.js";
 const router = express.Router();
 
@@ -37,5 +38,23 @@ router.get("/active", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+//get Tasks Assigned to an Employee
+router.get("/assigned/:employeeId", verifyJWT, authMiddleware(["employee"]), async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+
+    const result = await pool.query(
+      "SELECT * FROM tasks WHERE assigned_to = $1",
+      [employeeId]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching assigned tasks:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 export default router;
