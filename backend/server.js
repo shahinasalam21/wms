@@ -10,7 +10,7 @@ import taskRoutes from "./routes/taskRoutes.js";
 import { verifyJWT, authMiddleware } from "./middleware/authMiddleware.js";
 import employeeRoutes from "./routes/employees.js";
 import meetingRoutes from "./routes/meetingRoutes.js";
-import profileRoute from "./routes/profile.js";
+import ProfileRoutes from "./routes/ProfileRoutes.js";
 import empprofileRoute from "./routes/empprofileroutes.js"; 
 import db from "./config/db.js"; // Ensure db connection is imported
 
@@ -52,7 +52,7 @@ app.use("/api/workflows", workflowRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/meeting", meetingRoutes);
-app.use("/api", verifyJWT, profileRoute);
+app.use("/api", verifyJWT, ProfileRoutes);
 app.use("/api", verifyJWT, empprofileRoute); // ✅ Ensure the correct route is used
 
 // Role-Based Protected Routes
