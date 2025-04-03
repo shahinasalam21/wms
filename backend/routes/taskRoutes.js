@@ -59,6 +59,25 @@ router.get("/assigned/:employeeId", verifyJWT, authMiddleware(["employee"]), asy
     res.status(500).json({ message: "Server error" });
   }
 });
+router.get("/getTask/:employeeId", verifyJWT, authMiddleware(["employee"]), async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+
+    const result = await pool.query(
+      "SELECT * FROM tasks WHERE assigned_to = $1",
+      [employeeId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "No tasks found for this employee" });
+    }
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching assigned tasks:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 
 export default router;
