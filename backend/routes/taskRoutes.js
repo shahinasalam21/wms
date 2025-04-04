@@ -59,6 +59,8 @@ router.get("/assigned/:employeeId", verifyJWT, authMiddleware(["employee"]), asy
     res.status(500).json({ message: "Server error" });
   }
 });
+
+//get tasks assigned to employee and display on dashboard
 router.get("/getTask/:employeeId", verifyJWT, authMiddleware(["employee"]), async (req, res) => {
   try {
     const { employeeId } = req.params;

@@ -154,6 +154,7 @@ router.get("/employee/:employee_id", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch meetings" });
     }
 });
+//api call for displaying meetings for employee
 router.get("/emp/employee/:employeeId", verifyJWT, authMiddleware(["employee"]), async (req, res) => {
     try {
         const { employeeId } = req.params;
@@ -163,11 +164,6 @@ router.get("/emp/employee/:employeeId", verifyJWT, authMiddleware(["employee"]),
         if (!employeeId || employeeId === "undefined") {
             return res.status(400).json({ message: "Invalid Employee ID" });
         }
-
-        // ❌ Incorrect Query
-        // "SELECT * FROM meetings WHERE assigned_to = $1"
-
-        // ✅ Correct Query: Use `meeting_invites` to get meetings for an employee
         const result = await pool.query(
             `SELECT m.* FROM meetings m
              JOIN meeting_invites mi ON m.id = mi.meeting_id
