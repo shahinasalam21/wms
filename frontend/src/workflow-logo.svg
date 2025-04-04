@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3a66db" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Logo shape -->
+  <rect x="10" y="14" width="36" height="32" rx="4" fill="url(#gradient)" />
+  
+  <!-- Workflow lines -->
+  <line x1="16" y1="24" x2="30" y2="24" stroke="#fff" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="16" y1="30" x2="35" y2="30" stroke="#fff" stroke-width="2.5" stroke-linecap="round" />
+  <line x1="16" y1="36" x2="25" y2="36" stroke="#fff" stroke-width="2.5" stroke-linecap="round" />
+  
+  <!-- Circle nodes -->
+  <circle cx="35" cy="24" r="3" fill="#fff" />
+  <circle cx="40" cy="30" r="3" fill="#fff" />
+  <circle cx="30" cy="36" r="3" fill="#fff" />
+  
+  <!-- Text -->
+  <text x="52" y="32" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#3a66db">WorkFlow</text>
+  <text x="52" y="42" font-family="Arial, sans-serif" font-size="8" fill="#64748b">MANAGEMENT SYSTEM</text>
+</svg>

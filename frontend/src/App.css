@@ -1,58 +1,39 @@
 
+:root {
+  --primary: #3a66db;
+  --primary-light: #5c85f7;
+  --secondary: #34d399;
+  --dark: #1e293b;
+  --light: #f8fafc;
+  --gray: #64748b;
+  --light-gray: #e2e8f0;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--dark);
+  background-color: #f4f7fc;
+  margin: 0;
+}
+ 
+/*home page*/
 .home-container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f4f7fc;
-  text-align: center;
-  color: #333;
-  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
+  padding: 20px;
 }
 
 .home-content {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98);
   padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  width: 50%;
-}
-
-h1 {
-  font-size: 2rem;
-  margin-bottom: 10px;
-  font-weight: bold;
-}
-
-.description {
-  font-size: 1.1rem;
-  margin-bottom: 20px;
-  color: #555;
-}
-
-.carousel-container {
-  margin-bottom: 20px;
-}
-
-.carousel img {
-  border-radius: 10px;
-  height: 300px;
-  object-fit: cover;
-}
-
-.button-group {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-
-.btn {
-  font-size: 1.2rem;
-  padding: 10px 25px;
-  border-radius: 30px;
-  transition: 0.3s;
-}
-
-.btn:hover {
-  transform: scale(1.05);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  width: 90%;
+  max-width: 1000px;
+  position: relative;
+  overflow: hidden;
 }
