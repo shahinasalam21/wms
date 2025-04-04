@@ -1,11 +1,11 @@
-// routes/PerformanceRoutes.js
+
 
 import express from "express";
 import db from "../config/db.js";
 
 const router = express.Router();
 
-// ✅ FIXED: Added leading slash
+
 router.get("/report/:employeeId", async (req, res) => {
     const { employeeId } = req.params;
 
