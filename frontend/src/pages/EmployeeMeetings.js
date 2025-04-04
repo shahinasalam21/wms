@@ -4,8 +4,8 @@ import axios from "axios";
 function EmployeeMeetings() {
     const [meetings, setMeetings] = useState([]);
     
-    // Ensure employeeId is correctly retrieved
     const employeeId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token"); // ✅ Get the JWT token
 
     useEffect(() => {
         console.log("Stored Employee ID:", employeeId); 
@@ -15,9 +15,22 @@ function EmployeeMeetings() {
             return;
         }
 
+        if (!token) {
+            console.error("🚨 Error: Token is missing. User must log in.");
+            return;
+        }
+
         const fetchMeetings = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/meeting/employee/${employeeId}`);
+                const response = await axios.get(
+                    `http://localhost:5000/api/meeting/employee/${employeeId}`,
+                    { 
+                        headers: { 
+                            Authorization: `Bearer ${token}`, // ✅ Include the token
+                            "Content-Type": "application/json"
+                        } 
+                    }
+                );
                 setMeetings(response.data);
             } catch (error) {
                 console.error("Error fetching meetings:", error);
@@ -25,7 +38,7 @@ function EmployeeMeetings() {
         };
         
         fetchMeetings();
-    }, [employeeId]);
+    }, [employeeId, token]);
 
     return (
         <div>

@@ -10,20 +10,23 @@ function ScheduleMeeting() {
     const [selectedEmployees, setSelectedEmployees] = useState([]);
     const [error, setError] = useState(null);
 
-    const managerId = localStorage.getItem("userId"); // Dynamic Manager ID
+    const managerId = localStorage.getItem("userId"); // Get manager ID
+    const token = localStorage.getItem("token"); // Get JWT token
     const API_BASE_URL = "http://localhost:5000/api";
 
     useEffect(() => {
         const fetchEmployees = async () => {
             try {
-                const response = await axios.get(`${API_BASE_URL}/employees`);
+                const response = await axios.get(`${API_BASE_URL}/employees`, {
+                    headers: { Authorization: `Bearer ${token}` }, // ✅ Add token in header
+                });
                 setEmployees(response.data);
             } catch (err) {
                 setError("Failed to fetch employees. Please try again.");
             }
         };
         fetchEmployees();
-    }, []);
+    }, [token]);
 
     const handleEmployeeSelection = (empId) => {
         setSelectedEmployees((prevSelected) =>
@@ -42,14 +45,25 @@ function ScheduleMeeting() {
             return;
         }
 
+        if (!token) {
+            setError("Unauthorized: Please log in.");
+            return;
+        }
+
         try {
-            const response = await axios.post(`${API_BASE_URL}/meeting/create`, {
-                manager_id: managerId, // Use dynamic ID
-                title,
-                start_time: startTime,
-                end_time: endTime,
-                employee_ids: selectedEmployees,
-            });
+            const response = await axios.post(
+                `${API_BASE_URL}/meeting/create`,
+                {
+                    manager_id: managerId,
+                    title,
+                    start_time: startTime,
+                    end_time: endTime,
+                    employee_ids: selectedEmployees,
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` }, // ✅ Add token in header
+                }
+            );
 
             alert(`Meeting Created: ${response.data.meeting_link}`);
         } catch (err) {

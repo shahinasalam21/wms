@@ -46,7 +46,7 @@ const handleDeleteProfile = async () => {
     try {
       await axios.delete('/api/profile');
       alert('Profile deleted successfully');
-      window.location.href = '/logout'; // Or redirect to another page after deleting
+      window.location.href = '/logout'; 
     } catch (error) {
       console.error('Error deleting profile', error);
       alert('Error deleting profile');

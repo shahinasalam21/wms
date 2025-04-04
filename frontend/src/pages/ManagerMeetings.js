@@ -6,27 +6,33 @@ function ManagerMeetings() {
     const [meetings, setMeetings] = useState([]);
     const [error, setError] = useState(null);
 
-    // Get managerId from localStorage
+    // Get managerId and token from localStorage
     const managerId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token"); // ✅ Get the JWT token
 
     useEffect(() => {
-        if (!managerId) {
-            setError("Manager ID is missing. Please log in again.");
+        if (!managerId || !token) {
+            setError("Unauthorized: Please log in again.");
             return;
         }
 
         const fetchMeetings = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/meeting/manager/${managerId}`);
+                const response = await axios.get(
+                    `http://localhost:5000/api/meeting/manager/${managerId}`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` }, // ✅ Add the Authorization header
+                    }
+                );
                 setMeetings(response.data);
             } catch (error) {
                 console.error("Error fetching meetings:", error);
-                setError("Failed to load meetings.");
+                setError(error.response?.data?.error || "Failed to load meetings.");
             }
         };
 
         fetchMeetings();
-    }, [managerId]);
+    }, [managerId, token]);
 
     return (
         <div className="manager-meetings">  
