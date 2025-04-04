@@ -14,11 +14,11 @@ router.post("/create", async (req, res) => {
     res.status(500).json({ error: "Server error while creating workflow" });
   }
 });
-
+  //fetch the workflows 
 router.get("/", async (req, res) => {
   try {
     const workflows = await getAllWorkflows();
-    res.status(200).json(workflows); // Now returns an array (frontend expects this)
+    res.status(200).json(workflows); 
   } catch (error) {
     console.error("Error fetching workflows:", error);
     res.status(500).json({ error: "Server error while fetching workflows" });

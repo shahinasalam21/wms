@@ -5,6 +5,7 @@ const Workflows = () => {
     const [workflows, setWorkflows] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
 
+    //fetch the workflows 
     useEffect(() => {
         const fetchWorkflows = async () => {
             try {
@@ -13,7 +14,7 @@ const Workflows = () => {
                     throw new Error("Failed to fetch workflows");
                 }
                 const data = await response.json();
-                setWorkflows(data); // ✅ Set workflows from API response
+                setWorkflows(data); 
             } catch (error) {
                 console.error("Error fetching workflows:", error);
             }

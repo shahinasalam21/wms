@@ -32,7 +32,7 @@ const Signup = () => {
       setError("Please complete reCAPTCHA verification.");
       return;
     }
-
+    // api call for sign up
     try {
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",

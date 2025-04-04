@@ -19,7 +19,7 @@ function EmployeeMeetings() {
             console.error("🚨 Error: Token is missing. User must log in.");
             return;
         }
-
+        //dispalying meetings for employee
         const fetchMeetings = async () => {
             try {
                 const response = await axios.get(

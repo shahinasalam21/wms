@@ -191,7 +191,7 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
-// Update Password
+// reset Password
 router.post("/reset-password", async (req, res) => {
   const { token, newPassword } = req.body;
 

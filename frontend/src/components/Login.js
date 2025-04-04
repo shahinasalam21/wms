@@ -21,7 +21,7 @@ const Login = () => {
         setError("Please complete reCAPTCHA verification.");
         return;
     }
-
+    //api call for login
     try {
         const response = await fetch("http://localhost:5000/api/auth/login", {
             method: "POST",
@@ -36,11 +36,11 @@ const Login = () => {
             alert("Login successful!");
             
             
-            localStorage.setItem("userId", data.user.id);  // Correct way to access user ID
+            localStorage.setItem("userId", data.user.id);  //access user ID
             localStorage.setItem("token", data.token);
             localStorage.setItem("role", data.role);
 
-            // Redirect to dashboard
+            
             navigate(data.redirectURL);
         }
     } catch (error) {
