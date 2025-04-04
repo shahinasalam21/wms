@@ -1,61 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import '../pages/TaskPage.css'; // Style your page as needed
+import React, { useEffect, useState } from "react";
 
-const TaskPage = () => {
+const EmployeeTasks = () => {
   const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const employeeId = localStorage.getItem("userId"); // Get the logged-in user ID
 
   useEffect(() => {
-    // Fetch the tasks assigned to the employee
     const fetchTasks = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/tasks/assigned", {
+        const response = await fetch(`http://localhost:5000/api/tasks/assigned/${employeeId}`, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem('token')}`, // JWT token
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Send auth token
           },
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch tasks");
-        }
-
         const data = await response.json();
-        setTasks(data); // Here we expect the response to be an array
+        if (response.ok) {
+          setTasks(data);
+        } else {
+          setError(data.message || "Failed to fetch tasks.");
+        }
       } catch (error) {
-        console.error("Error fetching tasks:", error);
-      } finally {
-        setLoading(false);
+        setError("Error fetching tasks.");
       }
     };
 
-    fetchTasks();
-  }, []);
-
-  if (loading) {
-    return <div>Loading tasks...</div>;
-  }
+    if (employeeId) {
+      fetchTasks();
+    }
+  }, [employeeId]);
 
   return (
-    <div className="tasks-container">
-      <h2>My Assigned Tasks</h2>
-      <ul className="tasks-list">
-        {tasks.length === 0 ? (
-          <p>No tasks assigned yet.</p>
-        ) : (
-          tasks.map((task) => (
-            <li key={task.id} className="task-item">
-              <h3>{task.title}</h3>
-              <p>{task.description}</p>
-              <p><strong>Priority:</strong> {task.priority}</p>
-              <p><strong>Due Date:</strong> {task.due_date}</p>
-              <p><strong>Status:</strong> {task.status || 'Not Started'}</p>
+    <div>
+      <h2>Assigned Tasks</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {tasks.length > 0 ? (
+        <ul>
+          {tasks.map((task) => (
+            <li key={task.id}>
+              <strong>{task.title}</strong> - {task.description} <br />
+              <span>Status: {task.status}</span> | <span>Priority: {task.priority}</span>
             </li>
-          ))
-        )}
-      </ul>
+          ))}
+        </ul>
+      ) : (
+        <p>No assigned tasks.</p>
+      )}
     </div>
   );
 };
 
-export default TaskPage;
+export default EmployeeTasks;
