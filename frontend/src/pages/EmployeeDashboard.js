@@ -1,137 +1,207 @@
-import React, { useEffect, useState } from "react";
-import { FaTrash, FaEdit, FaClock } from "react-icons/fa";
-import "./EmployeeDashboard.css";
-
-const API_BASE_URL = "http://localhost:5000/api";  // Update if different
-
-const EmployeeHeader = () => (
-  <header className="employee-header align-items-center p-3">
-    <div className="employee-search-container">
-      <input
-        type="text"
-        placeholder="Search..."
-        className="form-control employee-search-input"
-      />
-    </div>
-  </header>
-);
+import React, { useState, useEffect } from 'react';
+import { Card, Container, Row, Col, Badge, Button, ProgressBar } from 'react-bootstrap';
+import { Bell, Calendar, CheckCircle, FileText, User, ChevronRight, Clock } from "lucide-react";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const EmployeeDashboard = () => {
   const [tasks, setTasks] = useState([]);
-
+  const [meetings, setMeetings] = useState([]);
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    fetchTasks();
+    const fetchData = async () => {
+      try {
+        const employeeId = localStorage.getItem("userId"); // Retrieve employee ID dynamically
+        const token = localStorage.getItem("token"); // Retrieve JWT token
+    
+        if (!token) {
+          console.error("No token found. User must log in.");
+          return;
+        }
+    
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
+    
+        const taskResponse = await fetch(`http://localhost:5000/api/tasks/getTask/${employeeId}`, { headers });
+        const meetingResponse = await fetch(`http://localhost:5000/api/meeting/emp/employee/${employeeId}`, { headers });
+    
+        if (!taskResponse.ok || !meetingResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+    
+        const taskData = await taskResponse.json();
+        const meetingData = await meetingResponse.json();
+    
+        setTasks(taskData);
+        setMeetings(meetingData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    
+  
+    fetchData();
   }, []);
-
-  const fetchTasks = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/tasks`);
-      if (!response.ok) throw new Error("Failed to fetch tasks");
-      const data = await response.json();
-      setTasks(data);
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
-    }
-  };
-
-  const updateTaskStatus = async (taskId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "In Progress" }),
-      });
-      if (!response.ok) throw new Error("Failed to update task");
-      fetchTasks(); 
-    } catch (error) {
-      console.error("Error updating task:", error);
-    }
-  };
-
- 
-  const deleteTask = async (taskId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) throw new Error("Failed to delete task");
-      fetchTasks(); 
-    } catch (error) {
-      console.error("Error deleting task:", error);
+  
+  const getStatusVariant = (status) => {
+    switch (status) {
+      case "Completed":
+        return "success";
+      case "In Progress":
+        return "primary";
+      case "To Do":
+        return "secondary";
+      default:
+        return "light";
     }
   };
 
   return (
-    <div className="employee-dashboard-content p-4">
-      <EmployeeHeader />
-      <h1 className="mb-4">Task Overview</h1>
+    <div className="bg-light min-vh-100">
+      <Container fluid className="py-4">
+        <header className="mb-4">
+          <h1 className="h3 mb-0 fw-bold">Employee Dashboard</h1>
+          <p className="text-muted">Welcome back, John! Here's your activity summary.</p>
+        </header>
 
-      <div className="employee-task-board d-flex justify-content-between">
-        {["To Do", "In Progress", "Completed"].map((status) => (
-          <div key={status} className="employee-task-column p-3 border rounded">
-            <h3>{status}</h3>
-            {tasks.filter((task) => task.status === status).length > 0 ? (
-              tasks.filter((task) => task.status === status).map((task) => (
-                <div
-                  key={task.id}
-                  className="employee-task-item p-2 border mt-2 d-flex justify-content-between align-items-center"
-                >
-                  <div>
-                    <strong>{task.name}</strong>
-                    <p>{task.description}</p>
-                    <small>
-                      <FaClock /> Deadline: {task.deadline}
-                    </small>
+        <Row className="g-4 mb-4">
+          <Col md={4}>
+            <Card className="border-0 shadow-sm h-100">
+              <Card.Body className="p-4">
+                <div className="d-flex align-items-center mb-3">
+                  <div className="rounded-circle bg-primary-subtle p-3 me-3">
+                    <CheckCircle className="text-primary" size={22} />
                   </div>
                   <div>
-                    <button
-                      className="btn btn-primary me-2"
-                      onClick={() => updateTaskStatus(task.id)}
-                    >
-                      <FaEdit /> Update Task
-                    </button>
-                    <button
-                      className="employee-btn-danger"
-                      onClick={() => deleteTask(task.id)}
-                    >
-                      <FaTrash />
-                    </button>
+                    <h6 className="mb-0 text-muted">Total Tasks</h6>
+                    <h2 className="mb-0 fw-bold">{tasks.length}</h2>
                   </div>
                 </div>
-              ))
-            ) : (
-              <p>No tasks available</p>
-            )}
-          </div>
-        ))}
-      </div>
+                <div className="d-flex justify-content-between text-muted">
+                  <small>{tasks.filter(t => t.status === "Completed").length} Completed</small>
+                  <small>{tasks.filter(t => t.status === "In Progress").length} In Progress</small>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
 
-      <div className="employee-deadline-overview mt-5 p-3 border rounded">
-        <h2>Deadline Overview</h2>
-        {tasks.length > 0 ? (
-          <ul className="list-unstyled">
-            {tasks.map((task) => (
-              <li
-                key={task.id}
-                className="d-flex justify-content-between border-bottom py-2"
-              >
-                <span>
-                  <strong>{task.name}</strong> - {task.deadline}
-                </span>
-                <button
-                  className="btn btn-sm btn-warning"
-                  onClick={() => updateTaskStatus(task.id)}
-                >
-                  <FaEdit /> Update Deadline
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No upcoming deadlines.</p>
-        )}
-      </div>
+          <Col md={4}>
+            <Card className="border-0 shadow-sm h-100">
+              <Card.Body className="p-4">
+                <div className="d-flex align-items-center mb-3">
+                  <div className="rounded-circle bg-success-subtle p-3 me-3">
+                    <Calendar className="text-success" size={22} />
+                  </div>
+                  <div>
+                    <h6 className="mb-0 text-muted">Today's Meetings</h6>
+                    <h2 className="mb-0 fw-bold">{meetings.length}</h2>
+                  </div>
+                </div>
+                <div className="d-flex align-items-center text-muted">
+                  <Clock size={14} className="me-1" />
+                  <small>
+                    {meetings.length > 0 ? `Next meeting: ${meetings[0].time}` : "No meetings today"}
+                  </small>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          <Col md={4}>
+            <Card className="border-0 shadow-sm h-100">
+              <Card.Body className="p-4">
+                <div className="d-flex align-items-center mb-3">
+                  <div className="rounded-circle bg-warning-subtle p-3 me-3">
+                    <Bell className="text-warning" size={22} />
+                  </div>
+                  <div>
+                    <h6 className="mb-0 text-muted">Notifications</h6>
+                    <h2 className="mb-0 fw-bold">{notifications.length}</h2>
+                  </div>
+                </div>
+                <div className="d-flex align-items-center text-muted">
+                  <small>{notifications.filter(n => n.isNew).length} unread notifications</small>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+
+        <Row className="g-4 mb-4">
+          <Col lg={7}>
+            <Card className="border-0 shadow-sm">
+              <Card.Body className="p-4">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                  <h5 className="mb-0 fw-bold">
+                    <FileText className="me-2" size={18} /> My Tasks
+                  </h5>
+                </div>
+                <div className="task-list">
+                  {tasks.map(task => (
+                    <div key={task.id} className="p-3 border-bottom">
+                      <div className="d-flex justify-content-between mb-2">
+                        <h6 className="mb-0">{task.title}</h6>
+                        <Badge bg={getStatusVariant(task.status)} pill>
+                          {task.status}
+                        </Badge>
+                      </div>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <small className="text-muted">Due: {task.dueDate}</small>
+                        <div style={{ width: '40%' }}>
+                          <ProgressBar
+                            now={task.progress}
+                            variant={getStatusVariant(task.status)}
+                            className="mb-1"
+                            style={{ height: '6px' }}
+                          />
+                          <div className="d-flex justify-content-end">
+                            <small className="text-muted">{task.progress}%</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          <Col lg={5}>
+            <Card className="border-0 shadow-sm">
+              <Card.Body className="p-4">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                  <h5 className="mb-0 fw-bold">
+                    <Calendar className="me-2" size={18} /> Today's Schedule
+                  </h5>
+                </div>
+                <div className="meeting-list">
+                  {meetings.map(meeting => (
+                    <div key={meeting.id} className="p-3 mb-3 bg-light rounded">
+                      <div className="d-flex justify-content-between">
+                        <div>
+                          <h6 className="mb-1">{meeting.title}</h6>
+                          <div className="d-flex align-items-center text-muted">
+                            <Clock size={14} className="me-1" />
+                            <small className="me-2">{meeting.time}</small>
+                            <small>{meeting.location}</small>
+                          </div>
+                        </div>
+                        <div className="d-flex align-items-center">
+                          <Button variant="light" size="sm" className="rounded-circle p-1">
+                            <ChevronRight size={16} />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 };
