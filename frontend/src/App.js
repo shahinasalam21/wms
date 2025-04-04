@@ -36,7 +36,6 @@ import Performance from "./pages/Performance";
 import UploadDocument from "./pages/UploadDocument";
 
 import Employeeprofile from "./pages/Employeeprofile";
-import EditEmployeePage from "./pages/EditEmployeePage";
 
 
 const App = () => {
@@ -67,7 +66,7 @@ const App = () => {
       <Route element={<EmpDashboardLayout />}>
         <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
         <Route path="/employee-profile" element={<Employeeprofile/>}/>
-        <Route path="/update-employee-profile" element={<EditEmployeePage/>}/>
+       
         <Route path="/employee-tasks" element={<TaskPage />} />
         <Route path="/performance" element={<Performance />} />
         <Route path="/notifications" element={<Notifications />} />
