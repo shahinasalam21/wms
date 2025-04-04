@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
+
 import authRoutes from "./routes/auth.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import workflowRoutes from "./routes/workflowRoutes.js";
@@ -11,8 +12,9 @@ import { verifyJWT, authMiddleware } from "./middleware/authMiddleware.js";
 import employeeRoutes from "./routes/employees.js";
 import meetingRoutes from "./routes/meetingRoutes.js";
 import ProfileRoutes from "./routes/ProfileRoutes.js";
-import employeeProfile from "./routes/employeeProfile.js"; 
-import db from "./config/db.js"; // Ensure db connection is imported
+import employeeProfile from "./routes/employeeProfile.js";
+import PerformanceRoutes from "./routes/PerformanceRoutes.js";
+import db from "./config/db.js";
 
 dotenv.config();
 
@@ -51,9 +53,10 @@ app.use("/api", uploadRoutes);
 app.use("/api/workflows", workflowRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/employees", employeeRoutes);
-app.use("/api/meeting",verifyJWT, meetingRoutes);
+app.use("/api/meeting", verifyJWT, meetingRoutes);
 app.use("/api", verifyJWT, ProfileRoutes);
-app.use("/api", verifyJWT, employeeProfile); // ✅ Ensure the correct route is used
+app.use("/api", verifyJWT, employeeProfile);
+app.use("/api/performance", verifyJWT, PerformanceRoutes); // ✅ Mount the route with auth
 
 // Role-Based Protected Routes
 app.get("/manager-dashboard", verifyJWT, authMiddleware(["manager"]), (req, res) => {
@@ -64,22 +67,22 @@ app.get("/employee-dashboard", verifyJWT, authMiddleware(["employee"]), (req, re
   res.json({ message: "Welcome to the Employee Dashboard!" });
 });
 
-// Manager Profile Route (Ensure verifyJWT is used)
+// Manager Profile Route
 app.get("/api/manager-profile", verifyJWT, async (req, res) => {
   try {
-      const userId = req.user.id; 
-      const result = await db.query("SELECT name, email FROM users WHERE id = $1", [userId]);
+    const userId = req.user.id;
+    const result = await db.query("SELECT name, email FROM users WHERE id = $1", [userId]);
 
-      if (result.rows.length === 0) {
-          return res.status(404).json({ message: "Manager not found" });
-      }
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Manager not found" });
+    }
 
-      res.json(result.rows[0]);
+    res.json(result.rows[0]);
   } catch (error) {
-      console.error("Error fetching manager profile:", error);
-      res.status(500).json({ message: "Server error" });
+    console.error("Error fetching manager profile:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(` Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
