@@ -64,57 +64,66 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
     e.preventDefault();
 
     if (!workflow.name.trim()) {
-      alert("Workflow name is required.");
-      return;
+        alert("Workflow name is required.");
+        return;
+    }
+
+    // Get the manager ID from local storage
+    const managerId = localStorage.getItem("userId");
+
+    if (!managerId) {
+        alert("Manager ID not found. Please log in again.");
+        navigate("/login"); 
+        return;
     }
 
     try {
-      //create workflow
-      const response = await fetch("http://localhost:5000/api/workflows/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: workflow.name,
-          description: workflow.description,
-          manager_id: 1,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create workflow");
-      }
-
-      const workflowData = await response.json();
-      const workflowId = workflowData.workflowId; 
-
-      // create task
-      for (const task of workflow.tasks) {
-        await fetch("http://localhost:5000/api/tasks/create", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: task.taskName,
-            description: task.description || "",
-            priority: task.priority, 
-            assignedTo: task.assignedTo,
-            workflow_id: workflowId,
-            due_date: task.duedate || null,
-          }),
+        // Create workflow
+        const response = await fetch("http://localhost:5000/api/workflows/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: workflow.name,
+                description: workflow.description,
+                manager_id: managerId,  // Use dynamic manager ID
+            }),
         });
-      }
 
-      // fetching workflow
-      const fetchUpdatedWorkflows = await fetch("http://localhost:5000/api/workflows");
-      const updatedData = await fetchUpdatedWorkflows.json();
+        if (!response.ok) {
+            throw new Error("Failed to create workflow");
+        }
 
-      setWorkflows(updatedData.workflows);
-      alert("Workflow created successfully!");
-      navigate("/manager-dashboard");
+        const workflowData = await response.json();
+        const workflowId = workflowData.workflowId; 
+
+        // Create tasks
+        for (const task of workflow.tasks) {
+            await fetch("http://localhost:5000/api/tasks/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title: task.taskName,
+                    description: task.description || "",
+                    priority: task.priority, 
+                    assignedTo: task.assignedTo,
+                    workflow_id: workflowId,
+                    due_date: task.duedate || null,
+                }),
+            });
+        }
+
+        // Fetch updated workflows
+        const fetchUpdatedWorkflows = await fetch("http://localhost:5000/api/workflows");
+        const updatedData = await fetchUpdatedWorkflows.json();
+
+        setWorkflows(updatedData.workflows);
+        alert("Workflow created successfully!");
+        navigate("/manager-dashboard");
     } catch (error) {
-      console.error("Error creating workflow:", error);
-      alert("Error creating workflow");
+        console.error("Error creating workflow:", error);
+        alert("Error creating workflow");
     }
-  };
+};
 
   return (
     <div className="create-workflow-container">
