@@ -1,22 +1,4 @@
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-body {
-    background: #f8f9fa;
-    color: #333;
-}
-
-.container {
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
-}
-
 .employee-sidebar {
     position: fixed;
     left: 0;
@@ -281,3 +263,72 @@ body {
     background-color: #e67e22;
     transform: scale(1.05);
 }
+/* Employee Dashboard Styles */
+
+.employee-dashboard {
+    padding: 20px;
+    background-color: #f8f9fa; /* Light background */
+    min-height: 100vh;
+  }
+  
+  .dashboard-header {
+    background: #007bff;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .dashboard-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .task-item, .meeting-item, .notification-item {
+    border-left: 5px solid #007bff;
+    background: #f1f1f1;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .task-item p, .meeting-item p, .notification-item p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #333;
+  }
+  
+  .profile-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-section img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #007bff;
+  }
+  
+  .profile-section h5 {
+    margin: 0;
+    color: #007bff;
+  }
+  
+  .profile-section p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
