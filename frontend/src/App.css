@@ -196,3 +196,93 @@ h1 {
   font-size: 0.95rem;
   line-height: 1.5;
 }
+@media (max-width: 992px) {
+  .home-content {
+    width: 95%;
+    padding: 30px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    text-align: center;
+  }
+  
+  .description {
+    font-size: 1.1rem;
+  }
+  
+  .carousel img {
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-content {
+    padding: 25px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  .description {
+    font-size: 1rem;
+  }
+  
+  .carousel img {
+    height: 250px;
+  }
+  
+  .button-group {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
+  .features {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background: white;
+  padding: 20px;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: 30px;
+  background: #f8fafc;
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade {
+  animation: fadeIn 0.5s ease-in-out;
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 20px; 
+}
+
+.logo {
+  width: 200px; 
+  height: 130px;
+}
