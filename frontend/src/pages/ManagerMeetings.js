@@ -1,53 +1,59 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "./ManagerMeetings.css";
 
-function ManagerMeetings() {
+function EmployeeMeetings() {
     const [meetings, setMeetings] = useState([]);
-    const [error, setError] = useState(null);
-
-    // Get managerId from localStorage
-    const managerId = localStorage.getItem("userId");
+    
+    const employeeId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token"); // ✅ Get the JWT token
 
     useEffect(() => {
-        if (!managerId) {
-            setError("Manager ID is missing. Please log in again.");
+        console.log("Stored Employee ID:", employeeId); 
+
+        if (!employeeId || employeeId === "undefined") {
+            console.error("🚨 Error: Employee ID is missing.");
+            return;
+        }
+
+        if (!token) {
+            console.error("🚨 Error: Token is missing. User must log in.");
             return;
         }
 
         const fetchMeetings = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/meeting/manager/${managerId}`);
+                const response = await axios.get(
+                    `http://localhost:5000/api/meeting/employee/${employeeId}`,
+                    { 
+                        headers: { 
+                            Authorization: `Bearer ${token}`, // ✅ Include the token
+                            "Content-Type": "application/json"
+                        } 
+                    }
+                );
                 setMeetings(response.data);
             } catch (error) {
                 console.error("Error fetching meetings:", error);
-                setError("Failed to load meetings.");
             }
         };
-
+        
         fetchMeetings();
-    }, [managerId]);
+    }, [employeeId, token]);
 
     return (
-        <div className="manager-meetings">  
-            <h2>Scheduled Meetings</h2>
-            {error && <p className="error">{error}</p>}
+        <div>
+            <h2>Your Meetings</h2>
             <ul>
-                {meetings.length > 0 ? (
-                    meetings.map((meeting) => (
-                        <li key={meeting.id}>
-                            <strong>{meeting.title}</strong> <br />
-                            📅 {new Date(meeting.start_time).toLocaleString()} - {new Date(meeting.end_time).toLocaleString()} <br />
-                            👥 Participants: {meeting.employees?.join(", ") || "None"} <br />
-                            🔗 <a href={meeting.meeting_link} target="_blank" rel="noopener noreferrer">Join Meeting</a>
-                        </li>
-                    ))
-                ) : (
-                    <p>No meetings scheduled.</p>
-                )}
+                {meetings.length > 0 ? meetings.map((meeting) => (
+                    <li key={meeting.id}>
+                        <strong>{meeting.title}</strong> <br />
+                        📅 {new Date(meeting.start_time).toLocaleString()} - {new Date(meeting.end_time).toLocaleString()} <br />
+                        🔗 <a href={meeting.meeting_link} target="_blank" rel="noopener noreferrer">Join Meeting</a>
+                    </li>
+                )) : <p>No meetings found.</p>}
             </ul>
         </div>
     );
 }
 
-export default ManagerMeetings;
+export default EmployeeMeetings;
