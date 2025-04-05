@@ -69,14 +69,9 @@ const EmployeeTasks = () => {
                     <strong>Priority:</strong>
                     <span>{task.priority}</span>
                   </div>
+                  <button className="upload-btn" onClick={() => navigate(`/upload-document`)}>📤 Upload Document</button>
                 </div>
               </div>
-              <button
-                className="upload-btn"
-                onClick={() => navigate(`/upload-document`)}
-              >
-                📤 Upload
-              </button>
             </div>
           ))}
         </div>

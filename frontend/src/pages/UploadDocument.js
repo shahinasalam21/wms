@@ -99,10 +99,7 @@ const UploadDocument = () => {
   return (
     <div className="upload-page">
     
-      <header className="upload-header">
-        <h2>📄 DOCUMENTS</h2>
-      </header>
-
+     
       <div className="content-container">
        
         <div className="upload-container">

@@ -1,8 +1,9 @@
 .employee-tasks-container {
-    padding: 2rem;
-    max-width: 900px;
-    margin: auto;
+    padding: rem;
+    width: 100%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background-color: #f9fbfc;
   }
   
   .section-title {
@@ -22,97 +23,136 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    animation: fadeInUp 0.8s ease;
+    width: 100%;
+    align-items: center;
   }
   
   .task-card {
-    background: #f9f9f9;
-    border: 1px solid #dcdcdc;
-    border-radius: 12px;
-    padding: 1.5rem;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.04);
-    transition: transform 0.2s ease-in-out;
+    align-items: flex-start;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 2rem;
+    min-height: 180px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 75vw;
+    max-width: 1000px;
   }
   
   .task-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   }
   
   .task-details {
-    flex-grow: 1;
-    padding-right: 1rem;
+    flex: 1;
+    margin-right: 1rem;
+    position: relative;
   }
   
-  .task-title {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: #34495e;
-    margin-bottom: 0.5rem;
+  /* 🔹 Enlarged Title and Description Boxes */
+  .task-title-box {
+    background-color: #f4f7fb;
+    padding: 20px 24px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    font-size: 18px;
   }
   
-  .task-desc {
-    color: #555;
-    margin-bottom: 1rem;
-  }
-  
-  .task-meta {
-    display: flex;
-    gap: 1.5rem;
-  }
-  
-  .meta-block {
-    background-color: #ecf0f1;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    font-size: 0.95rem;
-    color: #333;
-  }
-  
-  .upload-btn {
-    background-color: #3498db;
-    border: none;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .upload-btn:hover {
-    background-color: #2980b9;
-  }
-  
-  .no-tasks {
-    text-align: center;
-    color: #777;
-    font-size: 1.1rem;
-    margin-top: 2rem;
-  }
-  .task-title-box,
   .task-desc-box {
-    background-color: #f5f7fa;
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+    background-color: #f4f7fb;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   }
   
   .task-title-box strong,
   .task-desc-box strong {
     display: block;
-    color: #333;
-    margin-bottom: 5px;
+    color: #555;
+    margin-bottom: 6px;
     font-size: 14px;
   }
   
   .task-title-box p,
   .task-desc-box p {
     margin: 0;
-    font-size: 15px;
-    color: #444;
+    font-size: 17px;
+    color: #222;
   }
-    
+  
+  /* 🔹 Container for Status and Priority */
+  .task-meta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 10px;
+  }
+  
+  .meta-block {
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    background-color: #ecf0f1;
+    color: #34495e;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  }
+  
+  .meta-block strong {
+    color: #7f8c8d;
+    margin-right: 4px;
+  }
+  
+  .meta-block span {
+    font-weight: bold;
+    color: #1e88e5;
+  }
+  
+  /* ✅ Upload Button aligned bottom right */
+  .upload-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+    max-width: 170px;
+    white-space: nowrap;
+  
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-top: 10px;
+  }
+  
+  .upload-btn:hover {
+    background-color: #43a047;
+  }
+  
+  .no-tasks {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+  }
+  
+  /* Animations */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
