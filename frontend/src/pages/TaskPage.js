@@ -5,6 +5,7 @@ import "./EmployeeTasks.css";
 const EmployeeTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState("");
+  const [hoveredCardId, setHoveredCardId] = useState(null);
 
   const employeeId = localStorage.getItem("userId");
   const navigate = useNavigate();
@@ -41,15 +42,24 @@ const EmployeeTasks = () => {
 
   return (
     <div className="employee-tasks-container">
-      <h1 className="section-title">🧾 My Assigned Tasks</h1>
+      <h2 className="section-title">🧾 My Assigned Tasks</h2>
 
       {error && <p className="error-message">{error}</p>}
 
       {tasks.length > 0 ? (
         <div className="task-list">
           {tasks.map((task) => (
-            <div key={task.id} className="task-card">
-              <div className="task-details">
+            <div
+              key={task.id}
+              className="task-card"
+              onMouseEnter={() => setHoveredCardId(task.id)}
+              onMouseLeave={() => setHoveredCardId(null)}
+            >
+              <div
+                className={`task-details ${
+                  hoveredCardId === task.id ? "hovered-details" : ""
+                }`}
+              >
                 <div className="task-title-box">
                   <strong>Title:</strong>
                   <p>{task.title}</p>
@@ -69,7 +79,12 @@ const EmployeeTasks = () => {
                     <strong>Priority:</strong>
                     <span>{task.priority}</span>
                   </div>
-                  <button className="upload-btn" onClick={() => navigate(`/upload-document`)}>📤 Upload Document</button>
+                  <button
+                    className="upload-btn"
+                    onClick={() => navigate(`/upload-document`)}
+                  >
+                    📤 Upload Document
+                  </button>
                 </div>
               </div>
             </div>
