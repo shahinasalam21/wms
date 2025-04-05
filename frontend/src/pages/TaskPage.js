@@ -41,7 +41,7 @@ const EmployeeTasks = () => {
 
   return (
     <div className="employee-tasks-container">
-      <h2 className="section-title">🧾 Assigned Tasks</h2>
+      <h1 className="section-title">🧾 My Assigned Tasks</h1>
 
       {error && <p className="error-message">{error}</p>}
 
@@ -49,12 +49,26 @@ const EmployeeTasks = () => {
         <div className="task-list">
           {tasks.map((task) => (
             <div key={task.id} className="task-card">
-              <div className="task-info">
-                <h3>{task.title}</h3>
-                <p>{task.description}</p>
+              <div className="task-details">
+                <div className="task-title-box">
+                  <strong>Title:</strong>
+                  <p>{task.title}</p>
+                </div>
+
+                <div className="task-desc-box">
+                  <strong>Description:</strong>
+                  <p>{task.description}</p>
+                </div>
+
                 <div className="task-meta">
-                  <span>Status: {task.status}</span>
-                  <span>Priority: {task.priority}</span>
+                  <div className="meta-block">
+                    <strong>Status:</strong>
+                    <span>{task.status}</span>
+                  </div>
+                  <div className="meta-block">
+                    <strong>Priority:</strong>
+                    <span>{task.priority}</span>
+                  </div>
                 </div>
               </div>
               <button
@@ -67,7 +81,7 @@ const EmployeeTasks = () => {
           ))}
         </div>
       ) : (
-        <p className="no-tasks">No assigned tasks.</p>
+        <p className="no-tasks">No assigned tasks at the moment.</p>
       )}
     </div>
   );
