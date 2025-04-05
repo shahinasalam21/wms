@@ -6,7 +6,7 @@
 
 .profile-card {
   border-radius: 15px;
-  overflow: visible; /* Changed from hidden to visible */
+  overflow: visible; 
   position: relative;
   display: flex;
   flex-direction: column;
@@ -15,21 +15,21 @@
 
 .profile-header {
   background: linear-gradient(to right, #007bff, #00c6ff);
-  padding: 3rem 1rem 5rem;  /* increase bottom padding to make room for content overlap */
+  padding: 3rem 1rem 5rem;  
   color: white;
   text-align: center;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 }
 .card-body {
-    padding: 4rem 1.5rem 2rem; /* Adjusted padding */
+    padding: 4rem 1.5rem 2rem; 
     display: flex;
     flex-direction: column;
   }
   
   .profile-avatar-container {
     position: relative;
-    margin-top: -50px; /* Adjust this value to move it up */
+    margin-top: -50px;
     z-index: 2;
   }
   
@@ -45,7 +45,7 @@
   .profile-details {
     max-width: 500px;
     margin: 0 auto;
-    flex: 1; /* Allow this to take available space */
+    flex: 1; 
   }
   
   .detail-item {
@@ -81,12 +81,12 @@
   
   .profile-actions {
     margin-top: 2rem;
-    margin-bottom: 1.5rem; /* Add explicit bottom margin */
+    margin-bottom: 1.5rem; 
     display: flex;
     justify-content: center;
     gap: 1rem;
-    width: 100%; /* Ensure full width */
-    position: relative; /* Ensure proper stacking context */
+    width: 100%; 
+    position: relative; 
     z-index: 1;
   }
   
