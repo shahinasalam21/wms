@@ -1,0 +1,72 @@
+.employee-tasks-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .section-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #333;
+  }
+  
+  .task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .task-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  }
+  
+  .task-info h3 {
+    margin: 0 0 8px;
+    font-size: 20px;
+  }
+  
+  .task-info p {
+    margin: 0 0 10px;
+    color: #666;
+  }
+  
+  .task-meta span {
+    margin-right: 20px;
+    font-size: 14px;
+    color: #444;
+  }
+  
+  .upload-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+  
+  .upload-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .error-message {
+    color: red;
+    text-align: center;
+  }
+  
+  .no-tasks {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+  }
+  
