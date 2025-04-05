@@ -7,12 +7,14 @@ import {
   FaHourglassHalf,
   FaUserCircle,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import "./Performance.css";
 
 const Performance = () => {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const employeeId = localStorage.getItem("userId");
 
@@ -55,12 +57,42 @@ const Performance = () => {
       </div>
     );
 
+  const handleCardClick = (label) => {
+    if (label === "Total Tasks") {
+      navigate("/employee-tasks");
+    }
+  };
+
   const metrics = [
-    { label: "Total Tasks", value: report.total_tasks, icon: <FaTasks className="metric-icon" /> },
-    { label: "Completed Tasks", value: report.completed_tasks, class: "bg-success text-white", icon: <FaCheckCircle className="metric-icon" /> },
-    { label: "Pending Tasks", value: report.pending_tasks, class: "bg-warning text-dark", icon: <FaHourglassHalf className="metric-icon" /> },
-    { label: "Rejected Tasks", value: report.rejected_tasks, class: "bg-danger text-white", icon: <FaTimesCircle className="metric-icon" /> },
-    { label: "Meetings Attended", value: report.meetings_attended, icon: <FaUsers className="metric-icon" /> },
+    {
+      label: "Total Tasks",
+      value: report.total_tasks,
+      icon: <FaTasks className="metric-icon" />,
+      clickable: true,
+    },
+    {
+      label: "Completed Tasks",
+      value: report.completed_tasks,
+      class: "bg-success text-white",
+      icon: <FaCheckCircle className="metric-icon" />,
+    },
+    {
+      label: "Pending Tasks",
+      value: report.pending_tasks,
+      class: "bg-warning text-dark",
+      icon: <FaHourglassHalf className="metric-icon" />,
+    },
+    {
+      label: "Rejected Tasks",
+      value: report.rejected_tasks,
+      class: "bg-danger text-white",
+      icon: <FaTimesCircle className="metric-icon" />,
+    },
+    {
+      label: "Meetings Attended",
+      value: report.meetings_attended,
+      icon: <FaUsers className="metric-icon" />,
+    },
   ];
 
   return (
@@ -80,7 +112,12 @@ const Performance = () => {
 
       <div className="row g-4 justify-content-center">
         {metrics.map((metric, idx) => (
-          <div key={idx} className="col-lg-3 col-md-4 col-sm-6">
+          <div
+            key={idx}
+            className="col-lg-3 col-md-4 col-sm-6"
+            onClick={() => metric.clickable && handleCardClick(metric.label)}
+            style={{ cursor: metric.clickable ? "pointer" : "default" }}
+          >
             <div className={`metric-card shadow-sm rounded text-center h-100 p-4 ${metric.class || ""}`}>
               {metric.icon}
               <h6 className="text-muted mt-2">{metric.label}</h6>
