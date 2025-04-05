@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   FaTasks,
   FaCheckCircle,
-  FaClock,
   FaTimesCircle,
-  FaBell,
   FaUsers,
   FaHourglassHalf,
   FaUserCircle,
@@ -62,8 +60,6 @@ const Performance = () => {
     { label: "Completed Tasks", value: report.completed_tasks, class: "bg-success text-white", icon: <FaCheckCircle className="metric-icon" /> },
     { label: "Pending Tasks", value: report.pending_tasks, class: "bg-warning text-dark", icon: <FaHourglassHalf className="metric-icon" /> },
     { label: "Rejected Tasks", value: report.rejected_tasks, class: "bg-danger text-white", icon: <FaTimesCircle className="metric-icon" /> },
-    { label: "Avg Completion Time (hrs)", value: report.avg_completion_time || "N/A", icon: <FaClock className="metric-icon" /> },
-    { label: "Notifications Received", value: report.notifications_received, icon: <FaBell className="metric-icon" /> },
     { label: "Meetings Attended", value: report.meetings_attended, icon: <FaUsers className="metric-icon" /> },
   ];
 
@@ -74,7 +70,7 @@ const Performance = () => {
         <div className="d-flex justify-content-center gap-4 mt-3 flex-wrap">
           <h5 className="d-flex align-items-center gap-2">
             <FaUserCircle className="text-secondary fs-4" />
-            :<span className="badge bg-secondary fs-6">{report.employee_name}</span>
+            <span className="badge bg-secondary fs-6">{report.employee_name}</span>
           </h5>
           <h5>
             Role: <span className="badge bg-info text-dark fs-6">{report.department}</span>
