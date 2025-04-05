@@ -42,3 +42,92 @@
     font-size: 2.5rem;
     font-weight: bold;
   }
+  .profile-details {
+    max-width: 500px;
+    margin: 0 auto;
+    flex: 1; /* Allow this to take available space */
+  }
+  
+  .detail-item {
+    display: flex;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .detail-icon {
+    font-size: 1.5rem;
+    color: #0d6efd;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: rgba(13, 110, 253, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+  }
+  
+  .detail-label {
+    color: #6c757d;
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+  }
+  
+  .detail-value {
+    font-weight: 500;
+    margin-bottom: 0;
+  }
+  
+  .profile-actions {
+    margin-top: 2rem;
+    margin-bottom: 1.5rem; /* Add explicit bottom margin */
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%; /* Ensure full width */
+    position: relative; /* Ensure proper stacking context */
+    z-index: 1;
+  }
+  
+  .profile-actions button {
+    border-radius: 50px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .profile-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Modal customization */
+  .modal-content {
+    border-radius: 15px;
+    border: none;
+  }
+  
+  .close-button {
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .close-button:focus {
+    box-shadow: none;
+  }
+  
+  /* Success alert */
+  .success-alert {
+    z-index: 1070;
+    animation: slideDown 0.3s ease-out forwards;
+  }
+  
+  @keyframes slideDown {
+    from {
+      transform: translate(-50%, -100%);
+    }
+    to {
+      transform: translate(-50%, 0);
+    }
+  }
