@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Container, Card, Button, Modal, Form, Spinner, Alert } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import "./Profile.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
