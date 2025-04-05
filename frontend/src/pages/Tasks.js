@@ -1,74 +1,121 @@
 import React, { useState, useEffect } from "react";
+import { Container, Table, Spinner, Alert, Badge, Card } from "react-bootstrap";
+import "./Tasks.css";
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const token = localStorage.getItem("token"); // Retrieve token from local storage
-    
+        const token = localStorage.getItem("token");
+        
+        setLoading(true);
         const response = await fetch("http://localhost:5000/api/tasks", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`, // Attach token in headers
+            "Authorization": `Bearer ${token}`,
           },
         });
     
         if (!response.ok) {
           throw new Error(`Failed to fetch tasks: ${response.statusText}`);
-
         }
     
         const data = await response.json();
         setTasks(data);
+        setError("");
       } catch (error) {
         console.error("Error fetching tasks:", error);
+        setError("Failed to load tasks. Please try again.");
+      } finally {
+        setLoading(false);
       }
     };
     
-
     fetchTasks();
   }, []);
 
-  return (
-    <div style={{ width: "100%", padding: "120px" }}>
-      <h1>Tasks</h1>
-      <table border="1" style={{ width: "100%", textAlign: "left", marginTop: "20px" }}>
-      <thead>
-        <tr>
-        <th style={{ backgroundColor: "#1E90FF", color: "white" }}>Title</th>
-        <th style={{ backgroundColor: "#1E90FF", color: "white" }}>Description</th>
-        <th style={{ backgroundColor: "#1E90FF", color: "white" }}>Priority</th>
-        <th style={{ backgroundColor: "#1E90FF", color: "white" }}>Assigned To</th>
-        <th style={{ backgroundColor: "#1E90FF", color: "white" }}>Due Date</th>
-        <th style={{ backgroundColor: "#1E90FF", color: "white" }}>Created At</th>
-        </tr>
-      </thead>
+  // Function to determine badge color based on priority
+  const getPriorityBadge = (priority) => {
+    const variant = priority?.toLowerCase() === 'high' ? 'danger' : 
+                   priority?.toLowerCase() === 'medium' ? 'warning' : 'info';
+    
+    return <Badge bg={variant} className="priority-badge">{priority}</Badge>;
+  };
 
-        <tbody>
-          {tasks.length > 0 ? (
-            tasks.map((task) => (
-              <tr key={task.id}>
-                <td>{task.title}</td>
-                <td>{task.description}</td>
-                <td>{task.priority}</td>
-                <td>{task.assigned_to}</td>
-                
-                <td>{new Date(task.due_date).toLocaleDateString()}</td>
-                <td>{new Date(task.created_at).toLocaleDateString()}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="7" style={{ textAlign: "center" }}>No tasks available</td>
-            </tr>
+  return (
+    <div className="tasks-page bg-light min-vh-100">
+      <div className="tasks-container">
+        <Container className="py-4">
+          {error && (
+            <Alert variant="danger" className="shadow-sm">
+              <i className="bi bi-exclamation-circle-fill me-2"></i> {error}
+            </Alert>
           )}
-        </tbody>
-      </table>
+  
+          <Card className="border-0 shadow-sm">
+            <Card.Body>
+              {loading ? (
+                <div className="text-center py-5">
+                  <Spinner animation="border" variant="primary" />
+                  <p className="mt-3 text-muted">Loading tasks...</p>
+                </div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="table tasks-table">
+                    <thead>
+                      <tr>
+                        <th className="bg-primary text-white">Title</th>
+                        <th className="bg-primary text-white">Description</th>
+                        <th className="bg-primary text-white">Priority</th>
+                        <th className="bg-primary text-white">Assigned To</th>
+                        <th className="bg-primary text-white">Due Date</th>
+                        <th className="bg-primary text-white">Created At</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tasks.length > 0 ? (
+                        tasks.map((task) => (
+                          <tr key={task.id} className="task-row">
+                            <td className="fw-bold text-primary">{task.title}</td>
+                            <td className="text-muted description-cell">{task.description}</td>
+                            <td>{getPriorityBadge(task.priority)}</td>
+                            <td>{task.assigned_to}</td>
+                            <td>{new Date(task.due_date).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                            </td>
+                            <td>{new Date(task.created_at).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="6" className="text-center py-5">
+                            <i className="bi bi-inbox fs-1 text-muted d-block mb-2"></i>
+                            <p className="text-muted">No tasks available</p>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </Card.Body>
+          </Card>
+        </Container>
+      </div>
     </div>
   );
-};
-
+}
 export default Tasks;
