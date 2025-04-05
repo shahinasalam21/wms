@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./EmployeeProfile.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
@@ -85,64 +86,72 @@ const EmployeeProfile = () => {
     }
   };
 
-  if (loading) return <p className="text-center mt-4">Loading...</p>;
-  if (error) return <p className="text-danger text-center mt-4">{error}</p>;
+  if (loading) return <p className="text-center mt-5">Loading...</p>;
+  if (error) return <p className="text-danger text-center mt-5">{error}</p>;
 
   return (
-    <div className="container mt-5">
-      <div className="card shadow-lg p-4 border-0 rounded-3">
-        <h2 className="text-center mb-3 text-success">Employee Profile</h2>
-        <div className="card-body">
-          <p><strong>Name:</strong> {profile?.name}</p>
-          <p><strong>Email:</strong> {profile?.email}</p>
-          <p><strong>Role:</strong> {profile?.role}</p>
+    <div className="container d-flex justify-content-center align-items-center vh-100">
+      <div className="card shadow-lg border-0 rounded-4" style={{ width: "450px" }}>
+      <div className="card-header text-white text-center rounded-top-4" style={{ backgroundColor: "#007bff" }}>
+
+          <h3 className="mb-0">Employee Profile</h3>
         </div>
-        <div className="text-center">
-          <button className="btn btn-outline-success me-2" onClick={handleEdit}>Edit Profile</button>
-          <button className="btn btn-outline-danger" onClick={handleDelete}>Delete Profile</button>
+        <div className="card-body text-center">
+          <p className="mb-2"><strong>Name:</strong> {profile?.name}</p>
+          <p className="mb-2"><strong>Email:</strong> {profile?.email}</p>
+          <p className="mb-4"><strong>Role:</strong> {profile?.role}</p>
+          <div className="d-flex justify-content-around">
+  <button className="btn text-white px-4" style={{ backgroundColor: "#0056b3" }} onClick={handleEdit}>
+    Edit Profile
+  </button>
+  <button className="btn text-white px-4" style={{ backgroundColor: "#117a8b" }} onClick={handleDelete}>
+    Delete Profile
+  </button>
+</div>
+
         </div>
       </div>
 
-      {/* Bootstrap Modal for Editing Profile */}
+      {/* Modal */}
       {showModal && (
-        <div className="modal fade show d-block" tabIndex="-1">
-          <div className="modal-dialog">
-            <div className="modal-content border-0 rounded-3">
-              <div className="modal-header bg-success text-white">
-                <h5 className="modal-title">Edit Profile</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
-              </div>
-              <div className="modal-body">
-                <div className="mb-3">
-                  <label className="form-label">Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                  />
+        <>
+          <div className="modal fade show d-block" tabIndex="-1">
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content border-0 shadow rounded-4">
+                <div className="modal-header bg-success text-white rounded-top-4">
+                  <h5 className="modal-title">Edit Profile</h5>
+                  <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
                 </div>
-                <div className="mb-3">
-                  <label className="form-label">New Password</label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    value={editPassword}
-                    onChange={(e) => setEditPassword(e.target.value)}
-                  />
+                <div className="modal-body">
+                  <div className="form-group mb-3">
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-group mb-3">
+                    <label>New Password</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      value={editPassword}
+                      onChange={(e) => setEditPassword(e.target.value)}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
-                <button type="button" className="btn btn-success" onClick={handleSaveChanges}>Save Changes</button>
+                <div className="modal-footer">
+                  <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                  <button className="btn btn-success" onClick={handleSaveChanges}>Save Changes</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+          <div className="modal-backdrop fade show"></div>
+        </>
       )}
-
-      {/* Modal Overlay */}
-      {showModal && <div className="modal-backdrop fade show"></div>}
     </div>
   );
 };
