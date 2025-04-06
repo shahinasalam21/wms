@@ -7,7 +7,7 @@ const UploadDocument = () => {
   const [preview, setPreview] = useState(null);
   const [message, setMessage] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchUploadedFiles();
@@ -76,9 +76,9 @@ const UploadDocument = () => {
     }
   };
 
-  const handleDelete = async (filename) => {
+  const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/delete-file/${filename}`, {
+      const response = await fetch(`http://localhost:5000/api/delete-file/${id}`, {
         method: "DELETE",
       });
 
@@ -91,17 +91,13 @@ const UploadDocument = () => {
     }
   };
 
- 
   const filteredFiles = uploadedFiles.filter((file) =>
     file.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="upload-page">
-    
-     
       <div className="content-container">
-       
         <div className="upload-container">
           <h2>Upload Files</h2>
           <div className="drop-zone" {...getRootProps()}>
@@ -132,7 +128,6 @@ const UploadDocument = () => {
         <div className="uploaded-files-container">
           <h3>Uploaded Files</h3>
 
-       
           <input
             type="text"
             className="search-input"
@@ -146,8 +141,8 @@ const UploadDocument = () => {
               <li key={index} className="file-item">
                 <span>{file.name}</span>
                 <div className="file-actions">
-                  <a href={`http://localhost:5000${file.url}`} target="_blank" rel="noopener noreferrer" className="view-button">View</a>
-                  <button className="delete-button" onClick={() => handleDelete(file.name)}>Delete</button>
+                  <a href={`http://localhost:5000/api/download/${file.id}`} target="_blank" rel="noopener noreferrer" className="view-button">View</a>
+                  <button className="delete-button" onClick={() => handleDelete(file.id)}>Delete</button>
                 </div>
               </li>
             ))}
