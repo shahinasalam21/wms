@@ -1,169 +1,158 @@
 .employee-tasks-container {
-    padding: 3rem 2rem 2rem 2rem;
+  background-color: #f8f9fb;
+  min-height: 100vh;
+}
 
-    width: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-    background-color: #f9fbfc;
-  }
-  
-  .section-title {
-    font-size: 3rem;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    color: #0d6efd;
-    font-style: normal;
-  }
-  
-  .error-message {
-    color: red;
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-  
-  .task-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    animation: fadeInUp 0.8s ease;
-    width: 100%;
-    align-items: center;
-  }
-  
-  .task-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 2rem;
-    min-height: 180px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    width: 75vw;
-    max-width: 1000px;
-  }
-  
-  .task-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  }
-  
-  .task-details {
-    flex: 1;
-    margin-right: 1rem;
-    position: relative;
-  }
-  
-  /* 🔹 Enlarged Title and Description Boxes */
-  .task-title-box {
-    background-color: #f4f7fb;
-    padding: 20px 24px;
-    border-radius: 12px;
-    margin-bottom: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    font-size: 18px;
-  }
-  
-  .task-desc-box {
-    background-color: #f4f7fb;
-    padding: 16px 20px;
-    border-radius: 12px;
-    margin-bottom: 14px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  }
-  
-  .task-title-box strong,
-  .task-desc-box strong {
-    display: block;
-    color: #555;
-    margin-bottom: 6px;
-    font-size: 14px;
-  }
-  
-  .task-title-box p,
-  .task-desc-box p {
-    margin: 0;
-    font-size: 17px;
-    color: #222;
-  }
-  
-  /* 🔹 Container for Status and Priority */
-  .task-meta {
-    display: flex;
-    gap: 1rem;
-    margin-top: 10px;
-  }
-  /* 👇 Add this class at the end of EmployeeTasks.css */
-  .task-details.hovered-details {
-    background-color: #f1faff;
-    border-radius: 12px;
-    transition: background-color 0.3s ease;
-    padding: 1rem;
-  }
-  
-  
-  
-  .meta-block {
-    padding: 6px 12px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    background-color: #ecf0f1;
-    color: #34495e;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-  }
-  
-  .meta-block strong {
-    color: #7f8c8d;
-    margin-right: 4px;
-  }
-  
-  .meta-block span {
-    font-weight: bold;
-    color: #1e88e5;
-  }
-  
-  /* ✅ Upload Button aligned bottom right */
-  .upload-btn {
-    background-color: #3182ce;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 14px;
-    max-width: 170px;
-    white-space: nowrap;
-  
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    margin-top: 10px;
-  }
-  
-  .upload-btn:hover {
-    background-color: #43a047;
-  }
-  
-  .no-tasks {
-    text-align: center;
-    color: #888;
-    font-style: italic;
-  }
-  
-  /* Animations */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
+/* Header */
+.emp-tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  color: #1a73e8;
+}
+
+/* Task List */
+.task-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: flex-start;
+  align-items: stretch; /* Ensure equal height */
+}
+
+/* Task Card */
+.task-card {
+  background: #e6f2ff;
+  border-radius: 0.5rem;
+  border: 1px solid #e0e0e0;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 350px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1; /* makes it grow equally */
+}
+
+.task-footer {
+  margin-top: auto; /* This pushes footer to the bottom of the card */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+
+.task-card:hover {
+  transform: translateY(-4px);
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.task-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.task-badges {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Badge Styling */
+.status-badge,
+.priority-badge {
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+/* Status Colors */
+.status-pending {
+  background: #fff6b7;
+  color: #a67c00;
+}
+
+.status-in-progress {
+  background: #d1e7ff;
+  color: #0059b2;
+}
+
+.status-completed {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+/* Priority Colors */
+.priority-high {
+  background: #ffe0e0;
+  color: #c53030;
+}
+
+.priority-medium {
+  background: #ffeacc;
+  color: #b7791f;
+}
+
+.priority-low {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+/* Task Body */
+.task-description {
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  color: #4a4a4a;
+}
+
+
+
+.task-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: #606060;
+}
+
+.upload-document-btn {
+  background-color: #0066ff;
+  color: white;
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.upload-document-btn:hover {
+  background-color: #004ecc;
+}
+
+/* Empty State */
+.empty-state {
+  margin-top: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.empty-icon {
+  font-size: 3rem;
+}

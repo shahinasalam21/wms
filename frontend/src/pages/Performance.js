@@ -73,19 +73,16 @@ const Performance = () => {
     {
       label: "Completed Tasks",
       value: report.completed_tasks,
-      class: "bg-success text-white",
       icon: <FaCheckCircle className="metric-icon" />,
     },
     {
       label: "Pending Tasks",
       value: report.pending_tasks,
-      class: "bg-warning text-dark",
       icon: <FaHourglassHalf className="metric-icon" />,
     },
     {
       label: "Rejected Tasks",
       value: report.rejected_tasks,
-      class: "bg-danger text-white",
       icon: <FaTimesCircle className="metric-icon" />,
     },
     {
@@ -102,7 +99,7 @@ const Performance = () => {
         <div className="d-flex justify-content-center gap-4 mt-3 flex-wrap">
           <h5 className="d-flex align-items-center gap-2">
             <FaUserCircle className="text-secondary fs-4" />
-            <span className="badge bg-secondary fs-6">{report.employee_name}</span>
+            :<span className="badge bg-secondary fs-6">{report.employee_name}</span>
           </h5>
           <h5>
             Role: <span className="badge bg-info text-dark fs-6">{report.department}</span>
@@ -118,7 +115,10 @@ const Performance = () => {
             onClick={() => metric.clickable && handleCardClick(metric.label)}
             style={{ cursor: metric.clickable ? "pointer" : "default" }}
           >
-            <div className={`metric-card shadow-sm rounded text-center h-100 p-4 ${metric.class || ""}`}>
+            <div
+              className="metric-card shadow-sm rounded text-center h-100 p-4"
+              style={{ backgroundColor: "#e6f2ff" }}
+            >
               {metric.icon}
               <h6 className="text-muted mt-2">{metric.label}</h6>
               <div className="fs-4 fw-bold mt-1">{metric.value}</div>
