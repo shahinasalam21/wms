@@ -21,7 +21,13 @@ router.post("/create", async (req, res) => {
 
 router.get("/", verifyJWT, async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM tasks");
+    const result = await pool.query(`
+      SELECT 
+        tasks.*, 
+        users.name AS employee_name
+      FROM tasks
+      LEFT JOIN users ON tasks.assigned_to = users.id
+    `);
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching tasks:", error);

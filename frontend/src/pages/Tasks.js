@@ -72,7 +72,7 @@ const Tasks = () => {
                         <th className="bg-primary text-white">Title</th>
                         <th className="bg-primary text-white">Description</th>
                         <th className="bg-primary text-white">Priority</th>
-                        <th className="bg-primary text-white">Assigned To</th>
+                        <th className="bg-primary text-white">Employee ID</th>
                         <th className="bg-primary text-white">Due Date</th>
                         <th className="bg-primary text-white">Created At</th>
                       </tr>
