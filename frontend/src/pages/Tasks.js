@@ -73,6 +73,7 @@ const Tasks = () => {
                         <th className="bg-primary text-white">Description</th>
                         <th className="bg-primary text-white">Priority</th>
                         <th className="bg-primary text-white">Employee ID</th>
+                        <th className="bg-primary text-white">Employee Name</th>
                         <th className="bg-primary text-white">Due Date</th>
                         <th className="bg-primary text-white">Created At</th>
                       </tr>
@@ -85,6 +86,7 @@ const Tasks = () => {
                             <td className="text-muted description-cell">{task.description}</td>
                             <td>{getPriorityBadge(task.priority)}</td>
                             <td>{task.assigned_to}</td>
+                            <td>{task.employee_name || "N/A"}</td>
                             <td>{new Date(task.due_date).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
