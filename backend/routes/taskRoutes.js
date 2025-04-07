@@ -4,14 +4,10 @@ import { createTask } from "../models/task.js";
 import { verifyJWT,authMiddleware} from "../middleware/authMiddleware.js";
 
 const router = express.Router();
-
-// @route   POST /api/tasks/create
-// @desc    Create a new task under a workflow
-// @access  Private (Manager)
 router.post("/create", verifyJWT, async (req, res) => {
   const { title, description, priority, assignedTo, workflow_id, due_date } = req.body;
 
-  // ✅ Check required fields
+
   if (!title || !workflow_id || !due_date) {
     return res.status(400).json({ error: "Title, workflow ID, and due date are required" });
   }
@@ -25,12 +21,9 @@ router.post("/create", verifyJWT, async (req, res) => {
   }
 });
 
-// @route   GET /api/tasks
-// @desc    Get tasks created by the manager (under their workflows)
-// @access  Private (Manager)
 router.get("/", verifyJWT, authMiddleware(["manager"]),async (req, res) => {
   try {
-    const managerId = req.user.id; // ✅ Make sure req.user.id exists
+    const managerId = req.user.id; 
     console.log("🔐 Logged in manager ID:", managerId);
 
     const result = await pool.query(

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Spinner, Alert, Badge, Card } from "react-bootstrap";
-import { useNavigate } from "react-router-dom"; // <-- import useNavigate
+import { useNavigate } from "react-router-dom"; 
 
 import "./Tasks.css";
 
