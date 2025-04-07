@@ -32,8 +32,8 @@ const Employees = () => {
 
   return (
     <div className="employee-container">
-      <div className="employee-card">
-        <h2 className="text-center">All Registered Employees</h2>
+      <div className="employee-card"><h2 className="text-center fw-bold" style={{ color: "#003366" }}>All Employees</h2>
+
         {error && <p className="text-danger">{error}</p>}
         
         <input

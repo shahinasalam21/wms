@@ -69,7 +69,9 @@ const Tasks = () => {
   };
   return (
     <div className="tasks-page bg-light min-vh-100">
-      <Container className="py-4">
+    <h1 className="text-center pt-4 fw-bold" style={{ color: "#003366" }}>Tasks</h1>
+
+    <Container className="py-4">
         {error && (
           <Alert variant="danger" className="shadow-sm">
             <i className="bi bi-exclamation-circle-fill me-2"></i> {error}

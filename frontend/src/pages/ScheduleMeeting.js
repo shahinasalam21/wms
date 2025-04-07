@@ -70,8 +70,12 @@ function ScheduleMeeting() {
             setError(err.response?.data?.error || "Failed to create meeting. Try again.");
         }
     };
+    
 
     return (
+        <div>
+        <h2 className="text-center fw-bold" style={{ color: "#003366", marginTop: "2rem" }}> Schedule a Meeting</h2>
+
         <form onSubmit={handleSubmit} className="meeting-form">
             <input
                 type="text"
@@ -132,6 +136,7 @@ function ScheduleMeeting() {
             <button type="submit" className="submit-button">Create Meeting</button>
             {error && <p className="error-text">{error}</p>}
         </form>
+        </div>
     );
 }
 
