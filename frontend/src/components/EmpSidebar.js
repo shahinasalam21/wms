@@ -1,8 +1,8 @@
 import React from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { 
-  FaUser, FaTasks, FaBell, FaChartLine, FaClipboardList, FaSignOutAlt 
-} from "react-icons/fa";
+  FaHome, FaUser, FaTasks, FaBell, FaChartLine, FaClipboardList, FaSignOutAlt 
+} from "react-icons/fa"; // Added FaHome icon
 import "../pages/EmployeeDashboard.css"; 
 
 const EmpSidebar = () => {
@@ -19,6 +19,14 @@ const EmpSidebar = () => {
       <h2 className="mb-4 text-center">EMPLOYEE DASHBOARD</h2>
       <nav>
         <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+          <li className="mb-3">
+            <NavLink 
+              to={`${linkBase}/home`} 
+              className={({ isActive }) => isActive ? "active-link" : ""}
+            >
+              <FaHome className="me-2" /> Home
+            </NavLink>
+          </li>
           <li className="mb-3">
             <NavLink 
               to={`${linkBase}/employee-profile`} 

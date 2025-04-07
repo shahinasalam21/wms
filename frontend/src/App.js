@@ -70,6 +70,8 @@ const App = () => {
         <Route path="/employee/:employeeId/performance" element={<Performance />} />
         <Route path="/employee/:employeeId/notifications" element={<Notifications />} />
         <Route path="/employee/:employeeId/upload-document" element={<UploadDocument />} />
+        <Route path="/employee/:employeeId/home" element={<EmployeeDashboard />} />
+
         <Route path="/employee/:employeeId/employee-meetings" element={
           <EmployeeMeetings employeeId={localStorage.getItem("userId")} />
         } />
