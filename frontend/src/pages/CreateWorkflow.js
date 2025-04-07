@@ -9,7 +9,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
     description: "",
     tasks: [],
   });
-
+  
   const [newTask, setNewTask] = useState({
     taskName: "",
     assignedTo: "",
@@ -70,7 +70,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
 
     // Get the manager ID from local storage
     const managerId = localStorage.getItem("userId");
-
+    const token = localStorage.getItem("token"); 
     if (!managerId) {
         alert("Manager ID not found. Please log in again.");
         navigate("/login"); 
@@ -95,12 +95,16 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
 
         const workflowData = await response.json();
         const workflowId = workflowData.workflowId; 
-
-        // Create tasks
+        
+        
+        // Create tasks 
         for (const task of workflow.tasks) {
             await fetch("http://localhost:5000/api/tasks/create", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`
+                 },
                 body: JSON.stringify({
                     title: task.taskName,
                     description: task.description || "",
@@ -113,12 +117,21 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
         }
 
         // Fetch updated workflows
-        const fetchUpdatedWorkflows = await fetch("http://localhost:5000/api/workflows");
-        const updatedData = await fetchUpdatedWorkflows.json();
+        // or whatever key you stored JWT under
+
+        const fetchUpdatedWorkflows = await fetch(`http://localhost:5000/api/workflows/manager/${managerId}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        
+const updatedData = await fetchUpdatedWorkflows.json();
 
         setWorkflows(updatedData.workflows);
         alert("Workflow created successfully!");
-        navigate("/manager-dashboard");
+        navigate(`/manager-dashboard/${managerId}`);
+
     } catch (error) {
         console.error("Error creating workflow:", error);
         alert("Error creating workflow");

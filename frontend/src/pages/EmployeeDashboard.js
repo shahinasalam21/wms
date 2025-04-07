@@ -6,44 +6,52 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const EmployeeDashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [meetings, setMeetings] = useState([]);
-  const [notifications, setNotifications] = useState([]);
+  const [notifications] = useState([]);
+  const [name, setName] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const employeeId = localStorage.getItem("userId"); // Retrieve employee ID dynamically
-        const token = localStorage.getItem("token"); // Retrieve JWT token
-    
+        const employeeId = localStorage.getItem("userId");
+        const token = localStorage.getItem("token");
+  
         if (!token) {
           console.error("No token found. User must log in.");
           return;
         }
-    
+  
         const headers = {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         };
-        //api calls for displaying task and meetings of corresponding employee
-        const taskResponse = await fetch(`http://localhost:5000/api/tasks/getTask/${employeeId}`, { headers });
-        const meetingResponse = await fetch(`http://localhost:5000/api/meeting/emp/employee/${employeeId}`, { headers });
-    
-        if (!taskResponse.ok || !meetingResponse.ok) {
+  
+        const [taskResponse, meetingResponse, userResponse] = await Promise.all([
+          fetch(`http://localhost:5000/api/tasks/getTask/${employeeId}`, { headers }),
+          fetch(`http://localhost:5000/api/meeting/emp/employee/${employeeId}`, { headers }),
+          fetch(`http://localhost:5000/api/employees/${employeeId}`, { headers }), // Add your actual endpoint here
+        ]);
+  
+        if (!taskResponse.ok || !meetingResponse.ok || !userResponse.ok) {
           throw new Error("Failed to fetch data");
         }
-    
-        const taskData = await taskResponse.json();
-        const meetingData = await meetingResponse.json();
-    
+  
+        const [taskData, meetingData, userData] = await Promise.all([
+          taskResponse.json(),
+          meetingResponse.json(),
+          userResponse.json(),
+        ]);
+  
         setTasks(taskData);
         setMeetings(meetingData);
+        setName(userData.name); // Save employee name
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-    
   
     fetchData();
   }, []);
+  
   
   const getStatusVariant = (status) => {
     switch (status) {
@@ -63,7 +71,8 @@ const EmployeeDashboard = () => {
       <Container fluid className="py-4">
         <header className="mb-4">
           <h1 className="h3 mb-0 fw-bold">Employee Dashboard</h1>
-          <p className="text-muted">Welcome back, John! Here's your activity summary.</p>
+          <p className="text-muted">Welcome back, {name || "Employee"}! Here's your activity summary.</p>
+
         </header>
 
         <Row className="g-4 mb-4">
@@ -177,25 +186,30 @@ const EmployeeDashboard = () => {
                   </h5>
                 </div>
                 <div className="meeting-list">
-                  {meetings.map(meeting => (
-                    <div key={meeting.id} className="p-3 mb-3 bg-light rounded">
-                      <div className="d-flex justify-content-between">
-                        <div>
-                          <h6 className="mb-1">{meeting.title}</h6>
-                          <div className="d-flex align-items-center text-muted">
-                            <Clock size={14} className="me-1" />
-                            <small className="me-2">{meeting.time}</small>
-                            <small>{meeting.location}</small>
-                          </div>
+                {meetings.map(meeting => (
+                    <div key={meeting.id} className="p-3 border-bottom">
+                      <div className="d-flex justify-content-between mb-2">
+                        <h6 className="mb-0">{meeting.title}</h6>
+                        <small className="text-muted">{meeting.time}</small>
+                      </div>
+                      <p className="mb-1 text-muted">{meeting.description}</p>
+                      <div className="d-flex align-items-center justify-content-between">
+                        <div className="d-flex align-items-center text-muted">
+                          <User size={14} className="me-1" />
+                          <small>{meeting.organizer}</small>
                         </div>
-                        <div className="d-flex align-items-center">
-                          <Button variant="light" size="sm" className="rounded-circle p-1">
-                            <ChevronRight size={16} />
-                          </Button>
-                        </div>
+                        <Button variant="outline-primary" size="sm">
+                          Join <ChevronRight size={14} />
+                        </Button>
                       </div>
                     </div>
                   ))}
+                  {meetings.length === 0 && (
+                    <div className="text-center text-muted p-4">
+                      No meetings scheduled for today.
+                    </div>
+                  )}
+
                 </div>
               </Card.Body>
             </Card>

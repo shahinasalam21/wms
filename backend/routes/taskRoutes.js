@@ -1,44 +1,71 @@
 import express from "express";
-import { createTask } from "../models/task.js";
-import { verifyJWT, authMiddleware } from "../middleware/authMiddleware.js";
-
 import pool from "../config/db.js";
+import { createTask } from "../models/task.js";
+import { verifyJWT,authMiddleware} from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
-// task api
-router.post("/create", async (req, res) => {
+// @route   POST /api/tasks/create
+// @desc    Create a new task under a workflow
+// @access  Private (Manager)
+router.post("/create", verifyJWT, async (req, res) => {
   const { title, description, priority, assignedTo, workflow_id, due_date } = req.body;
+
+  // ✅ Check required fields
+  if (!title || !workflow_id || !due_date) {
+    return res.status(400).json({ error: "Title, workflow ID, and due date are required" });
+  }
 
   try {
     const task = await createTask(title, description, priority, assignedTo, workflow_id, due_date);
     res.status(201).json({ message: "Task created successfully", task });
   } catch (error) {
-    console.error("Error creating task:", error);
+    console.error("❌ Error creating task:", error);
     res.status(500).json({ error: error.message || "Server error while creating task" });
   }
 });
-// Middleware to verify JWT
 
-router.get("/", verifyJWT, async (req, res) => {
+// @route   GET /api/tasks
+// @desc    Get tasks created by the manager (under their workflows)
+// @access  Private (Manager)
+router.get("/", verifyJWT, authMiddleware(["manager"]),async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM tasks");
-    res.json(result.rows);
+    const managerId = req.user.id; // ✅ Make sure req.user.id exists
+    console.log("🔐 Logged in manager ID:", managerId);
+
+    const result = await pool.query(
+      `
+      SELECT tasks.*, users.name AS assigned_to_name
+      FROM tasks
+      INNER JOIN workflows ON tasks.workflow_id = workflows.id
+      LEFT JOIN users ON tasks.assigned_to = users.id
+      WHERE workflows.manager_id = $1
+      ORDER BY tasks.created_at DESC
+      `,
+      [managerId]
+    );
+
+    console.log("📦 Retrieved tasks:", result.rows);
+    res.status(200).json(result.rows);
   } catch (error) {
-    console.error("Error fetching tasks:", error);
+    console.error("❌ Error fetching manager-specific tasks:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 router.get("/active", async (req, res) => {
+  const { managerId } = req.query;
   try {
-    const result = await pool.query("SELECT COUNT(*) FROM tasks");
-    res.json({ count: result.rows[0].count });
+    const result = await pool.query(
+      "SELECT COUNT(*) FROM tasks WHERE workflow_id IN (SELECT id FROM workflows WHERE manager_id = $1)",
+      [managerId]
+    );
+    res.json({ count: parseInt(result.rows[0].count) });
   } catch (error) {
-    console.error("Error fetching active tasks count:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching active tasks:", error);
+    res.status(500).json({ error: "Server error while fetching active tasks" });
   }
 });
-
 //get Tasks Assigned to an Employee
 router.get("/assigned/:employeeId", verifyJWT, authMiddleware(["employee"]), async (req, res) => {
   try {

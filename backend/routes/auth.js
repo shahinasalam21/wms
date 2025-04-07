@@ -131,9 +131,16 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    const redirectURL = user.role === "manager" ? "/manager-dashboard" : "/employee-dashboard";
-
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    
+    const redirectURL = user.role === "manager" 
+    ? `/manager-dashboard/${user.id}` 
+    : `/employee-dashboard/${user.id}`;
+  
     // Send user data in response
     res.json({ 
       message: "Login successful",

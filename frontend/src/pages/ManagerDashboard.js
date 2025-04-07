@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaProjectDiagram, FaTasks, FaUsers, FaBell } from "react-icons/fa";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { useParams } from "react-router-dom";
+
+import "bootstrap/dist/css/bootstrap.min.css"; 
 import "./Dashboard.css";
 
 const Header = () => (
@@ -20,26 +22,26 @@ const ManagerDashboard = () => {
   const [workflows, setWorkflows] = useState([]);
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [activeTasks, setActiveTasks] = useState(0);
+  const { managerId } = useParams();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch workflows
-        const workflowResponse = await fetch("http://localhost:5000/api/workflows");
+        // 1 . Fetch workflows for this manager
+        const workflowResponse = await fetch(`http://localhost:5000/api/workflows/manager/${managerId}`);
+
         if (!workflowResponse.ok) throw new Error("Failed to fetch workflows");
         const workflowData = await workflowResponse.json();
         setWorkflows(Array.isArray(workflowData) ? workflowData : []);
   
-        // Fetch employees count
-        const employeesResponse = await fetch("http://localhost:5000/api/employees/count");
-
+        // 2. Fetch employee count under this manager
+        const employeesResponse = await fetch(`http://localhost:5000/api/employees/count?managerId=${managerId}`);
         if (!employeesResponse.ok) throw new Error("Failed to fetch employee count");
         const employeesData = await employeesResponse.json();
         setTotalEmployees(employeesData.count || 0);
-
   
-        // Fetch active tasks count
-        const tasksResponse = await fetch("http://localhost:5000/api/tasks/active");
+        // 3. Fetch active tasks under this manager
+        const tasksResponse = await fetch(`http://localhost:5000/api/tasks/active?managerId=${managerId}`);
         if (!tasksResponse.ok) throw new Error("Failed to fetch active tasks");
         const tasksData = await tasksResponse.json();
         setActiveTasks(tasksData.count || 0);
@@ -49,8 +51,11 @@ const ManagerDashboard = () => {
       }
     };
   
-    fetchData();
-  }, []);
+    if (managerId) {
+      fetchData();
+    }
+  }, [managerId]);
+  
   
   return (
     <div className="container-fluid">

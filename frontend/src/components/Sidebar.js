@@ -1,37 +1,72 @@
 import React from "react";
-import { Link, useNavigate, useLocation} from "react-router-dom";
-import { FaHome, FaClipboardList, FaUsers, FaChartBar, FaPlus, FaSignOutAlt } from "react-icons/fa";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { 
+  FaHome, FaClipboardList, FaUsers, FaChartBar, 
+  FaPlus, FaSignOutAlt, FaCalendarAlt 
+} from "react-icons/fa";
 import "../pages/Dashboard.css";
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const location = useLocation();
- 
-  const isActive = (path) => (location.pathname === path ? "active-link" : "");
+  const { managerId } = useParams(); // Get managerId from URL
+
+  const linkBase = `/manager/${managerId}`; // Base path for all routes
+
+  const handleSignOut = () => {
+    navigate("/login");
+  };
 
   return (
     <div className="sidebar">
       <h2 className="text-center">DASHBOARD</h2>
       <nav>
-        <li className={isActive("/Profile")}><Link to="/Profile"><FaHome /> Profile</Link></li>
-        <li className={isActive("/workflows")}><Link to="/workflows"><FaClipboardList /> Workflows</Link></li>
-        <li className={isActive("/tasks")}><Link to="/tasks"><FaClipboardList /> Tasks</Link></li>
-        <li className={isActive("/employees")}><Link to="/employees"><FaUsers /> Employees</Link></li>
-        <li className={isActive("/reports")}><Link to="/reports"><FaChartBar /> Reports</Link></li>
-        <li className={isActive("/schedule-meeting")}><Link to="/schedule-meeting"><FaChartBar /> Schedule Meeting</Link></li>
-        <li className={isActive("/manager-meetings")}><Link to="/manager-meetings"><FaChartBar /> My Meetings</Link></li>
-
-        <li>
-          <button className="create-button" onClick={() => navigate("/create-workflow")}>
-            <FaPlus /> Create Workflow
-          </button>
-        </li>
-
-        <li>
-          <button className="signout-btn" onClick={() => navigate("/login")}>
-            <FaSignOutAlt /> Sign Out
-          </button>
-        </li>
+        <ul className="list-unstyled">
+          <li>
+            <NavLink to={`${linkBase}/profile`} className={({ isActive }) => isActive ? "active-link" : ""}>
+              <FaHome /> Profile
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to={`${linkBase}/workflows`} className={({ isActive }) => isActive ? "active-link" : ""}>
+              <FaClipboardList /> Workflows
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to={`${linkBase}/tasks`} className={({ isActive }) => isActive ? "active-link" : ""}>
+              <FaClipboardList /> Tasks
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to={`${linkBase}/employees`} className={({ isActive }) => isActive ? "active-link" : ""}>
+              <FaUsers /> Employees
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to={`${linkBase}/reports`} className={({ isActive }) => isActive ? "active-link" : ""}>
+              <FaChartBar /> Reports
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to={`${linkBase}/schedule-meeting`} className={({ isActive }) => isActive ? "active-link" : ""}>
+              <FaCalendarAlt /> Schedule Meeting
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to={`${linkBase}/manager-meetings`} className={({ isActive }) => isActive ? "active-link" : ""}>
+              <FaCalendarAlt /> My Meetings
+            </NavLink>
+          </li>
+          <li>
+            <button className="create-button" onClick={() => navigate(`${linkBase}/create-workflow`)}>
+              <FaPlus /> Create Workflow
+            </button>
+          </li>
+          <li>
+            <button className="signout-btn" onClick={handleSignOut}>
+              <FaSignOutAlt /> Sign Out
+            </button>
+          </li>
+        </ul>
       </nav>
     </div>
   );

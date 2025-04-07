@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import './Workflows.css';
-
+import { useParams } from "react-router-dom";
 const Workflows = () => {
     const [workflows, setWorkflows] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
-
+    const { managerId } = useParams();
     //fetch the workflows 
     useEffect(() => {
         const fetchWorkflows = async () => {
+            
             try {
-                const response = await fetch("http://localhost:5000/api/workflows");
+                const response = await fetch(`http://localhost:5000/api/workflows/manager/${managerId}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch workflows");
                 }

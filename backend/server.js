@@ -44,7 +44,7 @@ app.use(
 
 app.use(express.json());
 
-// Serve uploaded files
+// Serve uploaded files 
 app.use("/uploads", express.static(uploadDir));
 
 // API Routes

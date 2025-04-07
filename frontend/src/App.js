@@ -1,7 +1,7 @@
 import React, { useState } from "react"; 
 import { Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Carousel, Container, Row, Col } from "react-bootstrap";
+import { Carousel} from "react-bootstrap";
 import "./App.css";
 import logo from './workflow-logo.svg';
 
@@ -52,31 +52,31 @@ const App = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       
       <Route element={<DashboardLayout />}>
-        <Route path="/manager-dashboard" element={<ManagerDashboard />} />
-        <Route path="/create-workflow" element={<CreateWorkflow setWorkflows={setWorkflows} />} />
-        <Route path="/workflows" element={<Workflows workflows={workflows} />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/profile" element={<Profile userId={localStorage.getItem("userId")} />} />
+        <Route path="/manager-dashboard/:managerId" element={<ManagerDashboard />} />
+
+        <Route path="/manager/:managerId/create-workflow" element={<CreateWorkflow setWorkflows={setWorkflows} />} />
+        <Route path="/manager/:managerId/workflows" element={<Workflows workflows={workflows} />} />
+        <Route path="/manager/:managerId/reports" element={<Reports />} />
+        <Route path="/manager/:managerId/profile" element={<Profile userId={localStorage.getItem("userId")} />} />
           
-        <Route path="/tasks" element={<Tasks />} />
-        <Route path="/employees" element={<Employees />} />
-        <Route path="/schedule-meeting" element={<ScheduleMeeting />} />
-        <Route path="/manager-meetings" element={<ManagerMeetings />} />
+        <Route path="/manager/:managerId/tasks" element={<Tasks />} />
+        <Route path="/manager/:managerId/employees" element={<Employees />} />
+        <Route path="/manager/:managerId/schedule-meeting" element={<ScheduleMeeting />} />
+        <Route path="/manager/:managerId/manager-meetings" element={<ManagerMeetings />} />
       </Route>
 
       <Route element={<EmpDashboardLayout />}>
-        <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
-        <Route path="/employee-profile" element={<Employeeprofile/>}/>
-       
-        <Route path="/employee-tasks" element={<TaskPage />} />
-        <Route path="/performance" element={<Performance />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/upload-document" element={<UploadDocument />} />
-        <Route
-          path="/employee-meetings"
-          element={<EmployeeMeetings employeeId={localStorage.getItem("employeeId")} />}
-        />
+        <Route path="/employee-dashboard/:employeeId" element={<EmployeeDashboard />} />
+        <Route path="/employee/:employeeId/employee-profile" element={<Employeeprofile />} />
+        <Route path="/employee/:employeeId/employee-tasks" element={<TaskPage />} />
+        <Route path="/employee/:employeeId/performance" element={<Performance />} />
+        <Route path="/employee/:employeeId/notifications" element={<Notifications />} />
+        <Route path="/employee/:employeeId/upload-document" element={<UploadDocument />} />
+        <Route path="/employee/:employeeId/employee-meetings" element={
+          <EmployeeMeetings employeeId={localStorage.getItem("userId")} />
+        } />
       </Route>
+
     </Routes>
   );
 };

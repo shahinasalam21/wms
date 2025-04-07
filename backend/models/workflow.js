@@ -12,9 +12,15 @@ export const createWorkflow = async (name, description, manager_id) => {
 };
 
 //fetching
-export const getAllWorkflows = async () => {
-  const query = "SELECT * FROM workflows ORDER BY created_at DESC;";
-  const { rows } = await pool.query(query);
-  return rows;
+export const getAllWorkflows = async (manager_id = null) => {
+  if (manager_id) {
+    const result = await pool.query(
+      "SELECT * FROM workflows WHERE manager_id = $1",
+      [manager_id]
+    );
+    return result.rows;
+  } else {
+    const result = await pool.query("SELECT * FROM workflows");
+    return result.rows;
+  }
 };
-
