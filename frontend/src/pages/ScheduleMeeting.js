@@ -10,15 +10,15 @@ function ScheduleMeeting() {
     const [selectedEmployees, setSelectedEmployees] = useState([]);
     const [error, setError] = useState(null);
 
-    const managerId = localStorage.getItem("userId"); // Get manager ID
-    const token = localStorage.getItem("token"); // Get JWT token
+    const managerId = localStorage.getItem("userId"); 
+    const token = localStorage.getItem("token"); 
     const API_BASE_URL = "http://localhost:5000/api";
 
     useEffect(() => {
         const fetchEmployees = async () => {
             try {
                 const response = await axios.get(`${API_BASE_URL}/employees`, {
-                    headers: { Authorization: `Bearer ${token}` }, // ✅ Add token in header
+                    headers: { Authorization: `Bearer ${token}` }, 
                 });
                 setEmployees(response.data);
             } catch (err) {
@@ -31,8 +31,8 @@ function ScheduleMeeting() {
     const handleEmployeeSelection = (empId) => {
         setSelectedEmployees((prevSelected) =>
             prevSelected.includes(empId)
-                ? prevSelected.filter((id) => id !== empId) // Remove if already selected
-                : [...prevSelected, empId] // Add if not selected
+                ? prevSelected.filter((id) => id !== empId) 
+                : [...prevSelected, empId] 
         );
     };
 
@@ -61,7 +61,7 @@ function ScheduleMeeting() {
                     employee_ids: selectedEmployees,
                 },
                 {
-                    headers: { Authorization: `Bearer ${token}` }, // ✅ Add token in header
+                    headers: { Authorization: `Bearer ${token}` }, 
                 }
             );
 

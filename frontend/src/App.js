@@ -26,7 +26,7 @@ import ManagerMeetings from "./pages/ManagerMeetings";
 import Tasks from "./pages/Tasks";
 import Reports from "./pages/Reports";
 
-import Profile from "./pages/Profile"; 
+import Profile from "./pages/ManagerProfile"; 
 
 import Employees from "./pages/Employees";
 import TaskPage from "./pages/TaskPage";
@@ -37,9 +37,6 @@ import UploadDocument from "./pages/UploadDocument";
 
 import Employeeprofile from "./pages/Employeeprofile";
 import ViewDocuments from './pages/ViewDocuments';
-
-// Import custom icons (you'd need to install react-icons)
-// import { FaTasks, FaUsers, FaChartLine, FaCalendarAlt } from 'react-icons/fa';
 
 const App = () => {
   const [workflows, setWorkflows] = useState([]);
