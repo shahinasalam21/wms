@@ -36,6 +36,7 @@ import Performance from "./pages/Performance";
 import UploadDocument from "./pages/UploadDocument";
 
 import Employeeprofile from "./pages/Employeeprofile";
+import ViewDocuments from './pages/ViewDocuments';
 
 // Import custom icons (you'd need to install react-icons)
 // import { FaTasks, FaUsers, FaChartLine, FaCalendarAlt } from 'react-icons/fa';
@@ -62,6 +63,7 @@ const App = () => {
         <Route path="/employees" element={<Employees />} />
         <Route path="/schedule-meeting" element={<ScheduleMeeting />} />
         <Route path="/manager-meetings" element={<ManagerMeetings />} />
+        <Route path="/view-documents/:taskId" element={<ViewDocuments />} />
       </Route>
 
       <Route element={<EmpDashboardLayout />}>

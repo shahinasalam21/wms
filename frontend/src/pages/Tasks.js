@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Container, Table, Spinner, Alert, Badge, Card } from "react-bootstrap";
+import { useNavigate } from "react-router-dom"; // <-- import useNavigate
+
 import "./Tasks.css";
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -47,6 +50,10 @@ const Tasks = () => {
     return <Badge bg={variant} className="priority-badge">{priority}</Badge>;
   };
 
+
+  const handleViewDocuments = (taskId) => {
+    navigate(`/view-documents/${taskId}`);
+  };
   return (
     <div className="tasks-page bg-light min-vh-100">
       <div className="tasks-container">
@@ -76,6 +83,8 @@ const Tasks = () => {
                         <th className="bg-primary text-white">Employee Name</th>
                         <th className="bg-primary text-white">Due Date</th>
                         <th className="bg-primary text-white">Created At</th>
+                        <th className="bg-primary text-white">Documents</th>
+
                       </tr>
                     </thead>
                     <tbody>
@@ -99,6 +108,14 @@ const Tasks = () => {
                               year: 'numeric'
                             })}
                             </td>
+                            <td>
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => handleViewDocuments(task.id)}
+                            >
+                              View Documents
+                            </button>
+                          </td>
                           </tr>
                         ))
                       ) : (
