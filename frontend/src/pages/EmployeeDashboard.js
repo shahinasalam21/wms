@@ -6,7 +6,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const EmployeeDashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [meetings, setMeetings] = useState([]);
-  const [notifications] = useState([]);
   const [name, setName] = useState("");
 
   useEffect(() => {
@@ -113,25 +112,6 @@ const EmployeeDashboard = () => {
                   <small>
                     {meetings.length > 0 ? `Next meeting: ${meetings[0].time}` : "No meetings today"}
                   </small>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-
-          <Col md={4}>
-            <Card className="border-0 shadow-sm h-100">
-              <Card.Body className="p-4">
-                <div className="d-flex align-items-center mb-3">
-                  <div className="rounded-circle bg-warning-subtle p-3 me-3">
-                    <Bell className="text-warning" size={22} />
-                  </div>
-                  <div>
-                    <h6 className="mb-0 text-muted">Notifications</h6>
-                    <h2 className="mb-0 fw-bold">{notifications.length}</h2>
-                  </div>
-                </div>
-                <div className="d-flex align-items-center text-muted">
-                  <small>{notifications.filter(n => n.isNew).length} unread notifications</small>
                 </div>
               </Card.Body>
             </Card>
