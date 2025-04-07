@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
+import { useLocation } from "react-router-dom";
 import "../components/UploadDocument.css";
 
 const UploadDocument = () => {
@@ -7,103 +8,84 @@ const UploadDocument = () => {
   const [preview, setPreview] = useState(null);
   const [message, setMessage] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { state } = useLocation();
+  const taskId = state?.taskId;
+  const taskTitle = state?.taskTitle;
 
   useEffect(() => {
-    fetchUploadedFiles();
+    if (taskId) fetchUploadedFiles(taskId);
     return () => preview && URL.revokeObjectURL(preview);
-  }, [preview]);
+  }, [taskId, preview]);
 
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => setMessage(""), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
-
-  const fetchUploadedFiles = async () => {
+  const fetchUploadedFiles = async (taskId) => {
     try {
-      const response = await fetch("http://localhost:5000/api/uploaded-files");
+      const response = await fetch(`http://localhost:5000/api/uploaded-files/${taskId}`);
       if (!response.ok) throw new Error("Failed to fetch files");
       const files = await response.json();
       setUploadedFiles(files);
-    } catch (error) {
+    } catch {
       setMessage("⚠️ Failed to fetch files.");
     }
   };
 
   const onDrop = (acceptedFiles) => {
-    if (acceptedFiles.length === 0) return;
-    const selectedFile = acceptedFiles[0];
-    setFile(selectedFile);
-
+    const selected = acceptedFiles[0];
+    setFile(selected);
     if (preview) URL.revokeObjectURL(preview);
-
-    setPreview(
-      selectedFile.type.startsWith("image/")
-        ? URL.createObjectURL(selectedFile)
-        : selectedFile.type === "application/pdf"
-        ? "/pdf-icon.png"
-        : "/file-icon.png"
-    );
+    setPreview(selected.type.startsWith("image/") ? URL.createObjectURL(selected) : "/file-icon.png");
   };
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const handleUpload = async () => {
-    if (!file) {
-      setMessage("⚠️ Please select a file first.");
-      return;
-    }
+    if (!file || !taskId) return setMessage("⚠️ Please select a file and valid task.");
 
     const formData = new FormData();
     formData.append("document", file);
 
     try {
-      const response = await fetch("http://localhost:5000/api/upload", {
+      const response = await fetch(`http://localhost:5000/api/upload/${taskId}`, {
         method: "POST",
         body: formData,
       });
 
-      if (!response.ok) throw new Error("File upload failed.");
+      if (!response.ok) throw new Error("Upload failed");
 
       setMessage("✅ File uploaded successfully!");
       setFile(null);
       setPreview(null);
-      fetchUploadedFiles();
-    } catch (error) {
+      fetchUploadedFiles(taskId);
+    } catch {
       setMessage("❌ File upload failed.");
     }
   };
 
-  const handleDelete = async (filename) => {
+  const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/delete-file/${filename}`, {
+      const response = await fetch(`http://localhost:5000/api/delete-file/${id}`, {
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error("Failed to delete file");
+      if (!response.ok) throw new Error("Delete failed");
 
       setMessage("✅ File deleted successfully!");
-      fetchUploadedFiles();
-    } catch (error) {
+      fetchUploadedFiles(taskId);
+    } catch {
       setMessage("❌ Failed to delete file.");
     }
   };
 
- 
   const filteredFiles = uploadedFiles.filter((file) =>
     file.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="upload-page">
-    
-     
       <div className="content-container">
-       
         <div className="upload-container">
-          <h2>Upload Files</h2>
+          <h2>Upload Document for: <strong>{taskTitle}</strong></h2>
           <div className="drop-zone" {...getRootProps()}>
             <input {...getInputProps()} />
             <p>📂 Drag & Drop or Click to Browse</p>
@@ -112,14 +94,8 @@ const UploadDocument = () => {
           {file && (
             <div className="file-preview-container">
               <h4>Selected File:</h4>
-              {file.type.startsWith("image/") ? (
-                <img src={preview} alt="Selected File" className="file-preview" />
-              ) : (
-                <div className="file-info">
-                  <img src={preview} alt="File Icon" className="file-icon" />
-                  <p>{file.name}</p>
-                </div>
-              )}
+              <img src={preview} alt="Preview" className="file-preview" />
+              <p>{file.name}</p>
               <button className="cancel-button" onClick={() => setFile(null)}>Cancel</button>
             </div>
           )}
@@ -131,8 +107,6 @@ const UploadDocument = () => {
 
         <div className="uploaded-files-container">
           <h3>Uploaded Files</h3>
-
-       
           <input
             type="text"
             className="search-input"
@@ -146,8 +120,8 @@ const UploadDocument = () => {
               <li key={index} className="file-item">
                 <span>{file.name}</span>
                 <div className="file-actions">
-                  <a href={`http://localhost:5000${file.url}`} target="_blank" rel="noopener noreferrer" className="view-button">View</a>
-                  <button className="delete-button" onClick={() => handleDelete(file.name)}>Delete</button>
+                  <a href={`http://localhost:5000/api/download/${file.id}`} target="_blank" rel="noopener noreferrer" className="view-button">View</a>
+                  <button className="delete-button" onClick={() => handleDelete(file.id)}>Delete</button>
                 </div>
               </li>
             ))}

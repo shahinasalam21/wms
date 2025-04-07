@@ -6,10 +6,10 @@ const EmployeeTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  
+
   const employeeId = localStorage.getItem("userId");
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const fetchTasks = async () => {
       setIsLoading(true);
@@ -24,7 +24,7 @@ const EmployeeTasks = () => {
             },
           }
         );
-        
+
         const data = await response.json();
         if (response.ok) {
           setTasks(data);
@@ -37,37 +37,37 @@ const EmployeeTasks = () => {
         setIsLoading(false);
       }
     };
-    
+
     if (employeeId) {
       fetchTasks();
     }
   }, [employeeId]);
 
-  // Function to get appropriate badge color based on status
+  // Get CSS class for status
   const getStatusColor = (status) => {
-    switch (status?.toLowerCase() || 'default') {
-      case 'completed':
-        return 'status-completed';
-      case 'in progress':
-        return 'status-in-progress';
-      case 'pending':
-        return 'status-pending';
+    switch (status?.toLowerCase() || "default") {
+      case "completed":
+        return "status-completed";
+      case "in progress":
+        return "status-in-progress";
+      case "pending":
+        return "status-pending";
       default:
-        return 'status-default';
+        return "status-default";
     }
   };
 
-  // Function to get appropriate badge color based on priority
+  // Get CSS class for priority
   const getPriorityColor = (priority) => {
-    switch (priority?.toLowerCase() || 'default') {
-      case 'high':
-        return 'priority-high';
-      case 'medium':
-        return 'priority-medium';
-      case 'low':
-        return 'priority-low';
+    switch (priority?.toLowerCase() || "default") {
+      case "high":
+        return "priority-high";
+      case "medium":
+        return "priority-medium";
+      case "low":
+        return "priority-low";
       default:
-        return 'priority-default';
+        return "priority-default";
     }
   };
 
@@ -78,14 +78,14 @@ const EmployeeTasks = () => {
           <span className="header-icon">📋</span> My Assigned Tasks
         </h2>
       </div>
-      
+
       {error && (
         <div className="error-banner">
           <i className="error-icon">⚠️</i>
           <p>{error}</p>
         </div>
       )}
-      
+
       {isLoading ? (
         <div className="loading-container">
           <div className="loading-spinner"></div>
@@ -108,12 +108,12 @@ const EmployeeTasks = () => {
                   </span>
                 </div>
               </div>
-              
+
               <div className="task-body">
                 <p className="task-description">
                   {task.description || "No description provided."}
                 </p>
-                
+
                 <div className="task-footer">
                   <div className="task-meta">
                     {task.dueDate && (
@@ -129,10 +129,14 @@ const EmployeeTasks = () => {
                       </div>
                     )}
                   </div>
-                  
+
                   <button
                     className="upload-document-btn"
-                    onClick={() => navigate(`/upload-document`)}
+                    onClick={() =>
+                      navigate("/upload-document", {
+                        state: { taskId: task.id, taskTitle: task.title },
+                      })
+                    }
                   >
                     <i className="upload-icon">📤</i> Upload Document
                   </button>
