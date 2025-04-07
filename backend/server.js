@@ -20,7 +20,7 @@ dotenv.config();
 
 const app = express();
 
-// Create 'uploads' directory if it doesn't exist
+
 const uploadDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -49,7 +49,8 @@ app.use("/uploads", express.static(uploadDir));
 
 // API Routes
 app.use("/api/auth", authRoutes);
-app.use("/api", uploadRoutes);
+app.use('/api/upload', uploadRoutes);
+
 app.use("/api/workflows", workflowRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/employees", employeeRoutes);

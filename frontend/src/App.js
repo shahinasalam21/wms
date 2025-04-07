@@ -36,7 +36,8 @@ import Performance from "./pages/Performance";
 import UploadDocument from "./pages/UploadDocument";
 
 import Employeeprofile from "./pages/Employeeprofile";
-import ViewDocuments from './pages/ViewDocuments';
+
+import ManagerViewDocuments from "./pages/ManagerViewDocuments";
 
 const App = () => {
   const [workflows, setWorkflows] = useState([]);
@@ -58,6 +59,7 @@ const App = () => {
         <Route path="/manager/:managerId/profile" element={<Profile userId={localStorage.getItem("userId")} />} />
           
         <Route path="/manager/:managerId/tasks" element={<Tasks />} />
+        <Route path="/manager/:managerId/view-documents/:taskId" element={<ManagerViewDocuments />} />
         <Route path="/manager/:managerId/employees" element={<Employees />} />
         <Route path="/manager/:managerId/schedule-meeting" element={<ScheduleMeeting />} />
         <Route path="/manager/:managerId/manager-meetings" element={<ManagerMeetings />} />
@@ -77,7 +79,6 @@ const App = () => {
         <Route path="/employee/:employeeId/employee-meetings" element={
           <EmployeeMeetings employeeId={localStorage.getItem("userId")} />
         } />
-        <Route path="/view-documents/:taskId" element={<ViewDocuments />} />
       </Route>
 
     </Routes>

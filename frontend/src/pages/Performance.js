@@ -59,7 +59,7 @@ const Performance = () => {
 
   const handleCardClick = (label) => {
     if (label === "Total Tasks") {
-      navigate("/employee/:employeeId/employee-tasks");
+      navigate("/employee/:employeeId/employee-task");
     }
   };
 

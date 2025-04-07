@@ -43,7 +43,6 @@ const EmployeeTasks = () => {
     }
   }, [employeeId]);
 
-  // Get CSS class for status
   const getStatusColor = (status) => {
     switch (status?.toLowerCase() || "default") {
       case "completed":
@@ -57,7 +56,7 @@ const EmployeeTasks = () => {
     }
   };
 
-  // Get CSS class for priority
+ 
   const getPriorityColor = (priority) => {
     switch (priority?.toLowerCase() || "default") {
       case "high":
@@ -133,7 +132,7 @@ const EmployeeTasks = () => {
                   <button
                     className="upload-document-btn"
                     onClick={() =>
-                      navigate("/employee/:employeeId/upload-document", {
+                      navigate(`/employee/${employeeId}/upload-document`, {
                         state: { taskId: task.id, taskTitle: task.title },
                       })
                     }

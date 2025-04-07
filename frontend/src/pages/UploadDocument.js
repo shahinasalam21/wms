@@ -13,13 +13,30 @@ const UploadDocument = () => {
   const { state } = useLocation();
   const taskId = state?.taskId;
   const taskTitle = state?.taskTitle;
-
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+    const fetchUploadedFiles = async (taskId) => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/upload/uploaded-files/${taskId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch files");
+        const files = await response.json();
+        setUploadedFiles(files);
+      } catch {
+        setMessage("⚠️ Failed to fetch files.");
+      }
+    };
+
     if (taskId) fetchUploadedFiles(taskId);
     return () => preview && URL.revokeObjectURL(preview);
-  }, [taskId, preview]);
+  }, [taskId, preview, token]);
 
   // Automatically clear message after 10 seconds
   useEffect(() => {
@@ -28,29 +45,15 @@ const UploadDocument = () => {
     return () => clearTimeout(timer);
   }, [message]);
 
-  const fetchUploadedFiles = async (taskId) => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/uploaded-files/${taskId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) throw new Error("Failed to fetch files");
-      const files = await response.json();
-      setUploadedFiles(files);
-    } catch {
-      setMessage("⚠️ Failed to fetch files.");
-    }
-  };
-
   const onDrop = (acceptedFiles) => {
     const selected = acceptedFiles[0];
     setFile(selected);
     if (preview) URL.revokeObjectURL(preview);
-    setPreview(selected.type.startsWith("image/") ? URL.createObjectURL(selected) : "/file-icon.png");
+    setPreview(
+      selected.type.startsWith("image/")
+        ? URL.createObjectURL(selected)
+        : "/file-icon.png"
+    );
   };
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
@@ -62,10 +65,10 @@ const UploadDocument = () => {
     formData.append("document", file);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/upload/${taskId}`, {
+      const response = await fetch(`http://localhost:5000/api/upload/upload/${taskId}`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`, // 🔐 Attach auth header (no need for Content-Type with FormData)
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       });
@@ -75,7 +78,17 @@ const UploadDocument = () => {
       setMessage("✅ File uploaded successfully!");
       setFile(null);
       setPreview(null);
-      fetchUploadedFiles(taskId);
+
+      // Re-fetch uploaded files
+      const refresh = await fetch(`http://localhost:5000/api/upload/uploaded-files/${taskId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const updatedFiles = await refresh.json();
+      setUploadedFiles(updatedFiles);
     } catch {
       setMessage("❌ File upload failed.");
     }
@@ -94,7 +107,17 @@ const UploadDocument = () => {
       if (!response.ok) throw new Error("Delete failed");
 
       setMessage("✅ File deleted successfully!");
-      fetchUploadedFiles(taskId);
+
+      // Refresh after deletion
+      const refresh = await fetch(`http://localhost:5000/api/uploaded-files/${taskId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const updatedFiles = await refresh.json();
+      setUploadedFiles(updatedFiles);
     } catch {
       setMessage("❌ Failed to delete file.");
     }
@@ -123,7 +146,9 @@ const UploadDocument = () => {
             </div>
           )}
 
-          <button className="upload-button" onClick={handleUpload} disabled={!file}>Upload</button>
+          <button className="upload-button" onClick={handleUpload} disabled={!file}>
+            Upload
+          </button>
 
           {message && <p className="upload-message">{message}</p>}
         </div>
@@ -151,7 +176,12 @@ const UploadDocument = () => {
                   >
                     View
                   </a>
-                  <button className="delete-button" onClick={() => handleDelete(file.id)}>Delete</button>
+                  <button
+                    className="delete-button"
+                    onClick={() => handleDelete(file.id)}
+                  >
+                    Delete
+                  </button>
                 </div>
               </li>
             ))}

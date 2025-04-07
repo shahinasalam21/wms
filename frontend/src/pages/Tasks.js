@@ -63,10 +63,19 @@ const Tasks = () => {
     );
   };
 
-
-  const handleViewDocuments = (taskId) => {
-    navigate(`/view-documents/${taskId}`);
+  const handleViewDocuments = (task) => {
+    const managerId = localStorage.getItem("userId");
+  
+    navigate(`/manager/${managerId}/view-documents/${task.id}`, {
+      state: {
+        taskId: task.id,
+        taskTitle: task.title,
+      },
+    });
   };
+  
+  
+  
   return (
     <div className="tasks-page bg-light min-vh-100">
     <h1 className="text-center pt-4 fw-bold" style={{ color: "#003366" }}>Tasks</h1>
@@ -130,12 +139,13 @@ const Tasks = () => {
                             )}
                           </td>
                           <td>
-                            <button
-                              className="btn btn-primary"
-                              onClick={() => handleViewDocuments(task.id)}
-                            >
-                              View Documents
-                            </button>
+                          <button
+                                 className="btn btn-primary"
+                                   onClick={() => handleViewDocuments(task)}
+                          >
+                           View Documents
+                          </button>
+
                           </td>
                         </tr>
                       ))
