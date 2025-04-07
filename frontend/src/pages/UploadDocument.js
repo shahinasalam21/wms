@@ -38,7 +38,6 @@ const UploadDocument = () => {
     return () => preview && URL.revokeObjectURL(preview);
   }, [taskId, preview, token]);
 
-  // Automatically clear message after 10 seconds
   useEffect(() => {
     if (!message) return;
     const timer = setTimeout(() => setMessage(""), 10000);
@@ -79,7 +78,6 @@ const UploadDocument = () => {
       setFile(null);
       setPreview(null);
 
-      // Re-fetch uploaded files
       const refresh = await fetch(`http://localhost:5000/api/upload/uploaded-files/${taskId}`, {
         method: "GET",
         headers: {
@@ -96,7 +94,7 @@ const UploadDocument = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/delete-file/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/upload/delete-file/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -108,8 +106,7 @@ const UploadDocument = () => {
 
       setMessage("✅ File deleted successfully!");
 
-      // Refresh after deletion
-      const refresh = await fetch(`http://localhost:5000/api/uploaded-files/${taskId}`, {
+      const refresh = await fetch(`http://localhost:5000/api/upload/uploaded-files/${taskId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -120,6 +117,31 @@ const UploadDocument = () => {
       setUploadedFiles(updatedFiles);
     } catch {
       setMessage("❌ Failed to delete file.");
+    }
+  };
+
+  const handleSecureDownload = async (fileId, fileName) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/upload/download/${fileId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to download file");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      setMessage("❌ Download failed.");
     }
   };
 
@@ -168,14 +190,12 @@ const UploadDocument = () => {
               <li key={index} className="file-item">
                 <span>{file.name}</span>
                 <div className="file-actions">
-                  <a
-                    href={`http://localhost:5000/api/download/${file.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
                     className="view-button"
+                    onClick={() => handleSecureDownload(file.id, file.name)}
                   >
-                    View
-                  </a>
+                   View
+                  </button>
                   <button
                     className="delete-button"
                     onClick={() => handleDelete(file.id)}
