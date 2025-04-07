@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { 
-  FaHome, FaClipboardList, FaUsers, FaChartBar, 
+  FaHome, FaClipboardList, FaUsers, 
   FaPlus, FaSignOutAlt, FaCalendarAlt 
 } from "react-icons/fa";
 import "../pages/Dashboard.css";
@@ -47,11 +47,7 @@ const Sidebar = () => {
               <FaUsers /> Employees
             </NavLink>
           </li>
-          <li>
-            <NavLink to={`${linkBase}/reports`} className={({ isActive }) => isActive ? "active-link" : ""}>
-              <FaChartBar /> Reports
-            </NavLink>
-          </li>
+          
           <li>
             <NavLink to={`${linkBase}/schedule-meeting`} className={({ isActive }) => isActive ? "active-link" : ""}>
               <FaCalendarAlt /> Schedule Meeting

@@ -1,21 +1,22 @@
-# Use Node.js official image
-FROM node:20
+# Base image
+FROM node:18-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and install dependencies
-COPY package.json package-lock.json ./
+# Install dependencies
+COPY package.json ./
+COPY package-lock.json ./
 RUN npm install
 
-# Copy the rest of the application
+# Install nodemon globally
+RUN npm install -g nodemon
+
+# Copy app files
 COPY . .
 
-# Set environment variable
-ENV NODE_ENV=production
-
-# Expose the port the app runs on
+# Expose backend port
 EXPOSE 5000
 
-# Start the backend server
-CMD ["node", "server.js"]
+# Start backend with nodemon
+CMD ["nodemon", "server.js"]

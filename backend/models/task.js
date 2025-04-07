@@ -1,5 +1,4 @@
 import pool from "../config/db.js";
-import { sendTaskNotification } from "../mail/email.js"; 
 
 //insert task
 export const createTask = async (title, description, priority, assignedToEmail, workflowId, dueDate) => {
@@ -25,12 +24,7 @@ export const createTask = async (title, description, priority, assignedToEmail, 
     const newTask = rows[0];
 
     
-    try {
-      await sendTaskNotification(assignedToEmail, workflowId, title, description, dueDate);
-      console.log(`📧 Notification email sent to ${assignedToEmail}`);
-    } catch (emailError) {
-      console.error("❌ Failed to send email notification:", emailError);
-    }
+    
 
     return newTask;
   } catch (error) {
