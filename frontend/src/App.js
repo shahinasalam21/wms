@@ -61,6 +61,8 @@ const App = () => {
         <Route path="/manager/:managerId/employees" element={<Employees />} />
         <Route path="/manager/:managerId/schedule-meeting" element={<ScheduleMeeting />} />
         <Route path="/manager/:managerId/manager-meetings" element={<ManagerMeetings />} />
+        <Route path="/manager/:managerId/home" element={<ManagerDashboard />} />
+
       </Route>
 
       <Route element={<EmpDashboardLayout />}>
