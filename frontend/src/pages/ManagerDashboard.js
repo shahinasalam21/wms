@@ -103,20 +103,7 @@ const ManagerDashboard = () => {
         )}
       </div>
 
-      {/* Notifications */}
-      <div className="mt-4">
-        <h2>Recent Notifications</h2>
-        <div className="list-group">
-          <div className="list-group-item d-flex align-items-center">
-            <FaBell className="me-2 text-danger" />
-            <span>New task assigned to Employee A</span>
-          </div>
-          <div className="list-group-item d-flex align-items-center">
-            <FaBell className="me-2 text-danger" />
-            <span>Workflow "Project Alpha" updated</span>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 };

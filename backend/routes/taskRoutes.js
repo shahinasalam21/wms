@@ -1,12 +1,12 @@
 import express from "express";
 import pool from "../config/db.js";
 import { createTask } from "../models/task.js";
-import { verifyJWT,authMiddleware} from "../middleware/authMiddleware.js";
+import { verifyJWT, authMiddleware } from "../middleware/authMiddleware.js";
+import { sendTaskAssignedEmail } from "../utils/sendEmail.js"; // ✅ import email function
 
 const router = express.Router();
 router.post("/create", verifyJWT, async (req, res) => {
   const { title, description, priority, assignedTo, workflow_id, due_date } = req.body;
-
 
   if (!title || !workflow_id || !due_date) {
     return res.status(400).json({ error: "Title, workflow ID, and due date are required" });
@@ -14,12 +14,27 @@ router.post("/create", verifyJWT, async (req, res) => {
 
   try {
     const task = await createTask(title, description, priority, assignedTo, workflow_id, due_date);
-    res.status(201).json({ message: "Task created successfully", task });
+
+    // ✅ If assignedTo is already an email, no need to query the DB
+    const employeeEmail = assignedTo;
+
+    if (employeeEmail) {
+      await sendTaskAssignedEmail(employeeEmail, {
+        title,
+        description,
+        priority,
+        due_date
+      });
+    }
+
+    res.status(201).json({ message: "Task created and email sent successfully", task });
   } catch (error) {
     console.error("❌ Error creating task:", error);
     res.status(500).json({ error: error.message || "Server error while creating task" });
   }
 });
+
+
 
 router.get("/", verifyJWT, authMiddleware(["manager"]),async (req, res) => {
   try {
