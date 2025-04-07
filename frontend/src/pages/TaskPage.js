@@ -133,7 +133,7 @@ const EmployeeTasks = () => {
                   <button
                     className="upload-document-btn"
                     onClick={() =>
-                      navigate("/upload-document", {
+                      navigate("/employee/:employeeId/upload-document", {
                         state: { taskId: task.id, taskTitle: task.title },
                       })
                     }

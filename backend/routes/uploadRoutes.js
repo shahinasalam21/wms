@@ -1,6 +1,7 @@
 import express from "express";
 import multer from "multer";
 import pool from "../config/db.js";
+import verifyJWT from "../middleware/verifyJWT.js"; // import middleware
 
 const router = express.Router();
 
@@ -22,8 +23,8 @@ const upload = multer({
   }
 });
 
-// Upload a document for a specific task
-router.post("/upload/:taskId", upload.single("document"), async (req, res) => {
+// ✅ Protected Upload
+router.post("/upload/:taskId", verifyJWT, upload.single("document"), async (req, res) => {
   const { taskId } = req.params;
   const { originalname, mimetype, buffer } = req.file;
 
@@ -31,8 +32,8 @@ router.post("/upload/:taskId", upload.single("document"), async (req, res) => {
 
   try {
     const result = await pool.query(
-      "INSERT INTO documents (filename, mimetype, data, task_id) VALUES ($1, $2, $3, $4) RETURNING id",
-      [originalname, mimetype, buffer, taskId]
+      "INSERT INTO documents (filename, mimetype, data, task_id, uploaded_by) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+      [originalname, mimetype, buffer, taskId, req.user.id] // req.user from JWT
     );
     res.json({
       message: "File uploaded successfully!",
@@ -45,7 +46,8 @@ router.post("/upload/:taskId", upload.single("document"), async (req, res) => {
   }
 });
 
-router.get("/uploaded-files/:taskId", async (req, res) => {
+// ✅ Protected File List
+router.get("/uploaded-files/:taskId", verifyJWT, async (req, res) => {
   const { taskId } = req.params;
   try {
     const result = await pool.query(
@@ -62,7 +64,8 @@ router.get("/uploaded-files/:taskId", async (req, res) => {
   }
 });
 
-router.get("/download/:id", async (req, res) => {
+// ✅ Protected File Download
+router.get("/download/:id", verifyJWT, async (req, res) => {
   try {
     const result = await pool.query("SELECT filename, mimetype, data FROM documents WHERE id = $1", [req.params.id]);
 
@@ -80,7 +83,8 @@ router.get("/download/:id", async (req, res) => {
   }
 });
 
-router.delete("/delete-file/:id", async (req, res) => {
+// ✅ Protected File Deletion
+router.delete("/delete-file/:id", verifyJWT, async (req, res) => {
   try {
     const result = await pool.query("DELETE FROM documents WHERE id = $1", [req.params.id]);
     if (result.rowCount === 0) return res.status(404).json({ error: "File not found." });

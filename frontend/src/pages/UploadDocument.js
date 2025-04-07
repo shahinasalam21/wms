@@ -14,14 +14,30 @@ const UploadDocument = () => {
   const taskId = state?.taskId;
   const taskTitle = state?.taskTitle;
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     if (taskId) fetchUploadedFiles(taskId);
     return () => preview && URL.revokeObjectURL(preview);
   }, [taskId, preview]);
 
+  // Automatically clear message after 10 seconds
+  useEffect(() => {
+    if (!message) return;
+    const timer = setTimeout(() => setMessage(""), 10000);
+    return () => clearTimeout(timer);
+  }, [message]);
+
   const fetchUploadedFiles = async (taskId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/uploaded-files/${taskId}`);
+      const response = await fetch(`http://localhost:5000/api/uploaded-files/${taskId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       if (!response.ok) throw new Error("Failed to fetch files");
       const files = await response.json();
       setUploadedFiles(files);
@@ -48,6 +64,9 @@ const UploadDocument = () => {
     try {
       const response = await fetch(`http://localhost:5000/api/upload/${taskId}`, {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // 🔐 Attach auth header (no need for Content-Type with FormData)
+        },
         body: formData,
       });
 
@@ -66,6 +85,10 @@ const UploadDocument = () => {
     try {
       const response = await fetch(`http://localhost:5000/api/delete-file/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) throw new Error("Delete failed");
@@ -120,7 +143,14 @@ const UploadDocument = () => {
               <li key={index} className="file-item">
                 <span>{file.name}</span>
                 <div className="file-actions">
-                  <a href={`http://localhost:5000/api/download/${file.id}`} target="_blank" rel="noopener noreferrer" className="view-button">View</a>
+                  <a
+                    href={`http://localhost:5000/api/download/${file.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="view-button"
+                  >
+                    View
+                  </a>
                   <button className="delete-button" onClick={() => handleDelete(file.id)}>Delete</button>
                 </div>
               </li>

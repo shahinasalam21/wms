@@ -21,6 +21,12 @@ const Sidebar = () => {
       <h2 className="text-center">DASHBOARD</h2>
       <nav>
         <ul className="list-unstyled">
+        <li>
+  <NavLink to={`${linkBase}/home`} className={({ isActive }) => isActive ? "active-link" : ""}>
+    <FaHome /> Home
+  </NavLink>
+</li>
+
           <li>
             <NavLink to={`${linkBase}/profile`} className={({ isActive }) => isActive ? "active-link" : ""}>
               <FaHome /> Profile
