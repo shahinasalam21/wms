@@ -232,7 +232,7 @@
   
   .file-status {
     margin-left: 10px;
-    padding: 4px 10px;
+    padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 600;
@@ -256,8 +256,64 @@
     color: #212529;
   }
   
- 
+  /* Rejection message styling */
+  .rejection-message {
+    background-color: #ffe2e2;
+    color: #a80000;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-left: 4px solid #dc3545;
+    border-radius: 6px;
+    margin-top: 6px;
+    word-wrap: break-word;
+    max-width: 100%;
+  }
   
+  /* Block for status and rejection */
+  .file-status-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-shrink: 0;
+    gap: 6px;
+    min-width: 120px;
+  }
+  
+  /* Allow file name text to wrap */
+  .file-item span {
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
+  }
+  
+  /* Rejected files section */
+  .rejected-files-container {
+    border-top: 2px solid #e06666;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    background-color: #fff5f5;
+    border-radius: 10px;
+  }
+  
+  .rejected-files-container h4 {
+    color: #d90429;
+    font-size: 18px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .rejected-item {
+    background-color: #ffe5e5;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 6px rgba(255, 0, 0, 0.1);
+    list-style: none;
+  }
+  
+  /* Responsive adjustments */
   @media (max-width: 768px) {
     .content-container {
       flex-direction: column;
@@ -296,111 +352,16 @@
       justify-content: flex-end;
     }
   }
-  /* 👇 NEW STYLE: Rejection message displayed below the status */
-.rejection-message {
-    font-size: 13px;
-    margin-top: 4px;
-    padding: 6px 10px;
-    background-color: #ffe2e2;
-    color: #a80000;
-    border-left: 4px solid #dc3545;
-    border-radius: 4px;
-    max-width: 100%;
-    word-break: break-word;
-  }
-  
-  /* 👇 Improve layout of file status + message block */
-  .file-item .file-status,
-  .file-item .rejection-message {
-    margin-left: 0;
-  }
-  
-  /* 👇 Container for status + rejection message */
-  .file-status-block {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex-shrink: 0;
-    gap: 6px;
-    min-width: 120px;
-  }
-  
-  
-  
-  /* 👇 File name text can wrap if needed */
-  .file-item span {
-    flex: 1;
-    min-width: 0;
-    word-break: break-word;
-  }
-  .rejected-files-container {
-    border-top: 1px solid #ddd;
-    margin-top: 2rem;
-    padding-top: 1rem;
-  }
-  
-  .rejected-item {
-    background-color: #fff0f0;
-  }
-  .rejected-files-container {
-    border-top: 2px solid #e06666;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    background-color: #fff5f5;
-    border-radius: 10px;
-  }
-  
-  .rejected-files-container h4 {
-    color: #d90429;
-    font-size: 18px;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .rejected-item {
-    background-color: #ffe5e5;
-    padding: 16px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(255, 0, 0, 0.1);
-    list-style: none;
-  }
-  
-  .file-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .file-name {
-    font-weight: 600;
-    font-size: 15px;
-    color: #8b0000;
-    word-break: break-word;
-    flex-grow: 1;
-  }
-  
-  .file-status {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: bold;
-  }
-  
-  .rejection-message {
-    background-color: #ffe2e2;
-    color: #8b0000;
-    padding: 10px;
-    font-size: 14px;
-    border-left: 4px solid #dc3545;
-    border-radius: 6px;
-    margin-top: 10px;
-    word-wrap: break-word;
-  }
-  
-  
+.resubmit-button {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  margin-left: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.resubmit-button:hover {
+  background-color: #0b5ed7;
+}
   

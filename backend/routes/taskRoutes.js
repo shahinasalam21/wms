@@ -115,6 +115,68 @@ router.get("/getTask/:employeeId", verifyJWT, authMiddleware(["employee"]), asyn
     res.status(500).json({ message: "Server error" });
   }
 });
+// Approve a Task
+router.post("/approve/:taskId", verifyJWT, authMiddleware(["manager"]), async (req, res) => {
+  const { taskId } = req.params;
+
+  try {
+    // Check if all documents for this task are approved
+    const result = await pool.query(
+      `SELECT status FROM documents WHERE task_id = $1`,
+      [taskId]
+    );
+
+    const documents = result.rows;
+
+    if (documents.length === 0) {
+      return res.status(400).json({ message: "No documents found for this task" });
+    }
+
+    const allApproved = documents.every(doc => doc.status === "Approved");
+
+    if (!allApproved) {
+      return res.status(400).json({ message: "All documents must be approved before approving the task" });
+    }
+
+    await pool.query(
+      `UPDATE tasks SET status = 'approved' WHERE id = $1`,
+      [taskId]
+    );
+
+    res.status(200).json({ message: "Task approved successfully" });
+  } catch (error) {
+    console.error("❌ Error approving task:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+// Reject a Task
+router.post("/reject/:taskId", verifyJWT, authMiddleware(["manager"]), async (req, res) => {
+  const { taskId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT status FROM documents WHERE task_id = $1`,
+      [taskId]
+    );
+
+    const documents = result.rows;
+
+    if (documents.some(doc => doc.status === "Rejected")) {
+      await pool.query(
+        `UPDATE tasks SET status = 'rejected' WHERE id = $1`,
+        [taskId]
+      );
+      return res.status(200).json({ message: "Task rejected due to rejected documents" });
+    }
+
+    res.status(400).json({ message: "Task cannot be rejected unless at least one document is rejected" });
+  } catch (error) {
+    console.error("❌ Error rejecting task:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 
 export default router;

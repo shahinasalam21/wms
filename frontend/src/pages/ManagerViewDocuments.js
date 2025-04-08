@@ -113,7 +113,10 @@ const ManagerViewDocuments = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ status: "Rejected", rejection_message: rejectionReason }),
+          body: JSON.stringify({
+            status: "Rejected",
+            rejection_message: rejectionReason,
+          }),
         }
       );
       if (!response.ok) throw new Error("Failed to reject.");
@@ -130,10 +133,20 @@ const ManagerViewDocuments = () => {
     <div className="container mt-5">
       <div className="card shadow-lg border-0 rounded-4 p-4">
         <div className="card-body">
-          <h3 className="mb-4 fw-bold">
+          <h3 className="fw-bold">
             📁 Documents for Task:{" "}
             <span className="text-primary text-capitalize">{taskTitle}</span>
           </h3>
+
+          {/* Task-level Approve / Reject Buttons */}
+          <div className="d-flex gap-3 my-3">
+            <button className="btn btn-success fw-semibold px-4 rounded-pill">
+              ✅ Approve Task
+            </button>
+            <button className="btn btn-danger fw-semibold px-4 rounded-pill">
+              ❌ Reject Task
+            </button>
+          </div>
 
           {message && (
             <div className="alert alert-info text-center fw-semibold">
@@ -154,7 +167,10 @@ const ManagerViewDocuments = () => {
                         <i className="bi bi-person-circle fs-5"></i>
                       </div>
                       <div className="flex-grow-1">
-                        <h6 className="mb-1 text-truncate fw-semibold" title={file.name}>
+                        <h6
+                          className="mb-1 text-truncate fw-semibold"
+                          title={file.name}
+                        >
                           📄 {file.name}
                         </h6>
                         <small className="text-muted">
@@ -173,12 +189,22 @@ const ManagerViewDocuments = () => {
                             ? "success"
                             : file.status === "Rejected"
                             ? "danger"
+                            : file.status === "Resubmitted"
+                            ? "info"
                             : "warning"
                         } text-dark px-3 py-1`}
                       >
                         {file.status || "Pending"}
                       </span>
                     </div>
+
+                    {file.status === "Rejected" && (
+                      <div className="alert alert-warning p-2 small">
+                        ❌ Rejection Reason:
+                        <br />
+                        <strong>{file.rejection_message || "N/A"}</strong>
+                      </div>
+                    )}
 
                     <div className="d-flex justify-content-between gap-2 mb-2">
                       <button

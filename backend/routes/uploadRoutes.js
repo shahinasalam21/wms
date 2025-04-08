@@ -1,14 +1,14 @@
 import express from "express";
 import multer from "multer";
 import pool from "../config/db.js";
-import { verifyJWT, authMiddleware } from "../middleware/authMiddleware.js";
+import { verifyJWT } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // Multer in-memory storage
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req, file, cb) => {
     const allowedTypes = [
       "image/jpeg", "image/png", "image/gif", "application/pdf",
@@ -24,7 +24,7 @@ const upload = multer({
   }
 });
 
-// Upload a document
+// 📥 Upload a document
 router.post("/upload/:taskId", verifyJWT, upload.single("document"), async (req, res) => {
   const { taskId } = req.params;
   if (!req.file) return res.status(400).json({ error: "No file uploaded." });
@@ -50,7 +50,7 @@ router.post("/upload/:taskId", verifyJWT, upload.single("document"), async (req,
   }
 });
 
-// Get all documents for a task
+// 📄 Get all documents for a task
 router.get("/uploaded-files/:taskId", verifyJWT, async (req, res) => {
   const { taskId } = req.params;
 
@@ -80,7 +80,7 @@ router.get("/uploaded-files/:taskId", verifyJWT, async (req, res) => {
   }
 });
 
-// Download a document
+// 📥 Download a document
 router.get("/download/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
 
@@ -106,7 +106,7 @@ router.get("/download/:id", verifyJWT, async (req, res) => {
   }
 });
 
-// Update document status (Approve/Reject)
+// ✅ Approve or Reject a document
 router.put("/update-status/:fileId", verifyJWT, async (req, res) => {
   const { fileId } = req.params;
   const { status, rejection_message } = req.body;
@@ -132,7 +132,7 @@ router.put("/update-status/:fileId", verifyJWT, async (req, res) => {
   }
 });
 
-// Delete document
+// ❌ Delete document
 router.delete("/delete-file/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
 
@@ -150,6 +150,37 @@ router.delete("/delete-file/:id", verifyJWT, async (req, res) => {
   } catch (err) {
     console.error("❌ Delete error:", err);
     res.status(500).json({ error: "Failed to delete file." });
+  }
+});
+
+// 🔁 Resubmit rejected file
+router.post("/resubmit/:docId", verifyJWT, upload.single("document"), async (req, res) => {
+  const { docId } = req.params;
+  const file = req.file;
+
+  if (!file) return res.status(400).json({ message: "No file uploaded." });
+
+  try {
+    const result = await pool.query(
+      `UPDATE documents
+       SET filename = $1,
+           mimetype = $2,
+           data = $3,
+           status = 'Resubmitted',
+           rejection_message = NULL
+       WHERE id = $4
+       RETURNING *`,
+      [file.originalname, file.mimetype, file.buffer, docId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Document not found." });
+    }
+
+    res.json({ message: "✅ File resubmitted successfully.", file: result.rows[0] });
+  } catch (error) {
+    console.error("❌ Error resubmitting file:", error.message);
+    res.status(500).json({ message: "Failed to resubmit file." });
   }
 });
 
