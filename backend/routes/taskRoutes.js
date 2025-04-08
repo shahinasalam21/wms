@@ -1,10 +1,13 @@
+// backend/routes/taskRoutes.js
 import express from "express";
 import pool from "../config/db.js";
 import { createTask } from "../models/task.js";
 import { verifyJWT, authMiddleware } from "../middleware/authMiddleware.js";
-import { sendTaskAssignedEmail } from "../utils/sendEmail.js"; // ✅ import email function
+import { sendTaskAssignedEmail } from "../utils/sendEmail.js";
 
 const router = express.Router();
+
+/* --------------------- ✅ Task Creation --------------------- */
 router.post("/create", verifyJWT, async (req, res) => {
   const { title, description, priority, assignedTo, workflow_id, due_date } = req.body;
 
@@ -15,9 +18,7 @@ router.post("/create", verifyJWT, async (req, res) => {
   try {
     const task = await createTask(title, description, priority, assignedTo, workflow_id, due_date);
 
-    // ✅ If assignedTo is already an email, no need to query the DB
-    const employeeEmail = assignedTo;
-
+    const employeeEmail = assignedTo; // If it's an email already
     if (employeeEmail) {
       await sendTaskAssignedEmail(employeeEmail, {
         title,
@@ -34,12 +35,10 @@ router.post("/create", verifyJWT, async (req, res) => {
   }
 });
 
-
-
-router.get("/", verifyJWT, authMiddleware(["manager"]),async (req, res) => {
+/* --------------------- ✅ Get Tasks for Manager --------------------- */
+router.get("/", verifyJWT, authMiddleware(["manager"]), async (req, res) => {
   try {
-    const managerId = req.user.id; 
-    console.log("🔐 Logged in manager ID:", managerId);
+    const managerId = req.user.id;
 
     const result = await pool.query(
       `
@@ -53,7 +52,6 @@ router.get("/", verifyJWT, authMiddleware(["manager"]),async (req, res) => {
       [managerId]
     );
 
-    console.log("📦 Retrieved tasks:", result.rows);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("❌ Error fetching manager-specific tasks:", error);
@@ -61,6 +59,7 @@ router.get("/", verifyJWT, authMiddleware(["manager"]),async (req, res) => {
   }
 });
 
+/* --------------------- ✅ Get Active Task Count --------------------- */
 router.get("/active", async (req, res) => {
   const { managerId } = req.query;
   try {
@@ -74,15 +73,13 @@ router.get("/active", async (req, res) => {
     res.status(500).json({ error: "Server error while fetching active tasks" });
   }
 });
-//get Tasks Assigned to an Employee
+
+/* --------------------- ✅ Get Tasks Assigned to Employee --------------------- */
 router.get("/assigned/:employeeId", verifyJWT, authMiddleware(["employee"]), async (req, res) => {
   try {
     const { employeeId } = req.params;
 
-    const result = await pool.query(
-      "SELECT * FROM tasks WHERE assigned_to = $1",
-      [employeeId]
-    );
+    const result = await pool.query("SELECT * FROM tasks WHERE assigned_to = $1", [employeeId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "No tasks found for this employee" });
@@ -95,15 +92,12 @@ router.get("/assigned/:employeeId", verifyJWT, authMiddleware(["employee"]), asy
   }
 });
 
-//get tasks assigned to employee and display on dashboard
+/* --------------------- ✅ Dashboard Task Fetch --------------------- */
 router.get("/getTask/:employeeId", verifyJWT, authMiddleware(["employee"]), async (req, res) => {
   try {
     const { employeeId } = req.params;
 
-    const result = await pool.query(
-      "SELECT * FROM tasks WHERE assigned_to = $1",
-      [employeeId]
-    );
+    const result = await pool.query("SELECT * FROM tasks WHERE assigned_to = $1", [employeeId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "No tasks found for this employee" });
@@ -115,68 +109,71 @@ router.get("/getTask/:employeeId", verifyJWT, authMiddleware(["employee"]), asyn
     res.status(500).json({ message: "Server error" });
   }
 });
-// Approve a Task
-router.post("/approve/:taskId", verifyJWT, authMiddleware(["manager"]), async (req, res) => {
+
+/* --------------------- ✅ Approve Task --------------------- */
+router.put("/:taskId/approve", verifyJWT, authMiddleware(["manager"]), async (req, res) => {
   const { taskId } = req.params;
 
   try {
-    // Check if all documents for this task are approved
-    const result = await pool.query(
-      `SELECT status FROM documents WHERE task_id = $1`,
+    const { rows: documents } = await pool.query(
+      'SELECT status FROM documents WHERE task_id = $1',
       [taskId]
     );
 
-    const documents = result.rows;
-
-    if (documents.length === 0) {
-      return res.status(400).json({ message: "No documents found for this task" });
-    }
-
-    const allApproved = documents.every(doc => doc.status === "Approved");
+    const allApproved = documents.every(doc => doc.status === 'Approved');
 
     if (!allApproved) {
-      return res.status(400).json({ message: "All documents must be approved before approving the task" });
+      return res.status(400).json({ message: 'All documents must be approved to approve the task.' });
     }
 
     await pool.query(
-      `UPDATE tasks SET status = 'approved' WHERE id = $1`,
-      [taskId]
+      'UPDATE tasks SET status = $1 WHERE id = $2',
+      ['Approved', taskId]
     );
 
-    res.status(200).json({ message: "Task approved successfully" });
+    res.status(200).json({ message: 'Task approved successfully.' });
   } catch (error) {
-    console.error("❌ Error approving task:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error('Error approving task:', error);
+    res.status(500).json({ message: 'Server error while approving task.' });
   }
 });
 
-
-// Reject a Task
-router.post("/reject/:taskId", verifyJWT, authMiddleware(["manager"]), async (req, res) => {
+/* --------------------- ✅ Reject Task --------------------- */
+router.put("/:taskId/reject", verifyJWT, authMiddleware(["manager"]), async (req, res) => {
   const { taskId } = req.params;
 
   try {
-    const result = await pool.query(
-      `SELECT status FROM documents WHERE task_id = $1`,
-      [taskId]
+    await pool.query(
+      'UPDATE tasks SET status = $1 WHERE id = $2',
+      ['Rejected', taskId]
     );
 
-    const documents = result.rows;
-
-    if (documents.some(doc => doc.status === "Rejected")) {
-      await pool.query(
-        `UPDATE tasks SET status = 'rejected' WHERE id = $1`,
-        [taskId]
-      );
-      return res.status(200).json({ message: "Task rejected due to rejected documents" });
-    }
-
-    res.status(400).json({ message: "Task cannot be rejected unless at least one document is rejected" });
+    res.status(200).json({ message: 'Task rejected successfully.' });
   } catch (error) {
-    console.error("❌ Error rejecting task:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error('Error rejecting task:', error);
+    res.status(500).json({ message: 'Server error while rejecting task.' });
   }
 });
 
+/* --------------------- ✅ Get Task Status --------------------- */
+router.get("/status/:taskId", async (req, res) => {
+  const { taskId } = req.params;
+
+  try {
+    const { rows } = await pool.query(
+      'SELECT status FROM tasks WHERE id = $1',
+      [taskId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Task not found.' });
+    }
+
+    res.json({ status: rows[0].status });
+  } catch (error) {
+    console.error('Error fetching task status:', error);
+    res.status(500).json({ message: 'Server error while fetching task status.' });
+  }
+});
 
 export default router;

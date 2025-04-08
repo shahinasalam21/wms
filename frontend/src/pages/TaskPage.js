@@ -47,6 +47,10 @@ const EmployeeTasks = () => {
     switch (status?.toLowerCase() || "default") {
       case "completed":
         return "status-completed";
+      case "approved":
+        return "status-approved";
+      case "rejected":
+        return "status-rejected";
       case "in progress":
         return "status-in-progress";
       case "pending":

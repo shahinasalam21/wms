@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "./ManagerViewDocuments.css";
 
 const ManagerViewDocuments = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { taskId: urlTaskId } = useParams();
   const taskId = location.state?.taskId || urlTaskId;
   const taskTitle = location.state?.taskTitle || "Untitled Task";
@@ -60,9 +62,7 @@ const ManagerViewDocuments = () => {
           },
         }
       );
-
       if (!response.ok) throw new Error("Failed to download.");
-
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -77,7 +77,7 @@ const ManagerViewDocuments = () => {
     }
   };
 
-  const handleApprove = async (fileId) => {
+  const handleApproveFile = async (fileId) => {
     try {
       const response = await fetch(
         `http://localhost:5000/api/upload/update-status/${fileId}`,
@@ -98,7 +98,7 @@ const ManagerViewDocuments = () => {
     }
   };
 
-  const handleReject = (fileId) => {
+  const handleRejectFile = (fileId) => {
     setSelectedFileId(fileId);
     setShowRejectModal(true);
   };
@@ -129,6 +129,48 @@ const ManagerViewDocuments = () => {
     }
   };
 
+  const handleApproveTask = async () => {
+    const allApproved = files.length > 0 && files.every((f) => f.status === "Approved");
+    if (!allApproved) {
+      toast.warn("All documents must be approved to approve the task.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/approve`, {
+        method: "PUT", // ✅ CHANGED FROM POST TO PUT
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to approve task.");
+      const data = await response.json();
+      toast.success(data.message || "Task approved!");
+      fetchDocuments();
+    } catch (err) {
+      console.error("❌ Task approve error:", err);
+      toast.error("Error approving task.");
+    }
+  };
+
+  const handleRejectTask = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/reject`, {
+        method: "PUT", // ✅ CHANGED FROM POST TO PUT
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to reject task.");
+      const data = await response.json();
+      toast.success(data.message || "Task rejected.");
+      fetchDocuments();
+    } catch (err) {
+      console.error("❌ Task reject error:", err);
+      toast.error("Error rejecting task.");
+    }
+  };
+
   return (
     <div className="container mt-5">
       <div className="card shadow-lg border-0 rounded-4 p-4">
@@ -138,12 +180,11 @@ const ManagerViewDocuments = () => {
             <span className="text-primary text-capitalize">{taskTitle}</span>
           </h3>
 
-          {/* Task-level Approve / Reject Buttons */}
           <div className="d-flex gap-3 my-3">
-            <button className="btn btn-success fw-semibold px-4 rounded-pill">
+            <button className="btn btn-success fw-semibold px-4 rounded-pill" onClick={handleApproveTask}>
               ✅ Approve Task
             </button>
-            <button className="btn btn-danger fw-semibold px-4 rounded-pill">
+            <button className="btn btn-danger fw-semibold px-4 rounded-pill" onClick={handleRejectTask}>
               ❌ Reject Task
             </button>
           </div>
@@ -167,17 +208,11 @@ const ManagerViewDocuments = () => {
                         <i className="bi bi-person-circle fs-5"></i>
                       </div>
                       <div className="flex-grow-1">
-                        <h6
-                          className="mb-1 text-truncate fw-semibold"
-                          title={file.name}
-                        >
+                        <h6 className="mb-1 text-truncate fw-semibold" title={file.name}>
                           📄 {file.name}
                         </h6>
                         <small className="text-muted">
-                          Uploaded by:{" "}
-                          <span className="fw-medium">
-                            {file.uploaded_by || "Unknown"}
-                          </span>
+                          Uploaded by: <span className="fw-medium">{file.uploaded_by || "Unknown"}</span>
                         </small>
                       </div>
                     </div>
@@ -209,14 +244,14 @@ const ManagerViewDocuments = () => {
                     <div className="d-flex justify-content-between gap-2 mb-2">
                       <button
                         className="btn btn-outline-success btn-sm flex-fill rounded-pill"
-                        onClick={() => handleApprove(file.id)}
+                        onClick={() => handleApproveFile(file.id)}
                         disabled={file.status === "Approved"}
                       >
                         ✅ Approve
                       </button>
                       <button
                         className="btn btn-outline-danger btn-sm flex-fill rounded-pill"
-                        onClick={() => handleReject(file.id)}
+                        onClick={() => handleRejectFile(file.id)}
                         disabled={file.status === "Rejected"}
                       >
                         ❌ Reject
@@ -235,7 +270,6 @@ const ManagerViewDocuments = () => {
             ))}
           </div>
 
-          {/* Modal for rejection reason */}
           {showRejectModal && (
             <div className="modal fade show d-block" tabIndex="-1">
               <div className="modal-dialog modal-dialog-centered">

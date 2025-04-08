@@ -156,3 +156,12 @@
 .empty-icon {
   font-size: 3rem;
 }
+.status-approved {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.status-rejected {
+  background-color: #f44336;
+  color: white;
+}
