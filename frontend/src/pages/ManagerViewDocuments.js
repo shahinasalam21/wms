@@ -138,7 +138,7 @@ const ManagerViewDocuments = () => {
 
     try {
       const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/approve`, {
-        method: "PUT", // ✅ CHANGED FROM POST TO PUT
+        method: "PUT", 
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -156,7 +156,7 @@ const ManagerViewDocuments = () => {
   const handleRejectTask = async () => {
     try {
       const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/reject`, {
-        method: "PUT", // ✅ CHANGED FROM POST TO PUT
+        method: "PUT", 
         headers: {
           Authorization: `Bearer ${token}`,
         },

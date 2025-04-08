@@ -256,7 +256,7 @@
     color: #212529;
   }
   
-  /* Rejection message styling */
+ 
   .rejection-message {
     background-color: #ffe2e2;
     color: #a80000;
@@ -269,7 +269,7 @@
     max-width: 100%;
   }
   
-  /* Block for status and rejection */
+ 
   .file-status-block {
     display: flex;
     flex-direction: column;
@@ -279,14 +279,14 @@
     min-width: 120px;
   }
   
-  /* Allow file name text to wrap */
+  
   .file-item span {
     flex: 1;
     min-width: 0;
     word-break: break-word;
   }
   
-  /* Rejected files section */
+
   .rejected-files-container {
     border-top: 2px solid #e06666;
     margin-top: 2rem;
@@ -313,7 +313,7 @@
     list-style: none;
   }
   
-  /* Responsive adjustments */
+
   @media (max-width: 768px) {
     .content-container {
       flex-direction: column;
@@ -364,4 +364,14 @@
 .resubmit-button:hover {
   background-color: #0b5ed7;
 }
-  
+.resubmitted-files-container {
+    background-color: #f0faff;
+    border: 1px solid #b6e0fe;
+    padding: 1rem;
+    border-radius: 6px;
+  }
+  .resubmitted-item .file-status {
+    background-color: #b6e0fe;
+    color: #004085;
+  }
+    

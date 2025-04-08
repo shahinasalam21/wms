@@ -1,4 +1,4 @@
-// backend/routes/taskRoutes.js
+
 import express from "express";
 import pool from "../config/db.js";
 import { createTask } from "../models/task.js";
@@ -7,7 +7,7 @@ import { sendTaskAssignedEmail } from "../utils/sendEmail.js";
 
 const router = express.Router();
 
-/* --------------------- ✅ Task Creation --------------------- */
+/* ---------------------  Task Creation --------------------- */
 router.post("/create", verifyJWT, async (req, res) => {
   const { title, description, priority, assignedTo, workflow_id, due_date } = req.body;
 
@@ -35,7 +35,7 @@ router.post("/create", verifyJWT, async (req, res) => {
   }
 });
 
-/* --------------------- ✅ Get Tasks for Manager --------------------- */
+/* ---------------------  Get Tasks for Manager --------------------- */
 router.get("/", verifyJWT, authMiddleware(["manager"]), async (req, res) => {
   try {
     const managerId = req.user.id;
@@ -59,7 +59,7 @@ router.get("/", verifyJWT, authMiddleware(["manager"]), async (req, res) => {
   }
 });
 
-/* --------------------- ✅ Get Active Task Count --------------------- */
+/* ---------------------  Get Active Task Count --------------------- */
 router.get("/active", async (req, res) => {
   const { managerId } = req.query;
   try {
@@ -74,7 +74,7 @@ router.get("/active", async (req, res) => {
   }
 });
 
-/* --------------------- ✅ Get Tasks Assigned to Employee --------------------- */
+/* ---------------------  Get Tasks Assigned to Employee --------------------- */
 router.get("/assigned/:employeeId", verifyJWT, authMiddleware(["employee"]), async (req, res) => {
   try {
     const { employeeId } = req.params;
@@ -92,7 +92,7 @@ router.get("/assigned/:employeeId", verifyJWT, authMiddleware(["employee"]), asy
   }
 });
 
-/* --------------------- ✅ Dashboard Task Fetch --------------------- */
+/* ---------------------  Dashboard Task Fetch --------------------- */
 router.get("/getTask/:employeeId", verifyJWT, authMiddleware(["employee"]), async (req, res) => {
   try {
     const { employeeId } = req.params;
@@ -110,7 +110,7 @@ router.get("/getTask/:employeeId", verifyJWT, authMiddleware(["employee"]), asyn
   }
 });
 
-/* --------------------- ✅ Approve Task --------------------- */
+/* ---------------------  Approve Task --------------------- */
 router.put("/:taskId/approve", verifyJWT, authMiddleware(["manager"]), async (req, res) => {
   const { taskId } = req.params;
 
@@ -138,7 +138,7 @@ router.put("/:taskId/approve", verifyJWT, authMiddleware(["manager"]), async (re
   }
 });
 
-/* --------------------- ✅ Reject Task --------------------- */
+/* --------------------- Reject Task --------------------- */
 router.put("/:taskId/reject", verifyJWT, authMiddleware(["manager"]), async (req, res) => {
   const { taskId } = req.params;
 
@@ -155,7 +155,7 @@ router.put("/:taskId/reject", verifyJWT, authMiddleware(["manager"]), async (req
   }
 });
 
-/* --------------------- ✅ Get Task Status --------------------- */
+/* ---------------------  Get Task Status --------------------- */
 router.get("/status/:taskId", async (req, res) => {
   const { taskId } = req.params;
 

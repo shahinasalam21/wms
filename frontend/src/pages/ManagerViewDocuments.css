@@ -1,4 +1,4 @@
-/* Card hover effect */
+
 .file-card {
   transition: transform 0.2s ease, box-shadow 0.3s ease;
   border-radius: 1rem;
@@ -9,7 +9,6 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
 }
 
-/* Avatar circle */
 .avatar {
   width: 45px;
   height: 45px;
@@ -21,7 +20,7 @@
   color: white;
 }
 
-/* Fix vertical download button issue */
+
 .fix-download-btn {
   white-space: nowrap;
   overflow: hidden;
@@ -40,7 +39,7 @@
   color: #fff;
 }
 
-/* Badge alignment and spacing */
+
 .badge {
   font-size: 0.85rem;
   padding: 6px 12px;
@@ -48,7 +47,6 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* Truncate long file names gracefully */
 .text-truncate {
   max-width: 100%;
   overflow: hidden;
@@ -56,7 +54,7 @@
   white-space: nowrap;
 }
 
-/* Scrollable layout */
+
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -66,14 +64,14 @@
   padding-right: 10px;
 }
 
-/* Card container */
+
 .card.shadow-lg {
   background: #ffffff;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   border-radius: 20px;
 }
 
-/* Title */
+
 .card-body h3 {
   font-weight: 700;
   color: #333;
