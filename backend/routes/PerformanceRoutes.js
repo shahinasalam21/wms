@@ -4,10 +4,9 @@ import { verifyJWT } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// ✅ Secure the route with verifyJWT
+
 router.get("/report/:employeeId", verifyJWT, async (req, res) => {
   const { employeeId } = req.params;
-
   try {
     const reportQuery = `
       SELECT 

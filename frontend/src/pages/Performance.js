@@ -42,27 +42,23 @@ const Performance = () => {
     };
     fetchReport();
   }, [employeeId]);
-
   if (loading)
     return (
       <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
         <div className="spinner-border text-primary" role="status"></div>
       </div>
     );
-
   if (error)
     return (
       <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
         <div className="alert alert-danger text-center">{error}</div>
       </div>
     );
-
   const handleCardClick = (label) => {
     if (label === "Total Tasks") {
       navigate("/employee/:employeeId/employee-task");
     }
   };
-
   const metrics = [
     {
       label: "Total Tasks",
@@ -91,7 +87,6 @@ const Performance = () => {
       icon: <FaUsers className="metric-icon" />,
     },
   ];
-
   return (
     <div className="performance-container">
       <div className="text-center mb-5">
@@ -106,7 +101,6 @@ const Performance = () => {
           </h5>
         </div>
       </div>
-
       <div className="row g-4 justify-content-center">
         {metrics.map((metric, idx) => (
           <div
@@ -129,5 +123,5 @@ const Performance = () => {
     </div>
   );
 };
-
 export default Performance;
+
