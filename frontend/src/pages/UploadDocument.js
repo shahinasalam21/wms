@@ -153,7 +153,9 @@ const UploadDocument = () => {
     <div className="upload-page">
       <div className="content-container">
         <div className="upload-container">
-          <h2>Upload Document for: <strong>{taskTitle}</strong></h2>
+          <h2>
+            Upload Document for: <strong>{taskTitle}</strong>
+          </h2>
           <div className="drop-zone" {...getRootProps()}>
             <input {...getInputProps()} />
             <p>📂 Drag & Drop or Click to Browse</p>
@@ -164,7 +166,9 @@ const UploadDocument = () => {
               <h4>Selected File:</h4>
               <img src={preview} alt="Preview" className="file-preview" />
               <p>{file.name}</p>
-              <button className="cancel-button" onClick={() => setFile(null)}>Cancel</button>
+              <button className="cancel-button" onClick={() => setFile(null)}>
+                Cancel
+              </button>
             </div>
           )}
 
@@ -189,12 +193,26 @@ const UploadDocument = () => {
             {filteredFiles.map((file, index) => (
               <li key={index} className="file-item">
                 <span>{file.name}</span>
+
+                {/* ✅ Show document status */}
+                <span
+                  className={`file-status badge ${
+                    file.status === "Approved"
+                      ? "bg-success"
+                      : file.status === "Rejected"
+                      ? "bg-danger"
+                      : "bg-warning text-dark"
+                  }`}
+                >
+                  {file.status || "Pending"}
+                </span>
+
                 <div className="file-actions">
                   <button
                     className="view-button"
                     onClick={() => handleSecureDownload(file.id, file.name)}
                   >
-                   View
+                    View
                   </button>
                   <button
                     className="delete-button"

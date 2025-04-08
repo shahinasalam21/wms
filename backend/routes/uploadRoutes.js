@@ -1,7 +1,8 @@
 import express from "express";
 import multer from "multer";
 import pool from "../config/db.js";
-import verifyJWT from "../middleware/verifyJWT.js";
+import { verifyJWT, authMiddleware } from "../middleware/authMiddleware.js";
+
 
 const router = express.Router();
 
@@ -24,26 +25,18 @@ const upload = multer({
   }
 });
 
-// ✅ Upload document to DB
+// ✅ Upload document to PostgreSQL
 router.post("/upload/:taskId", verifyJWT, upload.single("document"), async (req, res) => {
   const { taskId } = req.params;
-
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded." });
-  }
-
-  if (!taskId) {
-    return res.status(400).json({ error: "Missing task ID." });
-  }
+  if (!req.file) return res.status(400).json({ error: "No file uploaded." });
+  if (!taskId) return res.status(400).json({ error: "Missing task ID." });
 
   const { originalname, mimetype, buffer } = req.file;
 
   try {
-    console.log("📥 Uploading file for taskId:", taskId, "by user:", req.user.id);
-
     const result = await pool.query(
-      `INSERT INTO documents (filename, mimetype, data, task_id, uploaded_by)
-       VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+      `INSERT INTO documents (filename, mimetype, data, task_id, uploaded_by, status)
+       VALUES ($1, $2, $3, $4, $5, 'Pending') RETURNING id`,
       [originalname, mimetype, buffer, taskId, req.user.id]
     );
 
@@ -61,24 +54,24 @@ router.post("/upload/:taskId", verifyJWT, upload.single("document"), async (req,
 // ✅ Get all documents for a task
 router.get("/uploaded-files/:taskId", verifyJWT, async (req, res) => {
   const { taskId } = req.params;
-
-  if (!taskId) {
-    return res.status(400).json({ error: "Missing task ID." });
-  }
+  if (!taskId) return res.status(400).json({ error: "Missing task ID." });
 
   try {
     const result = await pool.query(
-      `SELECT id, filename, uploaded_at
-       FROM documents
-       WHERE task_id = $1
-       ORDER BY uploaded_at DESC`,
+      `SELECT d.id, d.filename, d.uploaded_at, d.status, u.name AS uploaded_by
+       FROM documents d
+       LEFT JOIN users u ON d.uploaded_by = u.id
+       WHERE d.task_id = $1
+       ORDER BY d.uploaded_at DESC`,
       [taskId]
     );
 
     const files = result.rows.map(doc => ({
       id: doc.id,
       name: doc.filename,
-      uploaded_at: doc.uploaded_at
+      uploaded_at: doc.uploaded_at,
+      uploaded_by: doc.uploaded_by || "Unknown",
+      status: doc.status || "Pending"
     }));
 
     res.json(files);
@@ -94,9 +87,7 @@ router.get("/download/:id", verifyJWT, async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT filename, mimetype, data
-       FROM documents
-       WHERE id = $1`,
+      `SELECT filename, mimetype, data FROM documents WHERE id = $1`,
       [id]
     );
 
@@ -116,14 +107,39 @@ router.get("/download/:id", verifyJWT, async (req, res) => {
   }
 });
 
+// ✅ Update document status (Approve/Reject/Pending)
+router.put("/update-status/:fileId", verifyJWT, async (req, res) => {
+  const { fileId } = req.params;
+  const { status } = req.body;
+
+  if (!["Approved", "Rejected", "Pending"].includes(status)) {
+    return res.status(400).json({ error: "Invalid status value." });
+  }
+
+  try {
+    const result = await pool.query(
+      `UPDATE documents SET status = $1 WHERE id = $2 RETURNING *`,
+      [status, fileId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Document not found." });
+    }
+
+    res.json({ message: `✅ Document marked as ${status}`, document: result.rows[0] });
+  } catch (err) {
+    console.error("❌ Status update error:", err);
+    res.status(500).json({ error: "Failed to update document status." });
+  }
+});
+
 // ✅ Secure file deletion
 router.delete("/delete-file/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
 
   try {
     const result = await pool.query(
-      `DELETE FROM documents
-       WHERE id = $1`,
+      `DELETE FROM documents WHERE id = $1`,
       [id]
     );
 
