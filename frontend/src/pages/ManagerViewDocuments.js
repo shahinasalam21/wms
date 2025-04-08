@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "./ManagerViewDocuments.css";
 
 const ManagerViewDocuments = () => {
   const location = useLocation();
@@ -280,7 +279,10 @@ const ManagerViewDocuments = () => {
               <div className="row g-4">
                 {files.map((file) => (
                   <div key={file.id} className="col-lg-4 col-md-6">
-                    <div className="card h-100 border-0 shadow-sm hover-shadow transition-all rounded-4">
+                    <div className="card h-100 border-0 shadow-sm rounded-4" 
+                         style={{transition: "all 0.3s ease", transform: "translateY(0)"}}
+                         onMouseOver={(e) => {e.currentTarget.style.transform = "translateY(-5px)"}}
+                         onMouseOut={(e) => {e.currentTarget.style.transform = "translateY(0)"}}>
                       <div className="card-header bg-light border-0 pt-4 pb-0 px-4">
                         <div className="d-flex align-items-center">
                           <div className={`bg-${getStatusClass(file.status)} bg-opacity-10 p-3 rounded-3 me-3`}>
