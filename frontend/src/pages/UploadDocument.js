@@ -149,6 +149,9 @@ const UploadDocument = () => {
     file.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const nonRejectedFiles = filteredFiles.filter(file => file.status !== "Rejected");
+  const rejectedFiles = filteredFiles.filter(file => file.status === "Rejected");
+
   return (
     <div className="upload-page">
       <div className="content-container">
@@ -190,23 +193,20 @@ const UploadDocument = () => {
           />
 
           <ul className="file-list">
-            {filteredFiles.map((file, index) => (
+            {nonRejectedFiles.map((file, index) => (
               <li key={index} className="file-item">
                 <span>{file.name}</span>
-
-                {/* ✅ Show document status */}
-                <span
-                  className={`file-status badge ${
-                    file.status === "Approved"
-                      ? "bg-success"
-                      : file.status === "Rejected"
-                      ? "bg-danger"
-                      : "bg-warning text-dark"
-                  }`}
-                >
-                  {file.status || "Pending"}
-                </span>
-
+                {file.status && (
+                  <span
+                    className={`file-status badge ${
+                      file.status === "Approved"
+                        ? "bg-success"
+                        : "bg-warning text-dark"
+                    }`}
+                  >
+                    {file.status}
+                  </span>
+                )}
                 <div className="file-actions">
                   <button
                     className="view-button"
@@ -224,6 +224,39 @@ const UploadDocument = () => {
               </li>
             ))}
           </ul>
+
+          {rejectedFiles.length > 0 && (
+            <div className="rejected-files-container mt-4">
+              <h4 className="text-danger">❌ Rejected Files</h4>
+              <ul className="file-list">
+                {rejectedFiles.map((file, index) => (
+                  <li key={index} className="file-item rejected-item">
+                    <div className="file-header">
+                      <span className="file-name">{file.name}</span>
+                      <span className="file-status badge bg-danger">Rejected</span>
+                    </div>
+                    <div className="rejection-message">
+                      <strong>Reason:</strong> {file.rejection_message}
+                    </div>
+                    <div className="file-actions mt-2">
+                      <button
+                        className="view-button"
+                        onClick={() => handleSecureDownload(file.id, file.name)}
+                      >
+                        View
+                      </button>
+                      <button
+                        className="delete-button"
+                        onClick={() => handleDelete(file.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </div>

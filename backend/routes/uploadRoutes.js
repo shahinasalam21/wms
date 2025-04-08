@@ -3,13 +3,12 @@ import multer from "multer";
 import pool from "../config/db.js";
 import { verifyJWT, authMiddleware } from "../middleware/authMiddleware.js";
 
-
 const router = express.Router();
 
-// ✅ Multer in-memory storage for DB upload
+// Multer in-memory storage
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   fileFilter: (req, file, cb) => {
     const allowedTypes = [
       "image/jpeg", "image/png", "image/gif", "application/pdf",
@@ -25,7 +24,7 @@ const upload = multer({
   }
 });
 
-// ✅ Upload document to PostgreSQL
+// Upload a document
 router.post("/upload/:taskId", verifyJWT, upload.single("document"), async (req, res) => {
   const { taskId } = req.params;
   if (!req.file) return res.status(400).json({ error: "No file uploaded." });
@@ -51,14 +50,13 @@ router.post("/upload/:taskId", verifyJWT, upload.single("document"), async (req,
   }
 });
 
-// ✅ Get all documents for a task
+// Get all documents for a task
 router.get("/uploaded-files/:taskId", verifyJWT, async (req, res) => {
   const { taskId } = req.params;
-  if (!taskId) return res.status(400).json({ error: "Missing task ID." });
 
   try {
     const result = await pool.query(
-      `SELECT d.id, d.filename, d.uploaded_at, d.status, u.name AS uploaded_by
+      `SELECT d.id, d.filename, d.uploaded_at, d.status, d.rejection_message, u.name AS uploaded_by
        FROM documents d
        LEFT JOIN users u ON d.uploaded_by = u.id
        WHERE d.task_id = $1
@@ -71,7 +69,8 @@ router.get("/uploaded-files/:taskId", verifyJWT, async (req, res) => {
       name: doc.filename,
       uploaded_at: doc.uploaded_at,
       uploaded_by: doc.uploaded_by || "Unknown",
-      status: doc.status || "Pending"
+      status: doc.status || "Pending",
+      rejection_message: doc.rejection_message || ""
     }));
 
     res.json(files);
@@ -81,7 +80,7 @@ router.get("/uploaded-files/:taskId", verifyJWT, async (req, res) => {
   }
 });
 
-// ✅ Secure file download
+// Download a document
 router.get("/download/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
 
@@ -107,10 +106,10 @@ router.get("/download/:id", verifyJWT, async (req, res) => {
   }
 });
 
-// ✅ Update document status (Approve/Reject/Pending)
+// Update document status (Approve/Reject)
 router.put("/update-status/:fileId", verifyJWT, async (req, res) => {
   const { fileId } = req.params;
-  const { status } = req.body;
+  const { status, rejection_message } = req.body;
 
   if (!["Approved", "Rejected", "Pending"].includes(status)) {
     return res.status(400).json({ error: "Invalid status value." });
@@ -118,8 +117,8 @@ router.put("/update-status/:fileId", verifyJWT, async (req, res) => {
 
   try {
     const result = await pool.query(
-      `UPDATE documents SET status = $1 WHERE id = $2 RETURNING *`,
-      [status, fileId]
+      `UPDATE documents SET status = $1, rejection_message = $2 WHERE id = $3 RETURNING *`,
+      [status, status === "Rejected" ? rejection_message : null, fileId]
     );
 
     if (result.rowCount === 0) {
@@ -133,7 +132,7 @@ router.put("/update-status/:fileId", verifyJWT, async (req, res) => {
   }
 });
 
-// ✅ Secure file deletion
+// Delete document
 router.delete("/delete-file/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
 

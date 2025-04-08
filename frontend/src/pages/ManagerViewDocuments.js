@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import "./ManagerViewDocuments.css"; // For custom styles
+import "./ManagerViewDocuments.css";
 
 const ManagerViewDocuments = () => {
   const location = useLocation();
@@ -10,6 +10,10 @@ const ManagerViewDocuments = () => {
 
   const [files, setFiles] = useState([]);
   const [message, setMessage] = useState("");
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [selectedFileId, setSelectedFileId] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState("");
+
   const token = localStorage.getItem("token");
 
   const fetchDocuments = useCallback(async () => {
@@ -23,12 +27,10 @@ const ManagerViewDocuments = () => {
         `http://localhost:5000/api/upload/uploaded-files/${taskId}`,
         {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
       );
-
       if (!response.ok) throw new Error("Error fetching documents.");
       const data = await response.json();
       if (data.length === 0) {
@@ -53,7 +55,6 @@ const ManagerViewDocuments = () => {
       const response = await fetch(
         `http://localhost:5000/api/upload/download/${fileId}`,
         {
-          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -76,7 +77,7 @@ const ManagerViewDocuments = () => {
     }
   };
 
-  const handleStatusUpdate = async (fileId, newStatus) => {
+  const handleApprove = async (fileId) => {
     try {
       const response = await fetch(
         `http://localhost:5000/api/upload/update-status/${fileId}`,
@@ -86,15 +87,42 @@ const ManagerViewDocuments = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ status: newStatus }),
+          body: JSON.stringify({ status: "Approved" }),
         }
       );
-
-      if (!response.ok) throw new Error("Failed to update status.");
-      fetchDocuments(); // Refresh
+      if (!response.ok) throw new Error("Failed to approve.");
+      fetchDocuments();
     } catch (err) {
-      console.error("❌ Status update error:", err);
-      alert("Failed to update document status.");
+      console.error("❌ Approve error:", err);
+      alert("Failed to approve file.");
+    }
+  };
+
+  const handleReject = (fileId) => {
+    setSelectedFileId(fileId);
+    setShowRejectModal(true);
+  };
+
+  const submitRejection = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/upload/update-status/${selectedFileId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: "Rejected", rejection_message: rejectionReason }),
+        }
+      );
+      if (!response.ok) throw new Error("Failed to reject.");
+      setShowRejectModal(false);
+      setRejectionReason("");
+      fetchDocuments();
+    } catch (err) {
+      console.error("❌ Reject error:", err);
+      alert("Failed to reject file.");
     }
   };
 
@@ -116,10 +144,7 @@ const ManagerViewDocuments = () => {
           <div className="row gx-4 gy-4">
             {files.map((file) => (
               <div key={file.id} className="col-xl-4 col-lg-6 col-md-6">
-                <div
-                  className="card h-100 shadow-sm rounded-4 p-3"
-                  style={{ minHeight: "260px", minWidth: "240px" }}
-                >
+                <div className="card h-100 shadow-sm rounded-4 p-3">
                   <div className="card-body d-flex flex-column">
                     <div className="d-flex align-items-center mb-3">
                       <div
@@ -129,10 +154,7 @@ const ManagerViewDocuments = () => {
                         <i className="bi bi-person-circle fs-5"></i>
                       </div>
                       <div className="flex-grow-1">
-                        <h6
-                          className="mb-1 text-truncate fw-semibold"
-                          title={file.name}
-                        >
+                        <h6 className="mb-1 text-truncate fw-semibold" title={file.name}>
                           📄 {file.name}
                         </h6>
                         <small className="text-muted">
@@ -144,7 +166,7 @@ const ManagerViewDocuments = () => {
                       </div>
                     </div>
 
-                    <div className="mb-3">
+                    <div className="mb-2">
                       <span
                         className={`badge bg-${
                           file.status === "Approved"
@@ -161,14 +183,14 @@ const ManagerViewDocuments = () => {
                     <div className="d-flex justify-content-between gap-2 mb-2">
                       <button
                         className="btn btn-outline-success btn-sm flex-fill rounded-pill"
-                        onClick={() => handleStatusUpdate(file.id, "Approved")}
+                        onClick={() => handleApprove(file.id)}
                         disabled={file.status === "Approved"}
                       >
                         ✅ Approve
                       </button>
                       <button
                         className="btn btn-outline-danger btn-sm flex-fill rounded-pill"
-                        onClick={() => handleStatusUpdate(file.id, "Rejected")}
+                        onClick={() => handleReject(file.id)}
                         disabled={file.status === "Rejected"}
                       >
                         ❌ Reject
@@ -186,6 +208,48 @@ const ManagerViewDocuments = () => {
               </div>
             ))}
           </div>
+
+          {/* Modal for rejection reason */}
+          {showRejectModal && (
+            <div className="modal fade show d-block" tabIndex="-1">
+              <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title">Reason for Rejection</h5>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      onClick={() => setShowRejectModal(false)}
+                    ></button>
+                  </div>
+                  <div className="modal-body">
+                    <textarea
+                      className="form-control"
+                      placeholder="Enter rejection reason..."
+                      value={rejectionReason}
+                      onChange={(e) => setRejectionReason(e.target.value)}
+                      rows="4"
+                    ></textarea>
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => setShowRejectModal(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={submitRejection}
+                      disabled={!rejectionReason.trim()}
+                    >
+                      Submit Rejection
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
