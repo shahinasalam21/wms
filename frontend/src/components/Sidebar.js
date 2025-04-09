@@ -48,14 +48,15 @@ const Sidebar = () => {
             </NavLink>
           </li>
           
-          <li>
-            <NavLink to={`${linkBase}/schedule-meeting`} className={({ isActive }) => isActive ? "active-link" : ""}>
-              <FaCalendarAlt /> Schedule Meeting
-            </NavLink>
-          </li>
+          
           <li>
             <NavLink to={`${linkBase}/manager-meetings`} className={({ isActive }) => isActive ? "active-link" : ""}>
               <FaCalendarAlt /> My Meetings
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to={`${linkBase}/schedule-meeting`} className={({ isActive }) => isActive ? "active-link" : ""}>
+              <FaCalendarAlt /> Schedule Meeting
             </NavLink>
           </li>
           <li>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Container, Row, Col, Badge, Button, ProgressBar } from 'react-bootstrap';
-import { Bell, Calendar, CheckCircle, FileText, User, ChevronRight, Clock } from "lucide-react";
+import { Card, Container, Row, Col, Badge} from 'react-bootstrap';
+import { Bell, Calendar, CheckCircle, FileText, User,  Clock } from "lucide-react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const EmployeeDashboard = () => {
@@ -13,57 +13,57 @@ const EmployeeDashboard = () => {
       try {
         const employeeId = localStorage.getItem("userId");
         const token = localStorage.getItem("token");
-  
+
         if (!token) {
           console.error("No token found. User must log in.");
           return;
         }
-  
+
         const headers = {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         };
-  
+
         const [taskResponse, meetingResponse, userResponse] = await Promise.all([
           fetch(`http://localhost:5000/api/tasks/getTask/${employeeId}`, { headers }),
           fetch(`http://localhost:5000/api/meeting/emp/employee/${employeeId}`, { headers }),
-          fetch(`http://localhost:5000/api/employees/${employeeId}`, { headers }), // Add your actual endpoint here
+          fetch(`http://localhost:5000/api/employees/${employeeId}`, { headers }),
         ]);
-  
+
         if (!taskResponse.ok || !meetingResponse.ok || !userResponse.ok) {
           throw new Error("Failed to fetch data");
         }
-  
+
         const [taskData, meetingData, userData] = await Promise.all([
           taskResponse.json(),
           meetingResponse.json(),
           userResponse.json(),
         ]);
-  
+
         setTasks(taskData);
         setMeetings(meetingData);
-        setName(userData.name); // Save employee name
+        setName(userData.name);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-  
+
     fetchData();
   }, []);
-  
-  
-  const getStatusVariant = (status) => {
-    switch (status) {
-      case "Completed":
+
+  const getPriorityVariant = (priority) => {
+    switch (priority) {
+      case "high":
+        return "danger";
+      case "medium":
+        return "warning";
+      case "low":
         return "success";
-      case "In Progress":
-        return "primary";
-      case "To Do":
-        return "secondary";
       default:
-        return "light";
+        return "secondary";
     }
   };
+  
 
   return (
     <div className="bg-light min-vh-100">
@@ -71,10 +71,31 @@ const EmployeeDashboard = () => {
         <header className="mb-4">
           <h1 className="h3 mb-0 fw-bold">Employee Dashboard</h1>
           <p className="text-muted">Welcome back, {name || "Employee"}! Here's your activity summary.</p>
-
         </header>
 
         <Row className="g-4 mb-4">
+          {/* 🔔 Notifications */}
+          <Col md={4}>
+            <Card className="border-0 shadow-sm h-100">
+              <Card.Body className="p-4">
+                <div className="d-flex align-items-center mb-3">
+                  <div className="rounded-circle bg-warning-subtle p-3 me-3">
+                    <Bell className="text-warning" size={22} />
+                  </div>
+                  <div>
+                    <h6 className="mb-0 text-muted">New Updates</h6>
+                    <h2 className="mb-0 fw-bold">{tasks.length + meetings.length}</h2>
+                  </div>
+                </div>
+                <div className="text-muted d-flex justify-content-between">
+                  <small>📝 Tasks: {tasks.length}</small>
+                  <small>📅 Meetings: {meetings.length}</small>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          {/* ✅ Tasks */}
           <Col md={4}>
             <Card className="border-0 shadow-sm h-100">
               <Card.Body className="p-4">
@@ -95,6 +116,7 @@ const EmployeeDashboard = () => {
             </Card>
           </Col>
 
+          {/* 📅 Meetings */}
           <Col md={4}>
             <Card className="border-0 shadow-sm h-100">
               <Card.Body className="p-4">
@@ -103,14 +125,14 @@ const EmployeeDashboard = () => {
                     <Calendar className="text-success" size={22} />
                   </div>
                   <div>
-                    <h6 className="mb-0 text-muted">Today's Meetings</h6>
+                    <h6 className="mb-0 text-muted">All Meetings</h6>
                     <h2 className="mb-0 fw-bold">{meetings.length}</h2>
                   </div>
                 </div>
                 <div className="d-flex align-items-center text-muted">
                   <Clock size={14} className="me-1" />
                   <small>
-                    {meetings.length > 0 ? `Next meeting: ${meetings[0].time}` : "No meetings today"}
+                    {meetings.length > 0 ? `Next: ${meetings[0].start_time}` : "No meetings yet"}
                   </small>
                 </div>
               </Card.Body>
@@ -119,6 +141,7 @@ const EmployeeDashboard = () => {
         </Row>
 
         <Row className="g-4 mb-4">
+          {/* Task List */}
           <Col lg={7}>
             <Card className="border-0 shadow-sm">
               <Card.Body className="p-4">
@@ -128,45 +151,37 @@ const EmployeeDashboard = () => {
                   </h5>
                 </div>
                 <div className="task-list">
-                  {tasks.map(task => (
+                {tasks.map(task => (
                     <div key={task.id} className="p-3 border-bottom">
                       <div className="d-flex justify-content-between mb-2">
                         <h6 className="mb-0">{task.title}</h6>
-                        <Badge bg={getStatusVariant(task.status)} pill>
-                          {task.status}
+                        <Badge bg={getPriorityVariant(task.priority)} pill>
+                          {task.priority}
                         </Badge>
                       </div>
                       <div className="d-flex justify-content-between align-items-center">
-                        <small className="text-muted">Due: {task.dueDate}</small>
-                        <div style={{ width: '40%' }}>
-                          <ProgressBar
-                            now={task.progress}
-                            variant={getStatusVariant(task.status)}
-                            className="mb-1"
-                            style={{ height: '6px' }}
-                          />
-                          <div className="d-flex justify-content-end">
-                            <small className="text-muted">{task.progress}%</small>
-                          </div>
-                        </div>
+                        <small className="text-muted">Due: {task.due_date}</small>
+                        
                       </div>
                     </div>
                   ))}
+
                 </div>
               </Card.Body>
             </Card>
           </Col>
 
+          {/* Meeting List */}
           <Col lg={5}>
             <Card className="border-0 shadow-sm">
               <Card.Body className="p-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                   <h5 className="mb-0 fw-bold">
-                    <Calendar className="me-2" size={18} /> Today's Schedule
+                    <Calendar className="me-2" size={18} /> Meeting Schedule
                   </h5>
                 </div>
                 <div className="meeting-list">
-                {meetings.map(meeting => (
+                  {meetings.map(meeting => (
                     <div key={meeting.id} className="p-3 border-bottom">
                       <div className="d-flex justify-content-between mb-2">
                         <h6 className="mb-0">{meeting.title}</h6>
@@ -178,18 +193,15 @@ const EmployeeDashboard = () => {
                           <User size={14} className="me-1" />
                           <small>{meeting.organizer}</small>
                         </div>
-                        <Button variant="outline-primary" size="sm">
-                          Join <ChevronRight size={14} />
-                        </Button>
+                       
                       </div>
                     </div>
                   ))}
                   {meetings.length === 0 && (
                     <div className="text-center text-muted p-4">
-                      No meetings scheduled for today.
+                      No meetings scheduled.
                     </div>
                   )}
-
                 </div>
               </Card.Body>
             </Card>

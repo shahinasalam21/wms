@@ -42,67 +42,35 @@ async function sendMeetingEmail(email, meetingLink, title) {
 }
 
 // Create Google Meet Meeting
-router.post("/create", async (req, res) => {
-    const { manager_id, title, start_time, end_time, employee_ids } = req.body;
+router.post("/create", verifyJWT, async (req, res) => {
+    const { manager_id, title, start_time, end_time, meeting_link, employee_ids } = req.body;
 
-    //  Validate request data
-    if (!manager_id || !title || !start_time || !end_time || !Array.isArray(employee_ids)) {
+    if (!manager_id || !title || !start_time || !end_time || !meeting_link || !Array.isArray(employee_ids)) {
         return res.status(400).json({ error: "Missing or invalid data" });
     }
 
     try {
-        const event = {
-            summary: title,
-            start: { 
-                dateTime: new Date(start_time).toISOString(), 
-                timeZone: "UTC" 
-            },
-            end: { 
-                dateTime: new Date(end_time).toISOString(), 
-                timeZone: "UTC" 
-            },
-            conferenceData: {
-                createRequest: {
-                    requestId: `meet_${Date.now()}`,
-                    conferenceSolutionKey: { type: "hangoutsMeet" }
-                }
-            }
-        };
-        
-
-        const response = await calendar.events.insert({
-            calendarId: "primary",
-            resource: event,
-            conferenceDataVersion: 1,
-        });
-
-        const meetingLink = response.data.hangoutLink;
-        console.log(` Meeting Created: ${meetingLink}`);
-
-        //  Insert meeting into DB
         const result = await pool.query(
             "INSERT INTO meetings (manager_id, title, start_time, end_time, meeting_link) VALUES ($1, $2, $3, $4, $5) RETURNING id",
-            [manager_id, title, start_time, end_time, meetingLink]
+            [manager_id, title, start_time, end_time, meeting_link]
         );
 
         const meetingId = result.rows[0].id;
 
-        //  Store invites & Send Emails in parallel
         await Promise.all(
             employee_ids.map(async (empId) => {
                 await pool.query("INSERT INTO meeting_invites (meeting_id, employee_id) VALUES ($1, $2)", [meetingId, empId]);
 
-                // Fetch employee email
                 const emp = await pool.query("SELECT email FROM users WHERE id = $1", [empId]);
                 if (emp.rows.length > 0) {
-                    await sendMeetingEmail(emp.rows[0].email, meetingLink, title);
+                    await sendMeetingEmail(emp.rows[0].email, meeting_link, title);
                 }
             })
         );
 
-        res.json({ success: true, meeting_link: meetingLink });
+        res.json({ success: true, meeting_link });
     } catch (error) {
-        console.error(" Error Creating Meeting:", error);
+        console.error("❌ Error Creating Meeting:", error);
         res.status(500).json({ error: "Failed to create meeting" });
     }
 });

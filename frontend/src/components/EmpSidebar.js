@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { 
-  FaHome, FaUser, FaTasks, FaBell, FaChartLine, FaClipboardList, FaSignOutAlt 
+  FaHome, FaUser, FaTasks, FaChartLine, FaClipboardList, FaSignOutAlt 
 } from "react-icons/fa"; // Added FaHome icon
 import "../pages/EmployeeDashboard.css"; 
 
@@ -43,14 +43,7 @@ const EmpSidebar = () => {
               <FaTasks className="me-2" /> Tasks
             </NavLink>
           </li>
-          <li className="mb-3">
-            <NavLink 
-              to={`${linkBase}/notifications`} 
-              className={({ isActive }) => isActive ? "active-link" : ""}
-            >
-              <FaBell className="me-2" /> Notifications
-            </NavLink>
-          </li>
+          
           <li className="mb-3">
             <NavLink 
               to={`${linkBase}/performance`} 

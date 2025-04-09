@@ -47,7 +47,6 @@
 .employee-main-content {
     flex-grow: 1;
     margin-left: 260px;
-    margin-top: 70px;
     padding: 5px;
     height: calc(100vh - 70px);
     overflow-y: auto;
