@@ -10,6 +10,7 @@ const UploadDocument = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [resubmittingFileId, setResubmittingFileId] = useState(null);
+  const [taskStatus, setTaskStatus] = useState(null);
 
   const { state } = useLocation();
   const taskId = state?.taskId;
@@ -17,19 +18,32 @@ const UploadDocument = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const fetchUploadedFiles = async () => {
+    const fetchUploadedFilesAndTaskStatus = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/upload/uploaded-files/${taskId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error();
-        const files = await res.json();
+        const [filesRes, taskRes] = await Promise.all([
+          fetch(`http://localhost:5000/api/upload/uploaded-files/${taskId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://localhost:5000/api/tasks/status/${taskId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+    
+
+        if (!filesRes.ok || !taskRes.ok) throw new Error();
+
+        const files = await filesRes.json();
+        const taskData = await taskRes.json();
+
         setUploadedFiles(files);
+        setTaskStatus(taskData.status);
       } catch {
-        setMessage("⚠️ Failed to fetch files.");
+        setMessage("⚠️ Failed to fetch files or task status.");
       }
     };
-    if (taskId) fetchUploadedFiles();
+
+    if (taskId) fetchUploadedFilesAndTaskStatus();
+
     return () => preview && URL.revokeObjectURL(preview);
   }, [taskId, preview, token]);
 
@@ -56,7 +70,9 @@ const UploadDocument = () => {
     if (!file || (!taskId && !resubmittingFileId)) {
       return setMessage("⚠️ Please select a file and valid task.");
     }
-
+    console.log("📂 file object:", file);
+    console.log("📎 file type:", typeof file);
+    
     const formData = new FormData();
     formData.append("document", file);
 
@@ -81,12 +97,19 @@ const UploadDocument = () => {
       setPreview(null);
       setResubmittingFileId(null);
 
-      // Refresh file list
-      const refresh = await fetch(`http://localhost:5000/api/upload/uploaded-files/${taskId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const updatedFiles = await refresh.json();
+      const [updatedFilesRes, updatedTaskRes] = await Promise.all([
+        fetch(`http://localhost:5000/api/upload/uploaded-files/${taskId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      const updatedFiles = await updatedFilesRes.json();
+      const updatedTask = await updatedTaskRes.json();
       setUploadedFiles(updatedFiles);
+      setTaskStatus(updatedTask.status);
     } catch {
       setMessage("❌ File upload failed.");
     }
@@ -100,6 +123,7 @@ const UploadDocument = () => {
       });
       if (!res.ok) throw new Error();
       setMessage("✅ File deleted successfully!");
+
       const refresh = await fetch(`http://localhost:5000/api/upload/uploaded-files/${taskId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -155,6 +179,18 @@ const UploadDocument = () => {
               : `Upload Document for: ${taskTitle}`}
           </h2>
 
+          {taskStatus && (
+            <div className={`task-status-label badge ${
+              taskStatus === "Approved"
+                ? "bg-success"
+                : taskStatus === "Rejected"
+                ? "bg-danger"
+                : "bg-secondary"
+            }`}>
+              Task Status: {taskStatus}
+            </div>
+          )}
+
           {resubmittingFileId && rejectedFile && (
             <div className="alert alert-info mt-2">
               You're replacing rejected file: <strong>{rejectedFile.name}</strong><br />
@@ -162,9 +198,16 @@ const UploadDocument = () => {
             </div>
           )}
 
-          <div className="drop-zone" {...getRootProps()}>
-            <input {...getInputProps()} />
-            <p>📂 Drag & Drop or Click to Browse</p>
+          <div
+            className={`drop-zone ${taskStatus === "Approved" ? "disabled" : ""}`}
+            {...(taskStatus === "Approved" ? {} : getRootProps())}
+          >
+            <input {...getInputProps()} disabled={taskStatus === "Approved"} />
+            <p>
+              {taskStatus === "Approved"
+                ? "✅ Task is approved. You cannot upload new documents."
+                : "📂 Drag & Drop or Click to Browse"}
+            </p>
           </div>
 
           {file && (
@@ -182,7 +225,11 @@ const UploadDocument = () => {
             </div>
           )}
 
-          <button className="upload-button" onClick={handleUpload} disabled={!file}>
+          <button
+            className="upload-button"
+            onClick={handleUpload}
+            disabled={!file || taskStatus === "Approved"}
+          >
             {resubmittingFileId ? "Replace & Resubmit" : "Upload"}
           </button>
 
@@ -236,6 +283,7 @@ const UploadDocument = () => {
                       <button
                         className="resubmit-button"
                         onClick={() => setResubmittingFileId(file.id)}
+                        disabled={taskStatus === "Approved"}
                       >
                         Resubmit
                       </button>

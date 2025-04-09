@@ -8,7 +8,7 @@ const router = express.Router();
 // Multer in-memory storage
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   fileFilter: (req, file, cb) => {
     const allowedTypes = [
       "image/jpeg", "image/png", "image/gif", "application/pdf",
@@ -28,11 +28,19 @@ const upload = multer({
 router.post("/upload/:taskId", verifyJWT, upload.single("document"), async (req, res) => {
   const { taskId } = req.params;
   if (!req.file) return res.status(400).json({ error: "No file uploaded." });
-  if (!taskId) return res.status(400).json({ error: "Missing task ID." });
 
   const { originalname, mimetype, buffer } = req.file;
 
   try {
+    const taskCheck = await pool.query("SELECT status FROM tasks WHERE id = $1", [taskId]);
+
+    if (taskCheck.rowCount === 0) return res.status(404).json({ error: "Task not found." });
+    const taskStatus = taskCheck.rows[0].status;
+
+    if (["Approved"].includes(taskStatus)) {
+      return res.status(400).json({ error: `Cannot upload. Task is already ${taskStatus}.` });
+    }
+
     const result = await pool.query(
       `INSERT INTO documents (filename, mimetype, data, task_id, uploaded_by, status)
        VALUES ($1, $2, $3, $4, $5, 'Pending') RETURNING id`,
@@ -137,10 +145,7 @@ router.delete("/delete-file/:id", verifyJWT, async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query(
-      `DELETE FROM documents WHERE id = $1`,
-      [id]
-    );
+    const result = await pool.query(`DELETE FROM documents WHERE id = $1`, [id]);
 
     if (result.rowCount === 0) {
       return res.status(404).json({ error: "File not found." });
@@ -152,15 +157,45 @@ router.delete("/delete-file/:id", verifyJWT, async (req, res) => {
     res.status(500).json({ error: "Failed to delete file." });
   }
 });
-
-// 🔁 Resubmit rejected file
 router.post("/resubmit/:docId", verifyJWT, upload.single("document"), async (req, res) => {
   const { docId } = req.params;
   const file = req.file;
 
-  if (!file) return res.status(400).json({ message: "No file uploaded." });
+  console.log("📥 Incoming resubmit file:", file);
+  console.log("👤 User ID from token:", req.user.id);
+  console.log("📝 Document ID param:", docId);
+
+  if (!file) {
+    console.log("❌ No file received.");
+    return res.status(400).json({ message: "No file uploaded." });
+  }
 
   try {
+    const docResult = await pool.query(
+      `SELECT task_id FROM documents WHERE id = $1 AND uploaded_by = $2`,
+      [docId, req.user.id]
+    );
+
+    if (docResult.rowCount === 0) {
+      console.log("❌ Document not found or user unauthorized.");
+      return res.status(404).json({ message: "Document not found or unauthorized." });
+    }
+
+    const taskId = docResult.rows[0].task_id;
+
+    const taskResult = await pool.query("SELECT status FROM tasks WHERE id = $1", [taskId]);
+
+    if (taskResult.rowCount === 0) {
+      console.log("❌ Task not found.");
+      return res.status(404).json({ message: "Task not found." });
+    }
+
+    const taskStatus = taskResult.rows[0].status;
+    if (["Approved"].includes(taskStatus)) {
+      console.log("🚫 Task already finalized:", taskStatus);
+      return res.status(400).json({ message: `Cannot resubmit. Task is already ${taskStatus}.` });
+    }
+
     const result = await pool.query(
       `UPDATE documents
        SET filename = $1,
@@ -173,15 +208,15 @@ router.post("/resubmit/:docId", verifyJWT, upload.single("document"), async (req
       [file.originalname, file.mimetype, file.buffer, docId]
     );
 
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: "Document not found." });
-    }
+    console.log("✅ Document updated:", result.rows[0]);
 
     res.json({ message: "✅ File resubmitted successfully.", file: result.rows[0] });
   } catch (error) {
-    console.error("❌ Error resubmitting file:", error.message);
+    console.error("❌ Error resubmitting file:", error);
     res.status(500).json({ message: "Failed to resubmit file." });
   }
 });
+
+
 
 export default router;
