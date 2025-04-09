@@ -156,7 +156,7 @@ router.put("/:taskId/reject", verifyJWT, authMiddleware(["manager"]), async (req
 });
 
 /* ---------------------  Get Task Status --------------------- */
-router.get("/status/:taskId", async (req, res) => {
+router.get("/status/:taskId", verifyJWT, authMiddleware(["manager", "employee"]), async (req, res) => {
   const { taskId } = req.params;
 
   try {
@@ -175,5 +175,28 @@ router.get("/status/:taskId", async (req, res) => {
     res.status(500).json({ message: 'Server error while fetching task status.' });
   }
 });
+
+router.get("/:id", verifyJWT, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT id, title, description, status, assigned_to, created_at
+       FROM tasks
+       WHERE id = $1`,
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Task not found." });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("❌ Error fetching task:", err.message);
+    res.status(500).json({ error: "Failed to fetch task." });
+  }
+});
+
 
 export default router;

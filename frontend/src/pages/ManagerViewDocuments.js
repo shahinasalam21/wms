@@ -215,7 +215,7 @@ const ManagerViewDocuments = () => {
     }
   };
 
-  // Get border color based on file status
+
   const getBorderColor = (status) => {
     switch(status) {
       case 'Approved':
@@ -230,7 +230,7 @@ const ManagerViewDocuments = () => {
   };
 
   return (
-    // Modified the class name for container to be unique
+ 
     <div className="bg-light min-vh-100 py-4 manager-documents-view">
       <div className="manager-documents-container">
         <div className="card shadow border-0 rounded-4">

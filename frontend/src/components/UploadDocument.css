@@ -374,4 +374,9 @@
     background-color: #b6e0fe;
     color: #004085;
   }
+  .drop-zone.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  
     
