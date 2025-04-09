@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import "./ManagerViewDocuments.css";
 
 const ManagerViewDocuments = () => {
   const location = useLocation();
@@ -214,11 +215,26 @@ const ManagerViewDocuments = () => {
     }
   };
 
+  // Get border color based on file status
+  const getBorderColor = (status) => {
+    switch(status) {
+      case 'Approved':
+        return "#28a745";  // Success green
+      case 'Rejected':
+        return "#dc3545";  // Danger red
+      case 'Resubmitted':
+        return "#17a2b8";  // Info blue
+      default:
+        return "#ffc107";  // Warning yellow
+    }
+  };
+
   return (
-    <div className="bg-light min-vh-100 py-5">
-      <div className="container">
+    // Modified the class name for container to be unique
+    <div className="bg-light min-vh-100 py-4 manager-documents-view">
+      <div className="manager-documents-container">
         <div className="card shadow border-0 rounded-4">
-          <div className="card-header bg-primary bg-gradient text-white p-4 rounded-top-4">
+          <div className="card-header bg-primary bg-gradient text-white p-3 rounded-top-4">
             <div className="d-flex justify-content-between align-items-center">
               <div>
                 <h3 className="mb-0 fw-bold">
@@ -229,7 +245,7 @@ const ManagerViewDocuments = () => {
                   {taskTitle}
                 </p>
               </div>
-              <div className="d-flex gap-2">
+              <div>
                 <button 
                   className="btn btn-light fw-semibold" 
                   onClick={() => navigate(-1)}
@@ -240,64 +256,88 @@ const ManagerViewDocuments = () => {
             </div>
           </div>
           
-          <div className="card-body p-4">
-            <div className="d-flex flex-wrap justify-content-between align-items-center mb-4">
-              <div className="fs-5 fw-semibold text-secondary mb-3 mb-md-0">
+          <div className="p-3 bg-white border-bottom">
+            <div className="d-flex flex-wrap justify-content-between align-items-center">
+              <div className="fs-5 fw-semibold text-secondary mb-2 mb-md-0">
                 <i className="bi bi-file-earmark-check me-2"></i>
-                Document Review
+                Document Review {files.length > 0 ? `(${files.length} document${files.length !== 1 ? "s" : ""})` : ""}
               </div>
               
               <div className="d-flex gap-2">
                 <button 
-                  className="btn btn-success fw-semibold" 
+                  className="btn btn-success btn-sm fw-semibold" 
                   onClick={handleApproveTask}
                 >
                   <i className="bi bi-check-circle me-1"></i> Approve Task
                 </button>
                 <button 
-                  className="btn btn-outline-danger fw-semibold" 
+                  className="btn btn-outline-danger btn-sm fw-semibold" 
                   onClick={handleRejectTask}
                 >
                   <i className="bi bi-x-circle me-1"></i> Reject Task
                 </button>
               </div>
             </div>
-
+          </div>
+          
+          <div className="card-body p-3 manager-documents-card-body">
             {loading ? (
-              <div className="text-center p-5">
+              <div className="text-center p-4">
                 <div className="spinner-border text-primary" role="status">
                   <span className="visually-hidden">Loading...</span>
                 </div>
                 <p className="mt-3 text-muted">Loading documents...</p>
               </div>
             ) : message ? (
-              <div className="alert alert-info d-flex align-items-center p-4 shadow-sm">
+              <div className="alert alert-info d-flex align-items-center p-3 shadow-sm">
                 <i className="bi bi-info-circle fs-4 me-3"></i>
                 <div>{message}</div>
               </div>
             ) : (
-              <div className="row g-4">
+              <div className="row g-3">
                 {files.map((file) => (
-                  <div key={file.id} className="col-lg-4 col-md-6">
-                    <div className="card h-100 border-0 shadow-sm rounded-4" 
-                         style={{transition: "all 0.3s ease", transform: "translateY(0)"}}
-                         onMouseOver={(e) => {e.currentTarget.style.transform = "translateY(-5px)"}}
-                         onMouseOut={(e) => {e.currentTarget.style.transform = "translateY(0)"}}>
-                      <div className="card-header bg-light border-0 pt-4 pb-0 px-4">
+                  <div key={file.id} className="col-xl-3 col-lg-4 col-md-6">
+                    <div 
+                      className="card h-100 rounded-3" 
+                      style={{
+                        transition: "all 0.3s ease", 
+                        transform: "translateY(0)", 
+                        minHeight: "220px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                        border: `2px solid ${getBorderColor(file.status)}`,
+                        overflow: "hidden"
+                      }}
+                      onMouseOver={(e) => {e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.boxShadow = "0 8px 16px rgba(0,0,0,0.15)"}}
+                      onMouseOut={(e) => {e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)"}}
+                    >
+                      <div className="card-header bg-light pt-3 pb-0 px-3" style={{borderBottom: "1px solid #eee"}}>
                         <div className="d-flex align-items-center">
-                          <div className={`bg-${getStatusClass(file.status)} bg-opacity-10 p-3 rounded-3 me-3`}>
-                            <i className={`bi ${getFileIcon(file.name)} fs-3 text-${getStatusClass(file.status)}`}></i>
+                          <div className={`bg-${getStatusClass(file.status)} bg-opacity-10 p-2 rounded-3 me-2`}>
+                            <i className={`bi ${getFileIcon(file.name)} fs-4 text-${getStatusClass(file.status)}`}></i>
                           </div>
                           <div className="flex-grow-1">
-                            <h6 className="mb-1 text-truncate fw-semibold" title={file.name}>
-                              {file.name}
-                            </h6>
-                            <div className="d-flex align-items-center">
-                              <div className="bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1 me-2 small">
+                            <div className="position-relative" style={{maxWidth: "100%"}}>
+                              <h6 
+                                className="mb-1 fw-semibold" 
+                                title={file.name}
+                                style={{
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                  fontSize: "0.9rem",
+                                  lineHeight: "1.2rem",
+                                  maxWidth: "100%"
+                                }}
+                              >
+                                {file.name}
+                              </h6>
+                            </div>
+                            <div className="d-flex align-items-center flex-wrap">
+                              <div className="bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-0 me-2 small mb-1">
                                 <i className="bi bi-person-circle me-1"></i>
-                                {file.uploaded_by || "Unknown"}
+                                <span className="small">{file.uploaded_by || "Unknown"}</span>
                               </div>
-                              <span className={`badge bg-${getStatusClass(file.status)} bg-opacity-10 text-${getStatusClass(file.status)} px-2 py-1`}>
+                              <span className={`badge bg-${getStatusClass(file.status)} bg-opacity-10 text-${getStatusClass(file.status)} px-2 py-0 small mb-1`}>
                                 {file.status || "Pending"}
                               </span>
                             </div>
@@ -305,35 +345,40 @@ const ManagerViewDocuments = () => {
                         </div>
                       </div>
 
-                      <div className="card-body p-4">
+                      <div className="card-body p-3 manager-documents-file-card-body d-flex flex-column">
                         {file.status === "Rejected" && (
-                          <div className="alert alert-danger bg-opacity-10 border-0 mb-3 py-2 px-3">
+                          <div className="alert alert-danger bg-opacity-10 border-0 mb-2 py-1 px-2" style={{minHeight: "40px", maxHeight: "50px", overflow: "auto"}}>
                             <small className="fw-semibold d-block mb-1">Rejection Reason:</small>
-                            <p className="mb-0 fst-italic">"{file.rejection_message || "No reason provided"}"</p>
+                            <p className="mb-0 fst-italic small">"{file.rejection_message || "No reason provided"}"</p>
                           </div>
                         )}
+                        {file.status !== "Rejected" && (
+                          <div style={{minHeight: "40px"}}></div>
+                        )}
 
-                        <div className="d-grid gap-2">
+                        <div className="d-grid gap-1 mt-auto">
                           <button
-                            className="btn btn-primary"
+                            className="btn btn-primary btn-sm"
                             onClick={() => handleDownload(file.id, file.name)}
                           >
-                            <i className="bi bi-cloud-download me-2"></i>
+                            <i className="bi bi-cloud-download me-1"></i>
                             View / Download
                           </button>
                           
-                          <div className="d-flex gap-2">
+                          <div className="d-flex gap-1 mt-1">
                             <button
-                              className={`btn flex-grow-1 ${file.status === "Approved" ? "btn-outline-success disabled" : "btn-outline-success"}`}
+                              className={`btn btn-xs flex-grow-1 ${file.status === "Approved" ? "btn-outline-success disabled" : "btn-outline-success"}`}
                               onClick={() => handleApproveFile(file.id)}
                               disabled={file.status === "Approved"}
+                              style={{ fontSize: "0.7rem", padding: "0.2rem 0.4rem" }}
                             >
                               <i className="bi bi-check-circle me-1"></i> Approve
                             </button>
                             <button
-                              className={`btn flex-grow-1 ${file.status === "Rejected" ? "btn-outline-danger disabled" : "btn-outline-danger"}`}
+                              className={`btn btn-xs flex-grow-1 ${file.status === "Rejected" ? "btn-outline-danger disabled" : "btn-outline-danger"}`}
                               onClick={() => handleRejectFile(file.id)}
                               disabled={file.status === "Rejected"}
+                              style={{ fontSize: "0.7rem", padding: "0.2rem 0.4rem" }}
                             >
                               <i className="bi bi-x-circle me-1"></i> Reject
                             </button>
@@ -349,7 +394,6 @@ const ManagerViewDocuments = () => {
         </div>
       </div>
 
-      {/* Rejection Modal */}
       {showRejectModal && (
         <div className="modal fade show d-block" style={{backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
           <div className="modal-dialog modal-dialog-centered">
@@ -365,32 +409,35 @@ const ManagerViewDocuments = () => {
                   onClick={() => setShowRejectModal(false)}
                 ></button>
               </div>
-              <div className="modal-body p-4">
-                <label className="form-label fw-semibold mb-2">
-                  Please provide a reason for rejection:
-                </label>
-                <textarea
-                  className="form-control border-0 bg-light"
-                  placeholder="Enter detailed feedback for rejection..."
-                  value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
-                  rows="4"
-                ></textarea>
+              <div className="modal-body">
+                <div className="form-group">
+                  <label htmlFor="rejectionReason" className="form-label">
+                    Rejection Reason (required)
+                  </label>
+                  <textarea
+                    id="rejectionReason"
+                    className="form-control"
+                    rows="4"
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                  />
+                </div>
               </div>
-              <div className="modal-footer border-0">
+              <div className="modal-footer">
                 <button
-                  className="btn btn-light"
+                  type="button"
+                  className="btn btn-outline-danger"
                   onClick={() => setShowRejectModal(false)}
                 >
                   Cancel
                 </button>
                 <button
+                  type="button"
                   className="btn btn-danger"
                   onClick={submitRejection}
-                  disabled={!rejectionReason.trim()}
+                  disabled={!rejectionReason}
                 >
-                  <i className="bi bi-x-circle me-1"></i>
-                  Submit Rejection
+                  Reject Document
                 </button>
               </div>
             </div>

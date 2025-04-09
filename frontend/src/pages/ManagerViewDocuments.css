@@ -1,0 +1,13 @@
+
+.manager-documents-view .manager-documents-card-body {
+    
+
+    padding: 1rem;
+    overflow: visible;
+  }
+  
+  .manager-documents-view .manager-documents-file-card-body {
+  
+    padding: 0.75rem;
+    background-color: #ffffff;
+  }
