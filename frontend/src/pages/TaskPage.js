@@ -15,7 +15,7 @@ const EmployeeTasks = () => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:5000/api/tasks/assigned/${employeeId}`,
+          `${process.env.REACT_APP_API_BASE_URL}/api/tasks/assigned/${employeeId}`,
           {
             method: "GET",
             headers: {

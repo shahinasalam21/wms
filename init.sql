@@ -46,6 +46,7 @@ CREATE TABLE meeting_invites (
     employee_email VARCHAR(255)
 
 );
+DROP TABLE IF EXISTS documents;
 
 CREATE TABLE documents (
   id SERIAL PRIMARY KEY,
@@ -53,5 +54,8 @@ CREATE TABLE documents (
   mimetype VARCHAR(100),
   data BYTEA,
   task_id INTEGER REFERENCES tasks(id) ON DELETE CASCADE,
-  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  uploaded_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status VARCHAR(20) DEFAULT 'pending',
+  rejection_message TEXT
 );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaProjectDiagram, FaTasks, FaUsers, FaBell } from "react-icons/fa";
+import { FaSearch, FaProjectDiagram, FaTasks, FaUsers} from "react-icons/fa";
 import { useParams } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css"; 
@@ -28,20 +28,20 @@ const ManagerDashboard = () => {
     const fetchData = async () => {
       try {
         // 1 . Fetch workflows for this manager
-        const workflowResponse = await fetch(`http://localhost:5000/api/workflows/manager/${managerId}`);
+        const workflowResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/workflows/manager/${managerId}`);
 
         if (!workflowResponse.ok) throw new Error("Failed to fetch workflows");
         const workflowData = await workflowResponse.json();
         setWorkflows(Array.isArray(workflowData) ? workflowData : []);
   
         // 2. Fetch employee count under this manager
-        const employeesResponse = await fetch(`http://localhost:5000/api/employees/count?managerId=${managerId}`);
+        const employeesResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/employees/count?managerId=${managerId}`);
         if (!employeesResponse.ok) throw new Error("Failed to fetch employee count");
         const employeesData = await employeesResponse.json();
         setTotalEmployees(employeesData.count || 0);
   
         // 3. Fetch active tasks under this manager
-        const tasksResponse = await fetch(`http://localhost:5000/api/tasks/active?managerId=${managerId}`);
+        const tasksResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/tasks/active?managerId=${managerId}`);
         if (!tasksResponse.ok) throw new Error("Failed to fetch active tasks");
         const tasksData = await tasksResponse.json();
         setActiveTasks(tasksData.count || 0);

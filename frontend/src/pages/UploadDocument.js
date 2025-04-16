@@ -21,10 +21,10 @@ const UploadDocument = () => {
     const fetchUploadedFilesAndTaskStatus = async () => {
       try {
         const [filesRes, taskRes] = await Promise.all([
-          fetch(`http://localhost:5000/api/upload/uploaded-files/${taskId}`, {
+          fetch(`${process.env.REACT_APP_API_BASE_URL}/api/upload/uploaded-files/${taskId}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://localhost:5000/api/tasks/status/${taskId}`, {
+          fetch(`${process.env.REACT_APP_API_BASE_URL}/api/tasks/status/${taskId}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -78,8 +78,8 @@ const UploadDocument = () => {
 
     try {
       const url = resubmittingFileId
-        ? `http://localhost:5000/api/upload/resubmit/${resubmittingFileId}`
-        : `http://localhost:5000/api/upload/upload/${taskId}`;
+        ? `${process.env.REACT_APP_API_BASE_URL}/api/upload/resubmit/${resubmittingFileId}`
+        : `${process.env.REACT_APP_API_BASE_URL}/api/upload/upload/${taskId}`;
 
       const response = await fetch(url, {
         method: "POST",
@@ -98,10 +98,10 @@ const UploadDocument = () => {
       setResubmittingFileId(null);
 
       const [updatedFilesRes, updatedTaskRes] = await Promise.all([
-        fetch(`http://localhost:5000/api/upload/uploaded-files/${taskId}`, {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/upload/uploaded-files/${taskId}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/api/tasks/${taskId}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -117,14 +117,14 @@ const UploadDocument = () => {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/upload/delete-file/${id}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/upload/delete-file/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error();
       setMessage("✅ File deleted successfully!");
 
-      const refresh = await fetch(`http://localhost:5000/api/upload/uploaded-files/${taskId}`, {
+      const refresh = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/upload/uploaded-files/${taskId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const updated = await refresh.json();
@@ -136,7 +136,7 @@ const UploadDocument = () => {
 
   const handleSecureDownload = async (fileId, fileName) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/upload/download/${fileId}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/upload/download/${fileId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error();

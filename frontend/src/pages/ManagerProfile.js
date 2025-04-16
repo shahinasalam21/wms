@@ -4,7 +4,7 @@ import { Container, Card, Button, Modal, Form, Spinner, Alert } from "react-boot
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Profile.css";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Profile = ({ userId: propUserId }) => {
   const [manager, setManager] = useState(null);

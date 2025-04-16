@@ -22,7 +22,7 @@ const Tasks = () => {
 
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:5000/api/tasks", {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/tasks`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,

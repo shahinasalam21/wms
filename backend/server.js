@@ -27,7 +27,8 @@ if (!fs.existsSync(uploadDir)) {
   console.log("📁 Created 'uploads/' folder");
 }
 
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = ["http://51.21.202.254:3000"]; 
+
 app.use(
   cors({
     origin: (origin, callback) => {

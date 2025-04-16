@@ -25,9 +25,9 @@ const EmployeeDashboard = () => {
         };
 
         const [taskResponse, meetingResponse, userResponse] = await Promise.all([
-          fetch(`http://localhost:5000/api/tasks/getTask/${employeeId}`, { headers }),
-          fetch(`http://localhost:5000/api/meeting/emp/employee/${employeeId}`, { headers }),
-          fetch(`http://localhost:5000/api/employees/${employeeId}`, { headers }),
+          fetch(`${process.env.REACT_APP_API_BASE_URL}/api/tasks/getTask/${employeeId}`, { headers }),
+          fetch(`${process.env.REACT_APP_API_BASE_URL}/api/meeting/emp/employee/${employeeId}`, { headers }),
+          fetch(`${process.env.REACT_APP_API_BASE_URL}/api/employees/${employeeId}`, { headers }),
         ]);
 
         if (!taskResponse.ok || !meetingResponse.ok || !userResponse.ok) {
@@ -88,8 +88,8 @@ const EmployeeDashboard = () => {
                   </div>
                 </div>
                 <div className="text-muted d-flex justify-content-between">
-                  <small>📝 Tasks: {tasks.length}</small>
-                  <small>📅 Meetings: {meetings.length}</small>
+                  <small> Tasks: {tasks.length}</small>
+                  <small> Meetings: {meetings.length}</small>
                 </div>
               </Card.Body>
             </Card>
@@ -116,7 +116,7 @@ const EmployeeDashboard = () => {
             </Card>
           </Col>
 
-          {/* 📅 Meetings */}
+          {/* Meetings */}
           <Col md={4}>
             <Card className="border-0 shadow-sm h-100">
               <Card.Body className="p-4">

@@ -35,6 +35,11 @@ const verifyRecaptcha = async (token) => {
   return data.success;
 };
 
+// ✅ Named export
+export const someFunction = (input) => {
+  return "expected output";
+};
+
 // User Registration
 router.post(
   "/register",

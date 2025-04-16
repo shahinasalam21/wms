@@ -21,7 +21,7 @@ const Performance = () => {
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/performance/report/${employeeId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/performance/report/${employeeId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

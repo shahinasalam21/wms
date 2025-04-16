@@ -29,7 +29,7 @@ const ManagerViewDocuments = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:5000/api/upload/uploaded-files/${taskId}`,
+        `${process.env.REACT_APP_API_BASE_URL}/api/upload/uploaded-files/${taskId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,7 +60,7 @@ const ManagerViewDocuments = () => {
   const handleDownload = async (fileId, fileName) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/upload/download/${fileId}`,
+        `${process.env.REACT_APP_API_BASE_URL}/api/upload/download/${fileId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -85,7 +85,7 @@ const ManagerViewDocuments = () => {
   const handleApproveFile = async (fileId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/upload/update-status/${fileId}`,
+        `${process.env.REACT_APP_API_BASE_URL}/api/upload/update-status/${fileId}`,
         {
           method: "PUT",
           headers: {
@@ -112,7 +112,7 @@ const ManagerViewDocuments = () => {
   const submitRejection = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/upload/update-status/${selectedFileId}`,
+        `${process.env.REACT_APP_API_BASE_URL}/api/upload/update-status/${selectedFileId}`,
         {
           method: "PUT",
           headers: {
@@ -144,7 +144,7 @@ const ManagerViewDocuments = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/approve`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/tasks/${taskId}/approve`, {
         method: "PUT", 
         headers: {
           Authorization: `Bearer ${token}`,
@@ -162,7 +162,7 @@ const ManagerViewDocuments = () => {
 
   const handleRejectTask = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/reject`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/tasks/${taskId}/reject`, {
         method: "PUT", 
         headers: {
           Authorization: `Bearer ${token}`,

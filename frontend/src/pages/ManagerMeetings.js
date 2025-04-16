@@ -8,7 +8,7 @@ function ManagerMeetings() {
 
     // Get managerId and token from localStorage
     const managerId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token"); // ✅ Get the JWT token
+    const token = localStorage.getItem("token"); //  Get the JWT token
 
     useEffect(() => {
         if (!managerId || !token) {
@@ -19,9 +19,9 @@ function ManagerMeetings() {
         const fetchMeetings = async () => {
             try {
                 const response = await axios.get(
-                    `http://localhost:5000/api/meeting/manager/${managerId}`,
+                    `${process.env.REACT_APP_API_BASE_URL}/api/meeting/manager/${managerId}`,
                     {
-                        headers: { Authorization: `Bearer ${token}` }, // ✅ Add the Authorization header
+                        headers: { Authorization: `Bearer ${token}` }, //  Add the Authorization header
                     }
                 );
                 setMeetings(response.data);

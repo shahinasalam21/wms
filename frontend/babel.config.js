@@ -1,6 +1,6 @@
 module.exports = {
   presets: [
-    "@babel/preset-env",    // Transpile modern JavaScript
-    "@babel/preset-react"   // Transpile JSX
+    "@babel/preset-env",
+    "@babel/preset-react"
   ]
 };

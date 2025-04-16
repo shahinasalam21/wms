@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CreateWorkflow.css";
 
-const CreateWorkflow = ({ setWorkflows, onClose }) => {
+const CreateWorkflow = ({ setWorkflows}) => {
   const navigate = useNavigate();
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +26,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
     const fetchEmployees = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await fetch("http://localhost:5000/api/employees", {
+        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/employees`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -101,7 +101,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
 
     try {
       // Create workflow
-      const response = await fetch("http://localhost:5000/api/workflows/create", {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/workflows/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -117,7 +117,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
 
       // Create tasks
       for (const task of workflow.tasks) {
-        await fetch("http://localhost:5000/api/tasks/create", {
+        await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/tasks/create`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -136,7 +136,7 @@ const CreateWorkflow = ({ setWorkflows, onClose }) => {
 
       // Refresh workflows
       const updatedRes = await fetch(
-        `http://localhost:5000/api/workflows/manager/${managerId}`,
+        `${process.env.REACT_APP_API_BASE_URL}/api/workflows/manager/${managerId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -7,7 +7,8 @@ WORKDIR /app
 # Install dependencies
 COPY package.json ./
 COPY package-lock.json ./
-RUN npm install
+RUN npm config set cache /tmp/npm-cache --global && npm install
+
 
 # Install nodemon globally
 RUN npm install -g nodemon

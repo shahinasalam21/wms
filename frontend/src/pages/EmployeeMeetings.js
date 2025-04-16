@@ -25,7 +25,7 @@ function EmployeeMeetings() {
         const fetchMeetings = async () => {
             try {
                 const response = await axios.get(
-                    `http://localhost:5000/api/meeting/employee/${employeeId}`,
+                    `${process.env.REACT_APP_API_BASE_URL}/api/meeting/employee/${employeeId}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
